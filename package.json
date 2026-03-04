@@ -25,6 +25,14 @@
   ],
   "author": "Andrew Kochulab <andrew.kochulab@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndrewKochulab/react-native-swiftui-dsl.git"
+  },
+  "homepage": "https://github.com/AndrewKochulab/react-native-swiftui-dsl#readme",
+  "bugs": {
+    "url": "https://github.com/AndrewKochulab/react-native-swiftui-dsl/issues"
+  },
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-native": ">=0.72.0",
