@@ -3,9 +3,16 @@ import { Text } from '../../src/Primitives/Text';
 import { VStack, HStack } from '../../src/Primitives/Containers';
 import { Icon } from '../../src/Primitives/Icon';
 import { Spacer } from '../../src/Primitives/Spacer';
+import { SafeArea } from '../../src/Primitives/SafeArea';
 import { Group } from '../../src/Conditionals/Group';
 import { DSLDefaults } from '../../src/Config/Defaults';
 import { renderWithDSLTheme, testThemeConfig } from '../Helpers/renderWithDSLTheme';
+
+jest.mock('expo-router', () => ({
+  Stack: {
+    Screen: ({ options }: { options: Record<string, unknown> }) => null,
+  },
+}));
 
 const Colors = testThemeConfig.colors;
 const Fonts = testThemeConfig.fonts;
@@ -268,12 +275,329 @@ describe('DSLRenderer', () => {
     });
   });
 
+  describe('Additional text modifiers rendering', () => {
+    it('applies lineHeight', () => {
+      const { getByText } = renderWithDSLTheme(
+        Text('LH').lineHeight(28).toElement()
+      );
+      const el = getByText('LH');
+      expect(el.props.style).toMatchObject({ lineHeight: 28 });
+    });
+
+    it('applies textAlign', () => {
+      const { getByText } = renderWithDSLTheme(
+        Text('TA').textAlign('right').toElement()
+      );
+      const el = getByText('TA');
+      expect(el.props.style).toMatchObject({ textAlign: 'right' });
+    });
+
+    it('applies accessibilityLabel on text', () => {
+      const { getByText } = renderWithDSLTheme(
+        Text('AL').accessibilityLabel('Accessible text').toElement()
+      );
+      const el = getByText('AL');
+      expect(el.props.accessibilityLabel).toBe('Accessible text');
+    });
+
+    it('applies disabled on text via Pressable', () => {
+      const handler = jest.fn();
+      const { getByText } = renderWithDSLTheme(
+        Text('Disabled').onTap(handler).disabled().toElement()
+      );
+      expect(getByText('Disabled')).toBeTruthy();
+    });
+  });
+
+  describe('Additional style modifiers rendering', () => {
+    it('applies borderStyle', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).borderStyle('dashed').testID('bs').toElement()
+      );
+      const el = getByTestId('bs');
+      expect(el.props.style).toMatchObject({ borderStyle: 'dashed' });
+    });
+
+    it('applies flexWrap', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        HStack(Text('X')).flexWrap().testID('fw').toElement()
+      );
+      const el = getByTestId('fw');
+      expect(el.props.style).toMatchObject({ flexWrap: 'wrap' });
+    });
+
+    it('applies opacity', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).opacity(0.5).testID('op').toElement()
+      );
+      const el = getByTestId('op');
+      expect(el.props.style).toMatchObject({ opacity: 0.5 });
+    });
+
+    it('applies frame with leading alignment', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).frame({ width: 100, alignment: 'leading' }).testID('fl').toElement()
+      );
+      const el = getByTestId('fl');
+      expect(el.props.style).toMatchObject({ width: 100, alignItems: 'flex-start' });
+    });
+
+    it('applies frame with trailing alignment', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).frame({ width: 100, alignment: 'trailing' }).testID('ft').toElement()
+      );
+      const el = getByTestId('ft');
+      expect(el.props.style).toMatchObject({ width: 100, alignItems: 'flex-end' });
+    });
+
+    it('applies frame with minWidth/maxWidth/minHeight/maxHeight', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).frame({ minWidth: 50, maxWidth: 200, minHeight: 30, maxHeight: 100 }).testID('fmm').toElement()
+      );
+      const el = getByTestId('fmm');
+      expect(el.props.style).toMatchObject({
+        minWidth: 50,
+        maxWidth: 200,
+        minHeight: 30,
+        maxHeight: 100,
+      });
+    });
+
+    it('applies cornerRadius with numeric value', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).cornerRadius(16).testID('crn').toElement()
+      );
+      const el = getByTestId('crn');
+      expect(el.props.style).toMatchObject({ borderRadius: 16 });
+    });
+
+    it('applies font with numeric value', () => {
+      const { getByText } = renderWithDSLTheme(
+        Text('Num').font(20).toElement()
+      );
+      const el = getByText('Num');
+      expect(el.props.style).toMatchObject({ fontSize: 20 });
+    });
+  });
+
+  describe('Edge-specific padding/margin rendering', () => {
+    it('applies padding vertical', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).paddingVertical(8).testID('pv').toElement()
+      );
+      const el = getByTestId('pv');
+      expect(el.props.style).toMatchObject({ paddingVertical: 8 });
+    });
+
+    it('applies padding top', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).paddingTop(12).testID('pt').toElement()
+      );
+      const el = getByTestId('pt');
+      expect(el.props.style).toMatchObject({ paddingTop: 12 });
+    });
+
+    it('applies padding left', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).paddingLeft(6).testID('pl').toElement()
+      );
+      const el = getByTestId('pl');
+      expect(el.props.style).toMatchObject({ paddingLeft: 6 });
+    });
+
+    it('applies padding right', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).paddingRight(6).testID('pr').toElement()
+      );
+      const el = getByTestId('pr');
+      expect(el.props.style).toMatchObject({ paddingRight: 6 });
+    });
+
+    it('applies padding bottom', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).paddingBottom(16).testID('pb').toElement()
+      );
+      const el = getByTestId('pb');
+      expect(el.props.style).toMatchObject({ paddingBottom: 16 });
+    });
+
+    it('applies margin vertical', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).marginVertical(8).testID('mv').toElement()
+      );
+      const el = getByTestId('mv');
+      expect(el.props.style).toMatchObject({ marginVertical: 8 });
+    });
+
+    it('applies margin top', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).marginTop(6).testID('mt').toElement()
+      );
+      const el = getByTestId('mt');
+      expect(el.props.style).toMatchObject({ marginTop: 6 });
+    });
+
+    it('applies margin left', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).marginLeft(4).testID('ml').toElement()
+      );
+      const el = getByTestId('ml');
+      expect(el.props.style).toMatchObject({ marginLeft: 4 });
+    });
+
+    it('applies margin right', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).marginRight(4).testID('mr').toElement()
+      );
+      const el = getByTestId('mr');
+      expect(el.props.style).toMatchObject({ marginRight: 4 });
+    });
+
+    it('applies padding horizontal', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).paddingHorizontal('lg').testID('ph').toElement()
+      );
+      const el = getByTestId('ph');
+      expect(el.props.style).toMatchObject({ paddingHorizontal: Layout.spacing.lg });
+    });
+
+    it('applies margin horizontal', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).marginHorizontal('sm').testID('mh').toElement()
+      );
+      const el = getByTestId('mh');
+      expect(el.props.style).toMatchObject({ marginHorizontal: Layout.spacing.sm });
+    });
+
+    it('applies margin bottom', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).marginBottom(10).testID('mb').toElement()
+      );
+      const el = getByTestId('mb');
+      expect(el.props.style).toMatchObject({ marginBottom: 10 });
+    });
+  });
+
   describe('Spacer rendering', () => {
     it('renders Spacer as flex:1 view', () => {
       const { toJSON } = renderWithDSLTheme(
         HStack(Text('Left'), Spacer(), Text('Right')).toElement()
       );
       expect(toJSON()).toBeTruthy();
+    });
+  });
+
+  describe('Container gap/spacing rendering', () => {
+    it('applies spacing as gap on container', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('A'), Text('B')).spacing(12).testID('gap-c').toElement()
+      );
+      const el = getByTestId('gap-c');
+      expect(el.props.style).toMatchObject({ gap: 12 });
+    });
+
+    it('applies gap modifier on container', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        HStack(Text('A'), Text('B')).gap(8).testID('gap-h').toElement()
+      );
+      const el = getByTestId('gap-h');
+      expect(el.props.style).toMatchObject({ gap: 8 });
+    });
+
+    it('applies justifyContent on container', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('A')).justifyContent('spaceBetween').testID('jc').toElement()
+      );
+      const el = getByTestId('jc');
+      expect(el.props.style).toMatchObject({ justifyContent: 'space-between' });
+    });
+
+    it('applies alignItems on container', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('A')).alignItems('center').testID('ai').toElement()
+      );
+      const el = getByTestId('ai');
+      expect(el.props.style).toMatchObject({ alignItems: 'center' });
+    });
+  });
+
+  describe('SafeArea rendering', () => {
+    it('renders SafeArea with edges', () => {
+      const { toJSON } = renderWithDSLTheme(
+        SafeArea(Text('Safe')).edges(['top', 'bottom']).testID('sa-edges').toElement()
+      );
+      const tree = toJSON();
+      expect(tree).toBeTruthy();
+      // SafeAreaView transforms edges array into an object
+      expect(tree.props.edges).toBeDefined();
+    });
+
+    it('renders SafeArea with testID', () => {
+      const { toJSON } = renderWithDSLTheme(
+        SafeArea(Text('Safe')).testID('sa-tid').toElement()
+      );
+      const tree = toJSON();
+      expect(tree.props.testID).toBe('sa-tid');
+    });
+  });
+
+  describe('Frame alignment center rendering', () => {
+    it('applies frame with center alignment', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).frame({ width: 100, height: 100, alignment: 'center' }).testID('fc').toElement()
+      );
+      const el = getByTestId('fc');
+      expect(el.props.style).toMatchObject({
+        width: 100,
+        height: 100,
+        alignItems: 'center',
+        justifyContent: 'center',
+      });
+    });
+  });
+
+  describe('Interaction with flex', () => {
+    it('passes flex to Pressable wrapper when onTap and flex are both set', () => {
+      const handler = jest.fn();
+      const { getByText } = renderWithDSLTheme(
+        Text('Flex+Tap').flex(1).onTap(handler).toElement()
+      );
+      expect(getByText('Flex+Tap')).toBeTruthy();
+    });
+  });
+
+  describe('Children types', () => {
+    it('renders string children', () => {
+      const { toJSON } = renderWithDSLTheme(
+        VStack('hello' as any, Text('World')).toElement()
+      );
+      expect(toJSON()).toBeTruthy();
+    });
+
+    it('renders number children', () => {
+      const { toJSON } = renderWithDSLTheme(
+        VStack(42 as any, Text('Answer')).toElement()
+      );
+      expect(toJSON()).toBeTruthy();
+    });
+
+    it('renders React element children directly', () => {
+      const rawEl = React.createElement('View', { key: 'raw' });
+      const { toJSON } = renderWithDSLTheme(
+        VStack(rawEl as any, Text('Mixed')).toElement()
+      );
+      expect(toJSON()).toBeTruthy();
+    });
+  });
+
+  describe('Screen navigation modifiers in computeStyles', () => {
+    it('screen modifiers are no-ops in computeStyles', () => {
+      const { getByTestId } = renderWithDSLTheme(
+        VStack(Text('X')).screenTitle('Title').testID('sn').toElement()
+      );
+      // screenTitle doesn't affect viewStyle
+      const el = getByTestId('sn');
+      expect(el).toBeTruthy();
     });
   });
 });

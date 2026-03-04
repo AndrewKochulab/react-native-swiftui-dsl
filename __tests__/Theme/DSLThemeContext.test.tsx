@@ -10,13 +10,13 @@ function ThemeReader() {
 }
 
 describe('useDSLTheme', () => {
-  it('throws when used outside DSLThemeProvider', () => {
-    // Suppress console.error for expected error
-    const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() => {
-      render(<ThemeReader />);
-    }).toThrow('DSLThemeProvider is required to use DSL components');
-    spy.mockRestore();
+  it('returns default config when used outside DSLThemeProvider', () => {
+    const { getByTestId } = render(<ThemeReader />);
+    const text = getByTestId('reader');
+    const children = text.props.children;
+    // Should use default config (colorScheme: 'light', body size: 17)
+    expect(children).toContain('light');
+    expect(children).toContain(17);
   });
 
   it('returns config and colorScheme when inside provider', () => {

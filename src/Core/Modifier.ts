@@ -100,7 +100,9 @@ export type Modifier =
   | { type: 'onEndReached'; handler: () => void; threshold?: number }
   | { type: 'separator'; builder: () => unknown }
   | { type: 'numColumns'; value: number }
-  | { type: 'emptyComponent'; builder: () => unknown };
+  | { type: 'emptyComponent'; builder: () => unknown }
+  // Modal
+  | { type: 'onDismiss'; handler: () => void };
 
 export function resolveSpacing(value: number | SpacingToken, layout: DSLLayout): number {
   if (typeof value === 'number') return value;

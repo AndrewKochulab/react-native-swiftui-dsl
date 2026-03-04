@@ -1,14 +1,15 @@
-import { DSLColors } from '../Theme/types';
+import { DSLColors, DSLColorConfig, ColorScheme, normalizeColors } from '../Theme/types';
 
 export type ColorValue = string;
 
 export function resolveColor(
   value: ColorValue,
-  theme: 'light' | 'dark',
-  colors: { light: DSLColors; dark: DSLColors },
+  theme: ColorScheme,
+  colors: DSLColorConfig,
 ): string {
-  if (value in colors.light) {
-    return colors[theme][value];
+  const normalized = normalizeColors(colors);
+  if (value in normalized.light) {
+    return normalized[theme][value];
   }
   return value;
 }

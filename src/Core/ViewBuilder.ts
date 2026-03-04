@@ -32,7 +32,9 @@ export type DSLElementType =
   | 'button'
   | 'divider'
   | 'link'
-  | 'sectionlist';
+  | 'sectionlist'
+  | 'modal'
+  | 'progressbar';
 
 export interface DSLElementProps {
   text?: string;
@@ -68,6 +70,14 @@ export interface DSLElementProps {
   sectionListData?: ReadonlyArray<{ title: string; data: ReadonlyArray<unknown> }>;
   sectionRenderItem?: (item: unknown) => ViewBuilder;
   sectionRenderHeader?: (title: string) => ViewBuilder;
+  // Modal
+  modalBinding?: Binding<boolean>;
+  modalAnimationType?: 'none' | 'slide' | 'fade';
+  modalTransparent?: boolean;
+  // ProgressBar
+  progressValue?: number;
+  progressTrackColor?: ColorValue;
+  progressColor?: ColorValue;
 }
 
 export type DSLChild = ViewBuilder | React.ReactElement | string | number | null | undefined | boolean;
@@ -269,6 +279,22 @@ export class ViewBuilder {
 
   medium(): ViewBuilder {
     return this.fontWeight('medium');
+  }
+
+  light(): ViewBuilder {
+    return this.fontWeight('light');
+  }
+
+  thin(): ViewBuilder {
+    return this.fontWeight('thin');
+  }
+
+  heavy(): ViewBuilder {
+    return this.fontWeight('heavy');
+  }
+
+  black(): ViewBuilder {
+    return this.fontWeight('black');
   }
 
   caption(): ViewBuilder {
@@ -507,6 +533,12 @@ export class ViewBuilder {
     return this.withModifier({ type: 'emptyComponent', builder });
   }
 
+  // --- Modal ---
+
+  onDismiss(handler: () => void): ViewBuilder {
+    return this.withModifier({ type: 'onDismiss', handler });
+  }
+
   // --- Materialization ---
 
   private extractScreenOptions(): Record<string, unknown> | null {
@@ -532,8 +564,12 @@ export class ViewBuilder {
 
     const screenOptions = this.extractScreenOptions();
     if (screenOptions) {
-      const { ScreenConfigRenderer } = require('../Navigation/ScreenConfigRenderer');
-      return React.createElement(ScreenConfigRenderer, { options: screenOptions }, renderer);
+      try {
+        const { ScreenConfigRenderer } = require('../Navigation/ScreenConfigRenderer');
+        return React.createElement(ScreenConfigRenderer, { options: screenOptions }, renderer);
+      } catch {
+        // expo-router not available, screen navigation modifiers are no-ops
+      }
     }
 
     return renderer;

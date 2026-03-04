@@ -15,14 +15,27 @@ import {
   RefreshControl,
   StyleSheet,
   Image as RNImage,
+  Modal as RNModal,
   ViewStyle,
   TextStyle,
   ImageStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useDSLTheme } from '../Theme/DSLThemeContext';
-import { DSLThemeConfig } from '../Theme/types';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let FontAwesomeComponent: React.ComponentType<any> | null = null;
+try {
+  FontAwesomeComponent = require('@expo/vector-icons/FontAwesome').default;
+} catch {
+  // @expo/vector-icons not installed — Icon and Button icon will render fallback text
+}
+
+/** @internal Test-only helper to override the icon component for testing fallback paths. */
+export function _setIconComponent(component: React.ComponentType<unknown> | null): void {
+  FontAwesomeComponent = component;
+}
+import { DSLThemeConfig, normalizeColors } from '../Theme/types';
 import { DSLDefaults } from '../Config/Defaults';
 import { ViewBuilder, DSLChild, isViewBuilder } from './ViewBuilder';
 import {
@@ -104,6 +117,12 @@ function renderBuilder(
 
     case 'sectionlist':
       return renderSectionList(props, computed, resolve, config);
+
+    case 'modal':
+      return renderModal(props, resolvedChildren, computed);
+
+    case 'progressbar':
+      return renderProgressBar(props, computed, resolve);
 
     case 'spacer':
       return React.createElement(View, {
@@ -464,12 +483,20 @@ function renderIcon(
 ): React.ReactElement {
   const color = props.iconColor ? resolve(props.iconColor) : resolve('tint');
 
-  const iconElement = React.createElement(FontAwesome, {
-    name: props.iconName as React.ComponentProps<typeof FontAwesome>['name'],
-    size: props.iconSize ?? DSLDefaults.iconSize,
-    color,
-    testID: computed.testID,
-  });
+  let iconElement: React.ReactElement;
+  if (FontAwesomeComponent) {
+    iconElement = React.createElement(FontAwesomeComponent, {
+      name: props.iconName,
+      size: props.iconSize ?? DSLDefaults.iconSize,
+      color,
+      testID: computed.testID,
+    });
+  } else {
+    iconElement = React.createElement(RNText, {
+      style: { fontSize: props.iconSize ?? DSLDefaults.iconSize, color } as TextStyle,
+      testID: computed.testID,
+    }, props.iconName);
+  }
 
   if (Object.keys(computed.viewStyle).length > 0) {
     return wrapWithInteraction(
@@ -589,15 +616,24 @@ function renderButton(
   const children: React.ReactElement[] = [];
 
   if (buttonIcon) {
-    children.push(
-      React.createElement(FontAwesome, {
-        key: 'icon',
-        name: buttonIcon as React.ComponentProps<typeof FontAwesome>['name'],
-        size: DSLDefaults.iconSize,
-        color: textColor,
-        style: { marginRight: DSLDefaults.buttonIconSpacing } as TextStyle,
-      }),
-    );
+    if (FontAwesomeComponent) {
+      children.push(
+        React.createElement(FontAwesomeComponent, {
+          key: 'icon',
+          name: buttonIcon,
+          size: DSLDefaults.iconSize,
+          color: textColor,
+          style: { marginRight: DSLDefaults.buttonIconSpacing } as TextStyle,
+        }),
+      );
+    } else {
+      children.push(
+        React.createElement(RNText, {
+          key: 'icon',
+          style: { fontSize: DSLDefaults.iconSize, color: textColor, marginRight: DSLDefaults.buttonIconSpacing } as TextStyle,
+        }, buttonIcon),
+      );
+    }
   }
 
   children.push(
@@ -744,6 +780,69 @@ function renderSectionList(
   return React.createElement(SectionList as any, sectionListProps);
 }
 
+function renderModal(
+  props: ViewBuilder['props'],
+  children: React.ReactNode[],
+  computed: ComputedStyles,
+): React.ReactElement {
+  const { modalBinding, modalAnimationType, modalTransparent } = props;
+
+  const modalProps: Record<string, unknown> = {
+    visible: modalBinding?.value ?? false,
+    animationType: modalAnimationType ?? 'slide',
+    transparent: modalTransparent ?? false,
+    onRequestClose: () => {
+      if (computed.onDismiss) computed.onDismiss();
+      modalBinding?.update(false);
+    },
+    testID: computed.testID,
+  };
+
+  const contentStyle: ViewStyle = {
+    flex: 1,
+    ...computed.viewStyle,
+  };
+
+  return React.createElement(
+    RNModal,
+    modalProps,
+    React.createElement(View, { style: contentStyle }, ...children),
+  );
+}
+
+function renderProgressBar(
+  props: ViewBuilder['props'],
+  computed: ComputedStyles,
+  resolve: ColorResolver,
+): React.ReactElement {
+  const value = Math.max(0, Math.min(1, props.progressValue ?? 0));
+  const trackColor = props.progressTrackColor ? resolve(props.progressTrackColor) : resolve('separator');
+  const progressColor = props.progressColor ? resolve(props.progressColor) : resolve('tint');
+  const height = computed.viewStyle.height ?? DSLDefaults.progressBarHeight;
+  const borderRadius = computed.viewStyle.borderRadius ?? DSLDefaults.progressBarCornerRadius;
+
+  const trackStyle: ViewStyle = {
+    height,
+    borderRadius,
+    backgroundColor: trackColor,
+    overflow: 'hidden',
+    ...computed.viewStyle,
+  };
+
+  const fillStyle: ViewStyle = {
+    width: `${value * 100}%` as unknown as number,
+    height: '100%' as unknown as number,
+    backgroundColor: progressColor,
+    borderRadius,
+  };
+
+  return React.createElement(
+    View,
+    { style: trackStyle, testID: computed.testID, accessibilityRole: 'progressbar' },
+    React.createElement(View, { style: fillStyle }),
+  );
+}
+
 // --- Interaction wrapper ---
 
 function wrapWithInteraction(
@@ -840,6 +939,8 @@ interface ComputedStyles {
   separatorBuilder?: () => unknown;
   numColumns?: number;
   emptyComponentBuilder?: () => unknown;
+  // Modal
+  onDismiss?: () => void;
 }
 
 // --- computeStyles ---
@@ -885,6 +986,8 @@ function computeStyles(
   let separatorBuilder: (() => unknown) | undefined;
   let numColumns: number | undefined;
   let emptyComponentBuilder: (() => unknown) | undefined;
+  // Modal
+  let onDismiss: (() => void) | undefined;
 
   for (const mod of modifiers) {
     switch (mod.type) {
@@ -991,9 +1094,13 @@ function computeStyles(
       case 'font':
         textStyle.fontSize = resolveFontSize(mod.size, config.fonts);
         break;
-      case 'fontWeight':
-        textStyle.fontWeight = config.fonts.weight[mod.weight] as TextStyle['fontWeight'];
+      case 'fontWeight': {
+        const resolved = config.fonts.weight[mod.weight] ?? DSLDefaults.fontWeightFallbacks[mod.weight];
+        if (resolved) {
+          textStyle.fontWeight = resolved as TextStyle['fontWeight'];
+        }
         break;
+      }
       case 'textTransform':
         textStyle.textTransform = mod.value;
         break;
@@ -1150,6 +1257,10 @@ function computeStyles(
       case 'emptyComponent':
         emptyComponentBuilder = mod.builder;
         break;
+      // Modal
+      case 'onDismiss':
+        onDismiss = mod.handler;
+        break;
       // Screen navigation modifiers are handled by ViewBuilder.toElement()
       case 'screenTitle':
       case 'headerRight':
@@ -1167,6 +1278,7 @@ function computeStyles(
     multilineLines, secureEntry, autoCapitalize, returnKeyType,
     maxLength, inputHeight,
     refreshControlData, onEndReachedData, separatorBuilder, numColumns, emptyComponentBuilder,
+    onDismiss,
   };
 }
 

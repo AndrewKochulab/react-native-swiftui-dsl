@@ -23,15 +23,17 @@
     "theme",
     "expo"
   ],
-  "author": "",
+  "author": "Andrew Kochulab <andrew.kochulab@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "@expo/vector-icons": ">=14.0.0",
     "react": ">=18.0.0",
     "react-native": ">=0.72.0",
     "react-native-safe-area-context": ">=4.0.0"
   },
   "peerDependenciesMeta": {
+    "@expo/vector-icons": {
+      "optional": true
+    },
     "expo-router": {
       "optional": true
     }
@@ -60,6 +62,10 @@
     ],
     "transformIgnorePatterns": [
       "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|native-base|react-native-svg)"
+    ],
+    "coveragePathIgnorePatterns": [
+      "src/index.ts",
+      "src/Theme/types.ts"
     ]
   }
 }

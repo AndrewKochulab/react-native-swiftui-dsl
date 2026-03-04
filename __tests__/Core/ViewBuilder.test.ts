@@ -7,6 +7,13 @@ import { SafeArea } from '../../src/Primitives/SafeArea';
 import { ScrollStack } from '../../src/Primitives/ScrollStack';
 import { DSLDefaults } from '../../src/Config/Defaults';
 
+// Mock expo-router for toElement() with screen options
+jest.mock('expo-router', () => ({
+  Stack: {
+    Screen: ({ options }: { options: Record<string, unknown> }) => null,
+  },
+}));
+
 describe('ViewBuilder', () => {
   describe('construction', () => {
     it('creates a text element', () => {
@@ -145,15 +152,30 @@ describe('ViewBuilder', () => {
       expect(builder.modifiers).toEqual([{ type: 'padding', value: 'lg', edge: 'horizontal' }]);
     });
 
+    it('adds paddingHorizontal with default', () => {
+      const builder = Text('X').paddingHorizontal();
+      expect(builder.modifiers).toEqual([{ type: 'padding', value: DSLDefaults.spacing, edge: 'horizontal' }]);
+    });
+
     it('adds paddingVertical', () => {
       const paddingValue = 8;
       const builder = Text('X').paddingVertical(paddingValue);
       expect(builder.modifiers).toEqual([{ type: 'padding', value: paddingValue, edge: 'vertical' }]);
     });
 
+    it('adds paddingVertical with default', () => {
+      const builder = Text('X').paddingVertical();
+      expect(builder.modifiers).toEqual([{ type: 'padding', value: DSLDefaults.spacing, edge: 'vertical' }]);
+    });
+
     it('adds margin', () => {
       const builder = Text('X').margin('sm');
       expect(builder.modifiers).toEqual([{ type: 'margin', value: 'sm', edge: DSLDefaults.edge }]);
+    });
+
+    it('adds default margin', () => {
+      const builder = Text('X').margin();
+      expect(builder.modifiers).toEqual([{ type: 'margin', value: DSLDefaults.spacing, edge: DSLDefaults.edge }]);
     });
 
     it('adds marginBottom', () => {
@@ -162,10 +184,20 @@ describe('ViewBuilder', () => {
       expect(builder.modifiers).toEqual([{ type: 'margin', value: marginValue, edge: 'bottom' }]);
     });
 
+    it('adds marginBottom with default', () => {
+      const builder = Text('X').marginBottom();
+      expect(builder.modifiers).toEqual([{ type: 'margin', value: DSLDefaults.spacing, edge: 'bottom' }]);
+    });
+
     it('adds marginLeft', () => {
       const marginValue = 8;
       const builder = Text('X').marginLeft(marginValue);
       expect(builder.modifiers).toEqual([{ type: 'margin', value: marginValue, edge: 'left' }]);
+    });
+
+    it('adds marginLeft with default', () => {
+      const builder = Text('X').marginLeft();
+      expect(builder.modifiers).toEqual([{ type: 'margin', value: DSLDefaults.spacing, edge: 'left' }]);
     });
 
     it('adds marginRight', () => {
@@ -174,16 +206,31 @@ describe('ViewBuilder', () => {
       expect(builder.modifiers).toEqual([{ type: 'margin', value: marginValue, edge: 'right' }]);
     });
 
+    it('adds marginRight with default', () => {
+      const builder = Text('X').marginRight();
+      expect(builder.modifiers).toEqual([{ type: 'margin', value: DSLDefaults.spacing, edge: 'right' }]);
+    });
+
     it('adds paddingLeft', () => {
       const paddingValue = 6;
       const builder = Text('X').paddingLeft(paddingValue);
       expect(builder.modifiers).toEqual([{ type: 'padding', value: paddingValue, edge: 'left' }]);
     });
 
+    it('adds paddingLeft with default', () => {
+      const builder = Text('X').paddingLeft();
+      expect(builder.modifiers).toEqual([{ type: 'padding', value: DSLDefaults.spacing, edge: 'left' }]);
+    });
+
     it('adds paddingRight', () => {
       const paddingValue = 10;
       const builder = Text('X').paddingRight(paddingValue);
       expect(builder.modifiers).toEqual([{ type: 'padding', value: paddingValue, edge: 'right' }]);
+    });
+
+    it('adds paddingRight with default', () => {
+      const builder = Text('X').paddingRight();
+      expect(builder.modifiers).toEqual([{ type: 'padding', value: DSLDefaults.spacing, edge: 'right' }]);
     });
 
     it('adds flex', () => {
@@ -520,6 +567,184 @@ describe('ViewBuilder', () => {
     });
   });
 
+  describe('additional text modifiers', () => {
+    it('adds medium shortcut', () => {
+      const builder = Text('X').medium();
+      expect(builder.modifiers).toEqual([{ type: 'fontWeight', weight: 'medium' }]);
+    });
+
+    it('adds lineHeight modifier', () => {
+      const builder = Text('X').lineHeight(24);
+      expect(builder.modifiers).toEqual([{ type: 'lineHeight', value: 24 }]);
+    });
+
+    it('adds textAlign modifier', () => {
+      const builder = Text('X').textAlign('center');
+      expect(builder.modifiers).toEqual([{ type: 'textAlign', value: 'center' }]);
+    });
+  });
+
+  describe('additional padding/margin modifiers', () => {
+    it('adds paddingTop with value', () => {
+      const builder = Text('X').paddingTop(10);
+      expect(builder.modifiers).toEqual([{ type: 'padding', value: 10, edge: 'top' }]);
+    });
+
+    it('adds paddingTop with default', () => {
+      const builder = Text('X').paddingTop();
+      expect(builder.modifiers).toEqual([{ type: 'padding', value: DSLDefaults.spacing, edge: 'top' }]);
+    });
+
+    it('adds paddingBottom with value', () => {
+      const builder = Text('X').paddingBottom(10);
+      expect(builder.modifiers).toEqual([{ type: 'padding', value: 10, edge: 'bottom' }]);
+    });
+
+    it('adds paddingBottom with default', () => {
+      const builder = Text('X').paddingBottom();
+      expect(builder.modifiers).toEqual([{ type: 'padding', value: DSLDefaults.spacing, edge: 'bottom' }]);
+    });
+
+    it('adds marginHorizontal', () => {
+      const builder = Text('X').marginHorizontal('sm');
+      expect(builder.modifiers).toEqual([{ type: 'margin', value: 'sm', edge: 'horizontal' }]);
+    });
+
+    it('adds marginHorizontal with default', () => {
+      const builder = Text('X').marginHorizontal();
+      expect(builder.modifiers).toEqual([{ type: 'margin', value: DSLDefaults.spacing, edge: 'horizontal' }]);
+    });
+
+    it('adds marginVertical', () => {
+      const builder = Text('X').marginVertical(12);
+      expect(builder.modifiers).toEqual([{ type: 'margin', value: 12, edge: 'vertical' }]);
+    });
+
+    it('adds marginVertical with default', () => {
+      const builder = Text('X').marginVertical();
+      expect(builder.modifiers).toEqual([{ type: 'margin', value: DSLDefaults.spacing, edge: 'vertical' }]);
+    });
+
+    it('adds marginTop', () => {
+      const builder = Text('X').marginTop(6);
+      expect(builder.modifiers).toEqual([{ type: 'margin', value: 6, edge: 'top' }]);
+    });
+
+    it('adds marginTop with default', () => {
+      const builder = Text('X').marginTop();
+      expect(builder.modifiers).toEqual([{ type: 'margin', value: DSLDefaults.spacing, edge: 'top' }]);
+    });
+  });
+
+  describe('additional scroll modifiers', () => {
+    it('adds horizontal modifier', () => {
+      const builder = ScrollStack(Text('X')).horizontal();
+      expect(builder.modifiers).toEqual([{ type: 'scrollDirection', value: 'horizontal' }]);
+    });
+
+    it('adds keyboardAvoiding with value', () => {
+      const builder = ScrollStack(Text('X')).keyboardAvoiding(80);
+      expect(builder.modifiers).toEqual([{ type: 'keyboardAvoiding', offset: 80 }]);
+    });
+
+    it('adds keyboardAvoiding with default', () => {
+      const builder = ScrollStack(Text('X')).keyboardAvoiding();
+      expect(builder.modifiers).toEqual([{ type: 'keyboardAvoiding', offset: DSLDefaults.keyboardAvoidingOffset }]);
+    });
+
+    it('adds keyboardShouldPersistTaps with value', () => {
+      const builder = ScrollStack(Text('X')).keyboardShouldPersistTaps('always');
+      expect(builder.modifiers).toEqual([{ type: 'keyboardPersistTaps', value: 'always' }]);
+    });
+
+    it('adds keyboardShouldPersistTaps with default', () => {
+      const builder = ScrollStack(Text('X')).keyboardShouldPersistTaps();
+      expect(builder.modifiers).toEqual([{ type: 'keyboardPersistTaps', value: DSLDefaults.keyboardShouldPersistTaps }]);
+    });
+
+    it('adds bounces with value', () => {
+      const builder = ScrollStack(Text('X')).bounces(false);
+      expect(builder.modifiers).toEqual([{ type: 'bounces', value: false }]);
+    });
+
+    it('adds bounces with default', () => {
+      const builder = ScrollStack(Text('X')).bounces();
+      expect(builder.modifiers).toEqual([{ type: 'bounces', value: DSLDefaults.bounces }]);
+    });
+  });
+
+  describe('additional textinput modifiers', () => {
+    it('adds autoCapitalize modifier', () => {
+      const builder = Text('X').autoCapitalize('none');
+      expect(builder.modifiers).toEqual([{ type: 'autoCapitalize', value: 'none' }]);
+    });
+
+    it('adds returnKeyType modifier', () => {
+      const builder = Text('X').returnKeyType('done');
+      expect(builder.modifiers).toEqual([{ type: 'returnKeyType', value: 'done' }]);
+    });
+
+    it('adds inputHeight modifier', () => {
+      const builder = Text('X').inputHeight(60);
+      expect(builder.modifiers).toEqual([{ type: 'inputHeight', value: 60 }]);
+    });
+  });
+
+  describe('screen navigation modifiers', () => {
+    it('adds screenTitle modifier', () => {
+      const builder = VStack(Text('X')).screenTitle('Home');
+      expect(builder.modifiers).toEqual([{ type: 'screenTitle', value: 'Home' }]);
+    });
+
+    it('adds headerRight modifier', () => {
+      const component = () => null as any;
+      const builder = VStack(Text('X')).headerRight(component);
+      expect(builder.modifiers).toEqual([{ type: 'headerRight', component }]);
+    });
+
+    it('adds headerLeft modifier', () => {
+      const component = () => null as any;
+      const builder = VStack(Text('X')).headerLeft(component);
+      expect(builder.modifiers).toEqual([{ type: 'headerLeft', component }]);
+    });
+  });
+
+  describe('borderStyle modifier', () => {
+    it('adds borderStyle modifier', () => {
+      const builder = Text('X').borderStyle('dashed');
+      expect(builder.modifiers).toEqual([{ type: 'borderStyle', value: 'dashed' }]);
+    });
+  });
+
+  describe('toElement with screen options', () => {
+    it('wraps with ScreenConfigRenderer when screenTitle is set', () => {
+      const builder = VStack(Text('Screen')).screenTitle('My Screen');
+      const element = builder.toElement();
+      expect(element).toBeTruthy();
+    });
+
+    it('wraps with ScreenConfigRenderer when headerRight is set', () => {
+      const builder = VStack(Text('Screen')).headerRight(() => null as any);
+      const element = builder.toElement();
+      expect(element).toBeTruthy();
+    });
+
+    it('wraps with ScreenConfigRenderer when headerLeft is set', () => {
+      const builder = VStack(Text('Screen')).headerLeft(() => null as any);
+      const element = builder.toElement();
+      expect(element).toBeTruthy();
+    });
+
+    it('wraps with ScreenConfigRenderer for combined screen modifiers', () => {
+      const builder = VStack(Text('Screen'))
+        .screenTitle('Title')
+        .headerRight(() => null as any)
+        .headerLeft(() => null as any);
+      const element = builder.toElement();
+      expect(element).toBeTruthy();
+    });
+  });
+
   describe('new interaction modifiers', () => {
     it('adds onLongPress modifier', () => {
       const handler = jest.fn();
@@ -639,6 +864,76 @@ describe('ViewBuilder', () => {
       });
       expect(builder.elementType).toBe('sectionlist');
       expect(builder.props.sectionListData).toBe(sections);
+    });
+
+    it('creates a modal element', () => {
+      const { Modal } = require('../../src/Primitives/Modal');
+      const { createBinding } = require('../../src/Binding/Binding');
+      const binding = createBinding(true, jest.fn());
+      const builder = Modal(binding, { animationType: 'fade', transparent: true }, Text('Content'));
+      expect(builder.elementType).toBe('modal');
+      expect(builder.props.modalBinding).toBe(binding);
+      expect(builder.props.modalAnimationType).toBe('fade');
+      expect(builder.props.modalTransparent).toBe(true);
+      expect(builder.children).toHaveLength(1);
+    });
+
+    it('creates a modal with defaults', () => {
+      const { Modal } = require('../../src/Primitives/Modal');
+      const { createBinding } = require('../../src/Binding/Binding');
+      const binding = createBinding(false, jest.fn());
+      const builder = Modal(binding);
+      expect(builder.elementType).toBe('modal');
+      expect(builder.props.modalAnimationType).toBe('slide');
+      expect(builder.props.modalTransparent).toBe(false);
+    });
+
+    it('creates a progressbar element', () => {
+      const { ProgressBar } = require('../../src/Primitives/ProgressBar');
+      const builder = ProgressBar(0.75, { trackColor: '#E0E0E0', progressColor: 'tint' });
+      expect(builder.elementType).toBe('progressbar');
+      expect(builder.props.progressValue).toBe(0.75);
+      expect(builder.props.progressTrackColor).toBe('#E0E0E0');
+      expect(builder.props.progressColor).toBe('tint');
+    });
+
+    it('creates a progressbar with defaults', () => {
+      const { ProgressBar } = require('../../src/Primitives/ProgressBar');
+      const builder = ProgressBar(0.5);
+      expect(builder.elementType).toBe('progressbar');
+      expect(builder.props.progressValue).toBe(0.5);
+      expect(builder.props.progressTrackColor).toBeUndefined();
+      expect(builder.props.progressColor).toBeUndefined();
+    });
+  });
+
+  describe('new font weight shortcuts', () => {
+    it('adds light font weight modifier', () => {
+      const builder = Text('Hello').light();
+      expect(builder.modifiers).toContainEqual({ type: 'fontWeight', weight: 'light' });
+    });
+
+    it('adds thin font weight modifier', () => {
+      const builder = Text('Hello').thin();
+      expect(builder.modifiers).toContainEqual({ type: 'fontWeight', weight: 'thin' });
+    });
+
+    it('adds heavy font weight modifier', () => {
+      const builder = Text('Hello').heavy();
+      expect(builder.modifiers).toContainEqual({ type: 'fontWeight', weight: 'heavy' });
+    });
+
+    it('adds black font weight modifier', () => {
+      const builder = Text('Hello').black();
+      expect(builder.modifiers).toContainEqual({ type: 'fontWeight', weight: 'black' });
+    });
+  });
+
+  describe('modal modifier', () => {
+    it('adds onDismiss modifier', () => {
+      const handler = jest.fn();
+      const builder = VStack(Text('Hello')).onDismiss(handler);
+      expect(builder.modifiers).toContainEqual({ type: 'onDismiss', handler });
     });
   });
 });

@@ -1,9 +1,10 @@
 import { createContext, useContext } from 'react';
-import { DSLThemeConfig } from './types';
+import { DSLThemeConfig, ColorScheme } from './types';
+import { defaultThemeConfig } from '../Config/Defaults';
 
 export interface DSLThemeContextValue {
   config: DSLThemeConfig;
-  colorScheme: 'light' | 'dark';
+  colorScheme: ColorScheme;
 }
 
 export const DSLThemeContext = createContext<DSLThemeContextValue | null>(null);
@@ -11,7 +12,7 @@ export const DSLThemeContext = createContext<DSLThemeContextValue | null>(null);
 export function useDSLTheme(): DSLThemeContextValue {
   const ctx = useContext(DSLThemeContext);
   if (!ctx) {
-    throw new Error('DSLThemeProvider is required to use DSL components');
+    return { config: defaultThemeConfig, colorScheme: 'light' };
   }
   return ctx;
 }

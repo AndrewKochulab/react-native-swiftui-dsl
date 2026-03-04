@@ -1,4 +1,4 @@
-import { DSLDefaults } from '../../src/Config/Defaults';
+import { DSLDefaults, defaultThemeConfig } from '../../src/Config/Defaults';
 
 describe('DSLDefaults', () => {
   it('has spacing default', () => {
@@ -135,5 +135,67 @@ describe('DSLDefaults', () => {
     // Verify the object is read-only at runtime level
     expect(typeof DSLDefaults).toBe('object');
     expect(Object.keys(DSLDefaults).length).toBeGreaterThan(10);
+  });
+
+  describe('fontWeightFallbacks', () => {
+    it('has thin fallback', () => {
+      expect(DSLDefaults.fontWeightFallbacks.thin).toBe('100');
+    });
+
+    it('has ultralight fallback', () => {
+      expect(DSLDefaults.fontWeightFallbacks.ultralight).toBe('200');
+    });
+
+    it('has light fallback', () => {
+      expect(DSLDefaults.fontWeightFallbacks.light).toBe('300');
+    });
+
+    it('has heavy fallback', () => {
+      expect(DSLDefaults.fontWeightFallbacks.heavy).toBe('800');
+    });
+
+    it('has black fallback', () => {
+      expect(DSLDefaults.fontWeightFallbacks.black).toBe('900');
+    });
+  });
+
+  describe('progressBar defaults', () => {
+    it('has progressBarHeight', () => {
+      expect(DSLDefaults.progressBarHeight).toBe(4);
+    });
+
+    it('has progressBarCornerRadius', () => {
+      expect(DSLDefaults.progressBarCornerRadius).toBe(2);
+    });
+  });
+});
+
+describe('defaultThemeConfig', () => {
+  it('has light and dark colors', () => {
+    const colors = defaultThemeConfig.colors as { light: Record<string, string>; dark: Record<string, string> };
+    expect(colors.light).toBeDefined();
+    expect(colors.dark).toBeDefined();
+    expect(colors.light.text).toBe('#000000');
+    expect(colors.dark.text).toBe('#FFFFFF');
+  });
+
+  it('has font sizes', () => {
+    expect(defaultThemeConfig.fonts.size.body).toBe(17);
+    expect(defaultThemeConfig.fonts.size.hero).toBe(40);
+  });
+
+  it('has font weights', () => {
+    expect(defaultThemeConfig.fonts.weight.regular).toBe('400');
+    expect(defaultThemeConfig.fonts.weight.bold).toBe('700');
+  });
+
+  it('has spacing', () => {
+    expect(defaultThemeConfig.layout.spacing.md).toBe(16);
+    expect(defaultThemeConfig.layout.spacing.lg).toBe(24);
+  });
+
+  it('has borderRadius', () => {
+    expect(defaultThemeConfig.layout.borderRadius.sm).toBe(4);
+    expect(defaultThemeConfig.layout.borderRadius.lg).toBe(16);
   });
 });

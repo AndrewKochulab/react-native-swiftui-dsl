@@ -1,10 +1,10 @@
 import React from 'react';
-import { DSLThemeConfig } from './types';
+import { DSLThemeConfig, ColorScheme } from './types';
 import { DSLThemeContext } from './DSLThemeContext';
 
 interface Props {
   config: DSLThemeConfig;
-  colorScheme: 'light' | 'dark';
+  colorScheme: ColorScheme;
   children: React.ReactNode;
 }
 

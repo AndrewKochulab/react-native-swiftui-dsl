@@ -7,7 +7,7 @@ export { testThemeConfig };
 
 export function renderWithDSLTheme(
   ui: React.ReactElement,
-  colorScheme: 'light' | 'dark' = 'light',
+  colorScheme: import('../../src/Theme/types').ColorScheme = 'light',
   options?: Omit<RenderOptions, 'wrapper'>,
 ) {
   return render(ui, {

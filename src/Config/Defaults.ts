@@ -1,4 +1,4 @@
-import type { SpacingToken } from '../Theme/types';
+import type { SpacingToken, DSLThemeConfig } from '../Theme/types';
 
 /**
  * Centralized default values used across the DSL framework.
@@ -82,4 +82,86 @@ export const DSLDefaults = {
 
   /** Default onEndReached threshold for lazy lists. */
   onEndReachedThreshold: 0.5,
+
+  /** Fallback font weight values for optional weight tokens. */
+  fontWeightFallbacks: {
+    thin: '100',
+    ultralight: '200',
+    light: '300',
+    heavy: '800',
+    black: '900',
+  } as Record<string, string>,
+
+  /** Default progress bar height in points. */
+  progressBarHeight: 4,
+
+  /** Default progress bar corner radius in points. */
+  progressBarCornerRadius: 2,
 } as const;
+
+/**
+ * Default theme configuration used when no DSLThemeProvider is present.
+ * Based on iOS Human Interface Guidelines system values.
+ */
+export const defaultThemeConfig: DSLThemeConfig = {
+  colors: {
+    light: {
+      text: '#000000',
+      background: '#FFFFFF',
+      tint: '#007AFF',
+      card: '#F2F2F7',
+      secondaryText: '#8E8E93',
+      separator: '#C6C6C8',
+      error: '#FF3B30',
+      success: '#34C759',
+      warning: '#FF9500',
+      inputBackground: '#F2F2F7',
+      buttonText: '#FFFFFF',
+      cardShadow: 'rgba(0,0,0,0.1)',
+    },
+    dark: {
+      text: '#FFFFFF',
+      background: '#000000',
+      tint: '#0A84FF',
+      card: '#1C1C1E',
+      secondaryText: '#8E8E93',
+      separator: '#38383A',
+      error: '#FF453A',
+      success: '#30D158',
+      warning: '#FF9F0A',
+      inputBackground: '#1C1C1E',
+      buttonText: '#FFFFFF',
+      cardShadow: 'rgba(0,0,0,0.3)',
+    },
+  },
+  fonts: {
+    size: {
+      micro: 10,
+      small: 11,
+      caption: 12,
+      footnote: 13,
+      body: 17,
+      subtitle: 20,
+      title2: 22,
+      title: 28,
+      header: 34,
+      hero: 40,
+    },
+    weight: {
+      regular: '400',
+      medium: '500',
+      semibold: '600',
+      bold: '700',
+    },
+    lineHeight: {
+      tight: 16,
+      normal: 22,
+      relaxed: 28,
+      loose: 34,
+    },
+  },
+  layout: {
+    spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
+    borderRadius: { sm: 4, md: 8, lg: 16 },
+  },
+};

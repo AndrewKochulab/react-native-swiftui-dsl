@@ -4,17 +4,22 @@ export type {
   DSLFonts,
   DSLLayout,
   DSLColors,
+  DSLColorConfig,
+  ColorScheme,
   SpacingToken,
   BorderRadiusToken,
   FontSizeToken,
   FontWeightToken,
+  RequiredFontWeightToken,
+  OptionalFontWeightToken,
 } from './Theme/types';
+export { normalizeColors } from './Theme/types';
 export { DSLThemeProvider } from './Theme/DSLThemeProvider';
 export { useDSLTheme } from './Theme/DSLThemeContext';
 export type { DSLThemeContextValue } from './Theme/DSLThemeContext';
 
 // Config
-export { DSLDefaults } from './Config/Defaults';
+export { DSLDefaults, defaultThemeConfig } from './Config/Defaults';
 
 // Core
 export { ViewBuilder, isViewBuilder } from './Core/ViewBuilder';
@@ -48,6 +53,9 @@ export { Divider } from './Primitives/Divider';
 export { Link } from './Primitives/Link';
 export { SectionedList } from './Primitives/SectionedList';
 export type { SectionData, SectionedListOptions } from './Primitives/SectionedList';
+export { Modal } from './Primitives/Modal';
+export type { ModalAnimationType } from './Primitives/Modal';
+export { ProgressBar } from './Primitives/ProgressBar';
 
 // Conditionals
 export { If } from './Conditionals/If';
