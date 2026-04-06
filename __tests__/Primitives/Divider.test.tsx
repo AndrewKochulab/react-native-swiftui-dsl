@@ -1,13 +1,16 @@
 import React from 'react';
-import { Divider } from '../../src/Primitives/Divider';
-import { renderWithDSLTheme, testThemeConfig } from '../Helpers/renderWithDSLTheme';
+import { Divider } from '@/Primitives/Divider';
+import { renderWithDSLTheme, testColors } from '@tests/Helpers/renderWithDSLTheme';
+import { ElementType, ModifierType } from '@/Tokens/ElementType';
+import { Color } from '@/Tokens/Color';
+import { Spacing, Edge } from '@/Tokens/Layout';
 
-const Colors = testThemeConfig.colors;
+const Colors = testColors;
 
 describe('Divider', () => {
   it('creates a divider element type', () => {
     const builder = Divider();
-    expect(builder.elementType).toBe('divider');
+    expect(builder.elementType).toBe(ElementType.divider);
   });
 
   it('renders with separator color', () => {
@@ -23,7 +26,7 @@ describe('Divider', () => {
 
   it('applies custom foregroundColor', () => {
     const { toJSON } = renderWithDSLTheme(
-      Divider().foregroundColor('tint').testID('custom-divider').toElement()
+      Divider().foregroundColor(Color.tint).testID('custom-divider').toElement()
     );
     const tree = toJSON();
     expect(tree.props.style).toMatchObject({
@@ -41,9 +44,9 @@ describe('Divider', () => {
   it('applies margin modifiers', () => {
     const builder = Divider().marginVertical('sm');
     expect(builder.modifiers).toContainEqual({
-      type: 'margin',
-      value: 'sm',
-      edge: 'vertical',
+      type: ModifierType.margin,
+      value: Spacing.sm,
+      edge: Edge.vertical,
     });
   });
 });

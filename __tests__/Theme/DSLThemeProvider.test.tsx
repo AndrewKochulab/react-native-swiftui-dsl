@@ -1,15 +1,17 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { Text as RNText } from 'react-native';
-import { DSLThemeProvider } from '../../src/Theme/DSLThemeProvider';
-import { useDSLTheme } from '../../src/Theme/DSLThemeContext';
-import { testThemeConfig } from '../Helpers/testThemeConfig';
+import { DSLThemeProvider } from '@/Theme/DSLThemeProvider';
+import { useDSLTheme } from '@/Theme/DSLThemeContext';
+import { normalizeColors } from '@/Core/ThemeResolver';
+import { testThemeConfig, testColors } from '@tests/Helpers/testThemeConfig';
 
 function ThemeConsumer() {
   const { config, colorScheme } = useDSLTheme();
+  const colors = normalizeColors(config.colors);
   return (
     <RNText testID="consumer">
-      {colorScheme}:{config.colors.light.tint}
+      {colorScheme}:{colors.light.tint}
     </RNText>
   );
 }
@@ -23,7 +25,7 @@ describe('DSLThemeProvider', () => {
     );
     const text = getByTestId('consumer');
     expect(text.props.children).toContain('light');
-    expect(text.props.children).toContain(testThemeConfig.colors.light.tint);
+    expect(text.props.children).toContain(testColors.light.tint);
   });
 
   it('provides dark color scheme', () => {

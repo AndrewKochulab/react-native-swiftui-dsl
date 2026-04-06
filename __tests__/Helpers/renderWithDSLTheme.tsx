@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react-native';
-import { DSLThemeProvider } from '../../src/Theme/DSLThemeProvider';
-import { testThemeConfig } from './testThemeConfig';
+import { DSLThemeProvider } from '@/Theme/DSLThemeProvider';
+import { testThemeConfig, testColors } from './testThemeConfig';
 
-export { testThemeConfig };
+export { testThemeConfig, testColors };
 
 export function renderWithDSLTheme(
   ui: React.ReactElement,

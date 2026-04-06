@@ -1,12 +1,16 @@
 import React from 'react';
-import { Text } from '../../src/Primitives/Text';
-import { VStack, HStack } from '../../src/Primitives/Containers';
-import { Icon } from '../../src/Primitives/Icon';
-import { Spacer } from '../../src/Primitives/Spacer';
-import { SafeArea } from '../../src/Primitives/SafeArea';
-import { Group } from '../../src/Conditionals/Group';
-import { DSLDefaults } from '../../src/Config/Defaults';
-import { renderWithDSLTheme, testThemeConfig } from '../Helpers/renderWithDSLTheme';
+import { Text } from '@/Primitives/Text';
+import { VStack, HStack } from '@/Primitives/Containers';
+import { Icon } from '@/Primitives/Icon';
+import { Spacer } from '@/Primitives/Spacer';
+import { SafeArea } from '@/Primitives/SafeArea';
+import { Group } from '@/Conditionals/Group';
+import { DSLDefaults } from '@/Config/Defaults';
+import { renderWithDSLTheme, testThemeConfig, testColors } from '@tests/Helpers/renderWithDSLTheme';
+import { Alignment } from '@/Tokens/Style';
+import { Font } from '@/Tokens/Font';
+import { Color } from '@/Tokens/Color';
+import { Spacing, Radius } from '@/Tokens/Layout';
 
 jest.mock('expo-router', () => ({
   Stack: {
@@ -14,7 +18,7 @@ jest.mock('expo-router', () => ({
   },
 }));
 
-const Colors = testThemeConfig.colors;
+const Colors = testColors;
 const Fonts = testThemeConfig.fonts;
 const Layout = testThemeConfig.layout;
 
@@ -27,7 +31,7 @@ describe('DSLRenderer', () => {
 
     it('applies font size modifier', () => {
       const { getByText } = renderWithDSLTheme(
-        Text('Styled').font('title').toElement()
+        Text('Styled').font(Font.title).toElement()
       );
       const element = getByText('Styled');
       expect(element.props.style).toMatchObject({
@@ -47,7 +51,7 @@ describe('DSLRenderer', () => {
 
     it('applies foregroundColor with theme token', () => {
       const { getByText } = renderWithDSLTheme(
-        Text('Colored').foregroundColor('tint').toElement()
+        Text('Colored').foregroundColor(Color.tint).toElement()
       );
       const element = getByText('Colored');
       expect(element.props.style).toMatchObject({
@@ -104,9 +108,9 @@ describe('DSLRenderer', () => {
       const letterSpacingValue = 0.5;
       const { getByText } = renderWithDSLTheme(
         Text('Multi')
-          .font('caption')
+          .font(Font.caption)
           .semibold()
-          .foregroundColor('secondaryText')
+          .foregroundColor(Color.secondaryText)
           .textTransform('uppercase')
           .letterSpacing(letterSpacingValue)
           .toElement()
@@ -169,7 +173,7 @@ describe('DSLRenderer', () => {
   describe('Style modifiers on containers', () => {
     it('applies padding', () => {
       const { getByTestId } = renderWithDSLTheme(
-        VStack(Text('X')).padding('md').testID('padded').toElement()
+        VStack(Text('X')).padding(Spacing.md).testID('padded').toElement()
       );
       const container = getByTestId('padded');
       expect(container.props.style).toMatchObject({
@@ -179,7 +183,7 @@ describe('DSLRenderer', () => {
 
     it('applies background with theme token', () => {
       const { getByTestId } = renderWithDSLTheme(
-        VStack(Text('X')).background('card').testID('bg').toElement()
+        VStack(Text('X')).background(Color.card).testID('bg').toElement()
       );
       const container = getByTestId('bg');
       expect(container.props.style).toMatchObject({
@@ -193,13 +197,13 @@ describe('DSLRenderer', () => {
         VStack(Text('X')).backgroundAlpha('tint', alphaValue).testID('bga').toElement()
       );
       const container = getByTestId('bga');
-      const bgColor = container.props.style.backgroundColor;
+      const bgColor = (container.props.style as Record<string, unknown>).backgroundColor;
       expect(bgColor).toMatch(new RegExp(`^${Colors.light.tint.replace('#', '#')}[0-9a-f]{2}$`, 'i'));
     });
 
     it('applies cornerRadius with token', () => {
       const { getByTestId } = renderWithDSLTheme(
-        VStack(Text('X')).cornerRadius('md').testID('cr').toElement()
+        VStack(Text('X')).cornerRadius(Radius.md).testID('cr').toElement()
       );
       const container = getByTestId('cr');
       expect(container.props.style).toMatchObject({
@@ -336,7 +340,7 @@ describe('DSLRenderer', () => {
 
     it('applies frame with leading alignment', () => {
       const { getByTestId } = renderWithDSLTheme(
-        VStack(Text('X')).frame({ width: 100, alignment: 'leading' }).testID('fl').toElement()
+        VStack(Text('X')).frame({ width: 100, alignment: Alignment.leading }).testID('fl').toElement()
       );
       const el = getByTestId('fl');
       expect(el.props.style).toMatchObject({ width: 100, alignItems: 'flex-start' });
@@ -344,7 +348,7 @@ describe('DSLRenderer', () => {
 
     it('applies frame with trailing alignment', () => {
       const { getByTestId } = renderWithDSLTheme(
-        VStack(Text('X')).frame({ width: 100, alignment: 'trailing' }).testID('ft').toElement()
+        VStack(Text('X')).frame({ width: 100, alignment: Alignment.trailing }).testID('ft').toElement()
       );
       const el = getByTestId('ft');
       expect(el.props.style).toMatchObject({ width: 100, alignItems: 'flex-end' });
@@ -544,7 +548,7 @@ describe('DSLRenderer', () => {
   describe('Frame alignment center rendering', () => {
     it('applies frame with center alignment', () => {
       const { getByTestId } = renderWithDSLTheme(
-        VStack(Text('X')).frame({ width: 100, height: 100, alignment: 'center' }).testID('fc').toElement()
+        VStack(Text('X')).frame({ width: 100, height: 100, alignment: Alignment.center }).testID('fc').toElement()
       );
       const el = getByTestId('fc');
       expect(el.props.style).toMatchObject({

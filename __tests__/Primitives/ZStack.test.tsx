@@ -1,9 +1,10 @@
 import React from 'react';
-import { ZStack } from '../../src/Primitives/Containers';
-import { Text } from '../../src/Primitives/Text';
-import { renderWithDSLTheme, testThemeConfig } from '../Helpers/renderWithDSLTheme';
+import { ZStack } from '@/Primitives/Containers';
+import { Text } from '@/Primitives/Text';
+import { renderWithDSLTheme, testColors } from '@tests/Helpers/renderWithDSLTheme';
+import { Color } from '@/Tokens/Color';
 
-const Colors = testThemeConfig.colors;
+const Colors = testColors;
 
 describe('ZStack', () => {
   it('creates a zstack element type', () => {
@@ -21,7 +22,7 @@ describe('ZStack', () => {
 
   it('applies background modifier', () => {
     const { toJSON } = renderWithDSLTheme(
-      ZStack(Text('X')).background('card').testID('zs').toElement()
+      ZStack(Text('X')).background(Color.card).testID('zs').toElement()
     );
     const tree = toJSON();
     expect(tree.props.style).toMatchObject({

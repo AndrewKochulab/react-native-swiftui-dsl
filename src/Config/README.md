@@ -60,7 +60,7 @@ const DSLDefaults: {
 **Example -- referencing defaults in custom code:**
 
 ```ts
-import { DSLDefaults } from 'react-native-swiftui-dsl';
+import { DSLDefaults } from '@/Config/Defaults';
 
 // Use the framework's default button height in your own component
 const myButtonHeight = DSLDefaults.buttonHeight; // 48
@@ -91,18 +91,24 @@ const defaultThemeConfig: DSLThemeConfig
 **Example -- using without a provider:**
 
 ```ts
-import { Text } from 'react-native-swiftui-dsl';
+import { Text } from '@/Primitives/Text';
+import { Font } from '@/Tokens/Font';
+import { Spacing } from '@/Tokens/Layout';
 
 // Works out of the box -- defaultThemeConfig is used automatically
 export default function App() {
-  return Text('Hello, world!').font('title').bold().padding().toElement();
+  return Text('Hello, world!').font(Font.title).bold().padding(Spacing.md).toElement();
 }
 ```
 
 **Example -- overriding with a provider:**
 
 ```ts
-import { DSLThemeProvider, defaultThemeConfig } from 'react-native-swiftui-dsl';
+import { DSLThemeProvider } from '@/Theme/DSLThemeProvider';
+import { defaultThemeConfig } from '@/Config/Defaults';
+import { ColorScheme as ColorSchemeValue } from '@/Theme/types';
+import { Text } from '@/Primitives/Text';
+import { Font } from '@/Tokens/Font';
 
 const myConfig = {
   ...defaultThemeConfig,
@@ -114,8 +120,8 @@ const myConfig = {
 
 export default function App() {
   return (
-    <DSLThemeProvider config={myConfig} colorScheme="light">
-      {Text('Branded App').font('title').toElement()}
+    <DSLThemeProvider config={myConfig} colorScheme={ColorSchemeValue.light}>
+      {Text('Branded App').font(Font.title).toElement()}
     </DSLThemeProvider>
   );
 }

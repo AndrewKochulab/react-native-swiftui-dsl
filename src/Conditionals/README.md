@@ -27,10 +27,14 @@ function If(
 **Example:**
 
 ```ts
-import { If, Text, Spinner, VStack } from 'react-native-swiftui-dsl';
+import { If } from '@/Conditionals/If';
+import { Text } from '@/Primitives/Text';
+import { Spinner } from '@/Primitives/Spinner';
+import { VStack } from '@/Primitives/Containers';
+import { Font } from '@/Tokens/Font';
 
 VStack(
-  Text('My Screen').font('title').bold(),
+  Text('My Screen').font(Font.title).bold(),
   If(
     isLoading,
     () => Spinner(),
@@ -54,7 +58,10 @@ function ForEach<T>(
 **Example:**
 
 ```ts
-import { ForEach, Text, VStack } from 'react-native-swiftui-dsl';
+import { ForEach } from '@/Conditionals/ForEach';
+import { Text } from '@/Primitives/Text';
+import { VStack } from '@/Primitives/Containers';
+import { Spacing } from '@/Tokens/Layout';
 
 interface Task {
   id: string;
@@ -70,7 +77,7 @@ VStack(
   ...ForEach(
     tasks,
     (task) => task.id,
-    (task) => Text(task.title).padding(),
+    (task) => Text(task.title).padding(Spacing.md),
   ),
 ).toElement();
 ```
@@ -86,10 +93,14 @@ function Group(...children: DSLChild[]): ViewBuilder
 **Example:**
 
 ```ts
-import { Group, Text, Divider } from 'react-native-swiftui-dsl';
+import { Group } from '@/Conditionals/Group';
+import { Text } from '@/Primitives/Text';
+import { Divider } from '@/Primitives/Divider';
+import { VStack } from '@/Primitives/Containers';
+import { Font } from '@/Tokens/Font';
 
 const header = Group(
-  Text('Section Title').font('title').bold(),
+  Text('Section Title').font(Font.title).bold(),
   Divider(),
 );
 

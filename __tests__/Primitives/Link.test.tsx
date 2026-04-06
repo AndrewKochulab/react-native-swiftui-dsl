@@ -1,10 +1,11 @@
 import React from 'react';
 import { Linking } from 'react-native';
 import { fireEvent } from '@testing-library/react-native';
-import { Link } from '../../src/Primitives/Link';
-import { renderWithDSLTheme, testThemeConfig } from '../Helpers/renderWithDSLTheme';
+import { Link } from '@/Primitives/Link';
+import { renderWithDSLTheme, testColors } from '@tests/Helpers/renderWithDSLTheme';
+import { Font } from '@/Tokens/Font';
 
-const Colors = testThemeConfig.colors;
+const Colors = testColors;
 
 jest.spyOn(Linking, 'openURL').mockResolvedValue(true as never);
 
@@ -47,7 +48,7 @@ describe('Link', () => {
   });
 
   it('applies font modifiers', () => {
-    const builder = Link('Link', 'https://example.com').font('caption').bold();
+    const builder = Link('Link', 'https://example.com').font(Font.caption).bold();
     expect(builder.modifiers).toHaveLength(2);
   });
 });

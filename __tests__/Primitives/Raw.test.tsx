@@ -1,7 +1,8 @@
 import React from 'react';
 import { View as RNView, Text as RNText } from 'react-native';
-import { Raw } from '../../src/Primitives/Raw';
-import { renderWithDSLTheme } from '../Helpers/renderWithDSLTheme';
+import { Raw } from '@/Primitives/Raw';
+import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
+import { Spacing } from '@/Tokens/Layout';
 
 describe('Raw', () => {
   it('creates a raw element type', () => {
@@ -25,7 +26,7 @@ describe('Raw', () => {
   it('wraps in View when style modifiers present', () => {
     const el = React.createElement(RNText, null, 'Styled');
     const { toJSON } = renderWithDSLTheme(
-      Raw(el).padding('sm').toElement()
+      Raw(el).padding(Spacing.sm).toElement()
     );
     const tree = toJSON();
     expect(tree).toBeTruthy();

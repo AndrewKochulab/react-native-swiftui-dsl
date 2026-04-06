@@ -1,12 +1,14 @@
 import React from 'react';
-import { Image } from '../../src/Primitives/Image';
-import { DSLDefaults } from '../../src/Config/Defaults';
-import { renderWithDSLTheme } from '../Helpers/renderWithDSLTheme';
+import { Image } from '@/Primitives/Image';
+import { DSLDefaults } from '@/Config/Defaults';
+import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
+import { ElementType, ModifierType } from '@/Tokens/ElementType';
+import { Radius } from '@/Tokens/Layout';
 
 describe('Image', () => {
   it('creates an image element type', () => {
     const builder = Image({ uri: 'https://example.com/img.png' });
-    expect(builder.elementType).toBe('image');
+    expect(builder.elementType).toBe(ElementType.image);
   });
 
   it('renders with URI source', () => {
@@ -29,18 +31,18 @@ describe('Image', () => {
   it('applies frame modifier', () => {
     const builder = Image({ uri: 'https://example.com/img.png' }).frame({ width: 100, height: 100 });
     expect(builder.modifiers).toContainEqual(
-      expect.objectContaining({ type: 'frame', width: 100, height: 100 })
+      expect.objectContaining({ type: ModifierType.frame, width: 100, height: 100 })
     );
   });
 
   it('applies cornerRadius modifier', () => {
-    const builder = Image({ uri: 'https://example.com/img.png' }).cornerRadius('md');
-    expect(builder.modifiers).toContainEqual({ type: 'cornerRadius', value: 'md' });
+    const builder = Image({ uri: 'https://example.com/img.png' }).cornerRadius(Radius.md);
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.cornerRadius, value: Radius.md });
   });
 
   it('applies aspectRatio modifier', () => {
     const builder = Image({ uri: 'https://example.com/img.png' }).aspectRatio(1.5);
-    expect(builder.modifiers).toContainEqual({ type: 'aspectRatio', value: 1.5 });
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.aspectRatio, value: 1.5 });
   });
 
   it('applies testID', () => {

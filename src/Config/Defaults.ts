@@ -1,16 +1,26 @@
-import type { SpacingToken, DSLThemeConfig } from '../Theme/types';
+import type { SpacingToken, FontWeightToken, FontSizeToken, DSLThemeConfig } from '@/Theme/types';
+import type { EasingPreset, TransitionEffect } from '@/Animation/types';
+import { Color } from '@/Tokens/Color';
+import { Font, Weight } from '@/Tokens/Font';
+import { Spacing, Edge } from '@/Tokens/Layout';
+import { Easing as EasingToken, Transition, AnimationType } from '@/Tokens/Animation';
+import { ButtonVariant, ModalAnimation, ImageResize, SpinnerSize, KeyboardPersistTaps } from '@/Tokens/Component';
+import { TextDecoration } from '@/Tokens/Style';
 
 /**
  * Centralized default values used across the DSL framework.
  * All framework defaults are defined here to avoid magic numbers
  * and scattered hard-coded values throughout the codebase.
+ *
+ * Every value is parameterizable — projects can override via DSLThemeConfig.components
+ * or by passing explicit parameters to component functions and modifiers.
  */
 export const DSLDefaults = {
   /** Default spacing token used when no value is provided for padding, margin, contentPadding. */
-  spacing: 'md' as SpacingToken,
+  spacing: Spacing.md as SpacingToken,
 
   /** Default edge used when no edge is provided for padding, margin, contentPadding. */
-  edge: 'all' as const,
+  edge: Edge.all,
 
   /** Default flex value when .flex() is called without arguments. */
   flex: 1,
@@ -19,14 +29,14 @@ export const DSLDefaults = {
   keyboardAvoidingOffset: 100,
 
   /** Default keyboard should persist taps behavior. */
-  keyboardShouldPersistTaps: 'handled' as const,
+  keyboardShouldPersistTaps: KeyboardPersistTaps.handled,
 
   /** Default bounces behavior for scroll views. */
   bounces: true,
 
   /** Default shadow configuration applied by .shadow() with no arguments. */
   shadow: {
-    color: 'cardShadow',
+    color: Color.cardShadow,
     offset: { width: 0, height: 2 },
     opacity: 1,
     radius: 8,
@@ -42,43 +52,62 @@ export const DSLDefaults = {
     labelMarginBottom: 6,
     errorMarginTop: 4,
     wrapperMarginBottom: 12,
+    labelFontSize: Font.caption as FontSizeToken,
+    labelFontWeight: Weight.semibold as FontWeightToken,
+    errorFontSize: Font.caption as FontSizeToken,
+    placeholderColor: Color.secondaryText,
   },
 
-  /** Default icon size in points when none is specified. */
-  iconSize: 18,
+  /** Icon defaults. */
+  icon: {
+    defaultSize: 18,
+  },
 
-  /** Opacity applied to pressable elements in the pressed state. */
-  pressedOpacity: 0.9,
+  /** Interaction defaults. */
+  interaction: {
+    pressedOpacity: 0.9,
+    fullOpacity: 1,
+  },
 
-  /** Full opacity for non-pressed state. */
-  fullOpacity: 1,
+  /** Button styling defaults. */
+  button: {
+    height: 48,
+    cornerRadius: 12,
+    paddingHorizontal: 16,
+    iconSpacing: 8,
+    fontSize: Font.body as FontSizeToken,
+    fontWeight: Weight.semibold as FontWeightToken,
+    borderWidth: 1.5,
+    defaultStyle: ButtonVariant.filled,
+  },
 
-  /** Default button height in points. */
-  buttonHeight: 48,
+  /** Image defaults. */
+  image: {
+    resizeMode: ImageResize.cover,
+  },
 
-  /** Default button corner radius in points. */
-  buttonCornerRadius: 12,
+  /** Divider defaults. */
+  divider: {
+    color: Color.separator,
+  },
 
-  /** Default button horizontal padding in points. */
-  buttonPaddingHorizontal: 16,
+  /** Link defaults. */
+  link: {
+    color: Color.tint,
+    fontSize: Font.body as FontSizeToken,
+    textDecoration: TextDecoration.underline,
+  },
 
-  /** Default button icon spacing in points. */
-  buttonIconSpacing: 8,
+  /** Modal defaults. */
+  modal: {
+    animationType: ModalAnimation.slide,
+    transparent: false,
+  },
 
-  /** Default button font size token. */
-  buttonFontSize: 'body' as const,
-
-  /** Default button outlined border width. */
-  buttonBorderWidth: 1.5,
-
-  /** Default image resize mode. */
-  imageResizeMode: 'cover' as const,
-
-  /** Default separator/divider color token. */
-  dividerColor: 'separator',
-
-  /** Default link color token. */
-  linkColor: 'tint',
+  /** Spinner defaults. */
+  spinner: {
+    defaultSize: SpinnerSize.large,
+  },
 
   /** Default onEndReached threshold for lazy lists. */
   onEndReachedThreshold: 0.5,
@@ -92,16 +121,60 @@ export const DSLDefaults = {
     black: '900',
   } as Record<string, string>,
 
-  /** Default progress bar height in points. */
-  progressBarHeight: 4,
+  /** Progress bar defaults. */
+  progressBar: {
+    height: 4,
+    cornerRadius: 2,
+  },
 
-  /** Default progress bar corner radius in points. */
-  progressBarCornerRadius: 2,
+  /** Animation system defaults. */
+  animation: {
+    defaultDuration: 300,
+    defaultEasing: EasingToken.easeInOut as EasingPreset,
+    defaultDelay: 0,
+    spring: {
+      damping: 10,
+      stiffness: 100,
+      mass: 1,
+      velocity: 0,
+    },
+    quick: {
+      duration: 150,
+      easing: EasingToken.easeOut as EasingPreset,
+    },
+    gentle: {
+      duration: 500,
+      easing: EasingToken.easeInOut as EasingPreset,
+    },
+    defaultTransitionEffect: Transition.opacity as TransitionEffect,
+    scaleRange: { from: 0.97, to: 1 },
+    slideDistance: 100,
+    moveDistance: 50,
+  },
+
+  /** Gesture system defaults. */
+  gesture: {
+    swipeThreshold: 50,
+    swipeVelocityThreshold: 300,
+    panMinDistance: 10,
+  },
+
+  /** Responsive system defaults. */
+  responsive: {
+    breakpoints: {
+      compact: { min: 0, max: 599 },
+      regular: { min: 600, max: 1023 },
+      large: { min: 1024, max: Infinity },
+    },
+  },
 } as const;
 
 /**
  * Default theme configuration used when no DSLThemeProvider is present.
  * Based on iOS Human Interface Guidelines system values.
+ *
+ * Projects override this by providing their own config to DSLThemeProvider.
+ * These are the ACTUAL color/size values — the ground truth that tokens resolve to.
  */
 export const defaultThemeConfig: DSLThemeConfig = {
   colors: {

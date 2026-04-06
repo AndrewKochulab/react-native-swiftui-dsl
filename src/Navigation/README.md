@@ -30,7 +30,9 @@ When you use screen navigation modifiers on a `ViewBuilder`, calling `.toElement
 **Example:**
 
 ```ts
-import { VStack, Text } from 'react-native-swiftui-dsl';
+import { VStack } from '@/Primitives/Containers';
+import { Text } from '@/Primitives/Text';
+import { Spacing } from '@/Tokens/Layout';
 
 export default function SettingsScreen() {
   return VStack(
@@ -38,7 +40,7 @@ export default function SettingsScreen() {
   )
   .screenTitle('Settings')
   .headerRight(() => <SaveButton />)
-  .padding()
+  .padding(Spacing.md)
   .toElement();
 }
 ```

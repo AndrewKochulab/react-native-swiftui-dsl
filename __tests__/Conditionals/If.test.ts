@@ -1,6 +1,6 @@
-import { If } from '../../src/Conditionals/If';
-import { Text } from '../../src/Primitives/Text';
-import { ViewBuilder } from '../../src/Core/ViewBuilder';
+import { If } from '@/Conditionals/If';
+import { Text } from '@/Primitives/Text';
+import { ViewBuilder } from '@/Core/ViewBuilder';
 
 describe('If', () => {
   it('returns then builder result when condition is true', () => {

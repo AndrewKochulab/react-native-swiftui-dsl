@@ -8,33 +8,34 @@ import {
   FontWeightToken,
 } from './Modifier';
 import { ColorValue } from './ThemeResolver';
-import { Binding } from '../Binding/Binding';
-import { DSLDefaults } from '../Config/Defaults';
+import { Binding } from '@/Binding/Binding';
+import { DSLDefaults } from '@/Config/Defaults';
+import { ViewModifier as ViewModifierClass, ViewModifierFn } from './ViewModifier';
+import { Color } from '@/Tokens/Color';
+import { DSLWarnings } from '@/Constants/Messages';
+import { ElementType, ElementTypeValue, ModifierType } from '@/Tokens/ElementType';
+import { Edge } from '@/Tokens/Layout';
+import type { EdgeToken } from '@/Tokens/Layout';
+import type { ImageResizeToken, SpinnerSizeToken, ButtonVariantToken, ModalAnimationToken } from '@/Tokens/Component';
+import { Font, Weight } from '@/Tokens/Font';
+import { isObject } from '@/Tokens/TypeGuards';
+import {
+  TextDecoration, FontStyle as FontStyleToken, FlexWrap as FlexWrapToken,
+} from '@/Tokens/Style';
+import type {
+  TextAlignToken, TextDecorationToken, TextTransformToken, FontStyleToken as FontStyleType,
+  BorderStyleToken, PositionToken, OverflowToken, DisplayToken, FlexWrapToken as FlexWrapType,
+  JustifyContentToken, AlignItemsToken, AlignSelfToken, AlignmentToken, FrameAlignmentToken,
+} from '@/Tokens/Style';
+import type { AutoCapitalizeToken, KeyboardBehaviorToken, KeyboardPersistTapsToken } from '@/Tokens/Component';
+import { ScrollDirection } from '@/Tokens/Component';
+import type { AnimationConfig, TransitionConfig } from '@/Animation/types';
+import type { SwipeDirection, PanGestureState, PinchGestureState, RotationGestureState, PanGestureConfig, PinchGestureConfig, RotationGestureConfig, GestureConfig } from '@/Gesture/types';
+import type { ResponsiveConfig, ResponsiveModifierFn } from '@/Responsive/types';
 
 export const VIEW_BUILDER_SYMBOL = Symbol.for('DSL.ViewBuilder');
 
-export type DSLElementType =
-  | 'text'
-  | 'vstack'
-  | 'hstack'
-  | 'zstack'
-  | 'icon'
-  | 'spacer'
-  | 'raw'
-  | 'fragment'
-  | 'safearea'
-  | 'scroll'
-  | 'textinput'
-  | 'spinner'
-  | 'lazylist'
-  | 'image'
-  | 'toggle'
-  | 'button'
-  | 'divider'
-  | 'link'
-  | 'sectionlist'
-  | 'modal'
-  | 'progressbar';
+export type DSLElementType = ElementTypeValue;
 
 export interface DSLElementProps {
   text?: string;
@@ -42,13 +43,13 @@ export interface DSLElementProps {
   iconSize?: number;
   iconColor?: ColorValue;
   imageSource?: unknown;
-  resizeMode?: 'cover' | 'contain' | 'stretch' | 'center';
+  resizeMode?: ImageResizeToken;
   imageAlt?: string;
   rawElement?: React.ReactElement;
   // TextInput
   binding?: Binding<string>;
   // Spinner
-  spinnerSize?: 'small' | 'large';
+  spinnerSize?: SpinnerSizeToken;
   // LazyList
   listData?: ReadonlyArray<unknown>;
   keyExtractor?: (item: unknown) => string;
@@ -62,7 +63,7 @@ export interface DSLElementProps {
   // Button
   buttonTitle?: string;
   buttonAction?: () => void;
-  buttonStyle?: 'filled' | 'outlined' | 'plain';
+  buttonStyle?: ButtonVariantToken;
   buttonIcon?: string;
   // Link
   linkURL?: string;
@@ -72,7 +73,7 @@ export interface DSLElementProps {
   sectionRenderHeader?: (title: string) => ViewBuilder;
   // Modal
   modalBinding?: Binding<boolean>;
-  modalAnimationType?: 'none' | 'slide' | 'fade';
+  modalAnimationType?: ModalAnimationToken;
   modalTransparent?: boolean;
   // ProgressBar
   progressValue?: number;
@@ -110,67 +111,67 @@ export class ViewBuilder {
   // --- Padding ---
 
   padding(value?: number | SpacingToken, edge?: PaddingEdge): ViewBuilder {
-    return this.withModifier({ type: 'padding', value: value ?? DSLDefaults.spacing, edge: edge ?? DSLDefaults.edge });
+    return this.withModifier({ type: ModifierType.padding, value: value ?? DSLDefaults.spacing, edge: edge ?? DSLDefaults.edge });
   }
 
   paddingHorizontal(value?: number | SpacingToken): ViewBuilder {
-    return this.padding(value ?? DSLDefaults.spacing, 'horizontal');
+    return this.padding(value ?? DSLDefaults.spacing, Edge.horizontal);
   }
 
   paddingVertical(value?: number | SpacingToken): ViewBuilder {
-    return this.padding(value ?? DSLDefaults.spacing, 'vertical');
+    return this.padding(value ?? DSLDefaults.spacing, Edge.vertical);
   }
 
   paddingTop(value?: number | SpacingToken): ViewBuilder {
-    return this.padding(value ?? DSLDefaults.spacing, 'top');
+    return this.padding(value ?? DSLDefaults.spacing, Edge.top);
   }
 
   paddingBottom(value?: number | SpacingToken): ViewBuilder {
-    return this.padding(value ?? DSLDefaults.spacing, 'bottom');
+    return this.padding(value ?? DSLDefaults.spacing, Edge.bottom);
   }
 
   paddingLeft(value?: number | SpacingToken): ViewBuilder {
-    return this.padding(value ?? DSLDefaults.spacing, 'left');
+    return this.padding(value ?? DSLDefaults.spacing, Edge.left);
   }
 
   paddingRight(value?: number | SpacingToken): ViewBuilder {
-    return this.padding(value ?? DSLDefaults.spacing, 'right');
+    return this.padding(value ?? DSLDefaults.spacing, Edge.right);
   }
 
   // --- Margin ---
 
   margin(value?: number | SpacingToken, edge?: PaddingEdge): ViewBuilder {
-    return this.withModifier({ type: 'margin', value: value ?? DSLDefaults.spacing, edge: edge ?? DSLDefaults.edge });
+    return this.withModifier({ type: ModifierType.margin, value: value ?? DSLDefaults.spacing, edge: edge ?? DSLDefaults.edge });
   }
 
   marginHorizontal(value?: number | SpacingToken): ViewBuilder {
-    return this.margin(value ?? DSLDefaults.spacing, 'horizontal');
+    return this.margin(value ?? DSLDefaults.spacing, Edge.horizontal);
   }
 
   marginVertical(value?: number | SpacingToken): ViewBuilder {
-    return this.margin(value ?? DSLDefaults.spacing, 'vertical');
+    return this.margin(value ?? DSLDefaults.spacing, Edge.vertical);
   }
 
   marginBottom(value?: number | SpacingToken): ViewBuilder {
-    return this.margin(value ?? DSLDefaults.spacing, 'bottom');
+    return this.margin(value ?? DSLDefaults.spacing, Edge.bottom);
   }
 
   marginTop(value?: number | SpacingToken): ViewBuilder {
-    return this.margin(value ?? DSLDefaults.spacing, 'top');
+    return this.margin(value ?? DSLDefaults.spacing, Edge.top);
   }
 
   marginLeft(value?: number | SpacingToken): ViewBuilder {
-    return this.margin(value ?? DSLDefaults.spacing, 'left');
+    return this.margin(value ?? DSLDefaults.spacing, Edge.left);
   }
 
   marginRight(value?: number | SpacingToken): ViewBuilder {
-    return this.margin(value ?? DSLDefaults.spacing, 'right');
+    return this.margin(value ?? DSLDefaults.spacing, Edge.right);
   }
 
   // --- Layout ---
 
   flex(value: number = DSLDefaults.flex): ViewBuilder {
-    return this.withModifier({ type: 'flex', value });
+    return this.withModifier({ type: ModifierType.flex, value });
   }
 
   frame(options: {
@@ -180,62 +181,62 @@ export class ViewBuilder {
     maxWidth?: number;
     minHeight?: number;
     maxHeight?: number;
-    alignment?: 'center' | 'leading' | 'trailing';
+    alignment?: FrameAlignmentToken;
   }): ViewBuilder {
-    return this.withModifier({ type: 'frame', ...options });
+    return this.withModifier({ type: ModifierType.frame, ...options });
   }
 
   spacing(value: number): ViewBuilder {
-    return this.withModifier({ type: 'spacing', value });
+    return this.withModifier({ type: ModifierType.spacing, value });
   }
 
   gap(value: number): ViewBuilder {
-    return this.withModifier({ type: 'gap', value });
+    return this.withModifier({ type: ModifierType.gap, value });
   }
 
   // --- Container Layout ---
 
-  justifyContent(value: 'flexStart' | 'flexEnd' | 'center' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly'): ViewBuilder {
-    return this.withModifier({ type: 'justifyContent', value });
+  justifyContent(value: JustifyContentToken): ViewBuilder {
+    return this.withModifier({ type: ModifierType.justifyContent, value });
   }
 
-  alignItems(value: 'flexStart' | 'flexEnd' | 'center' | 'stretch' | 'baseline'): ViewBuilder {
-    return this.withModifier({ type: 'alignItems', value });
+  alignItems(value: AlignItemsToken): ViewBuilder {
+    return this.withModifier({ type: ModifierType.alignItems, value });
   }
 
-  alignment(value: 'center' | 'leading' | 'trailing' | 'stretch'): ViewBuilder {
-    return this.withModifier({ type: 'alignment', value });
+  alignment(value: AlignmentToken): ViewBuilder {
+    return this.withModifier({ type: ModifierType.alignment, value });
   }
 
-  flexWrap(value: 'wrap' | 'nowrap' = 'wrap'): ViewBuilder {
-    return this.withModifier({ type: 'flexWrap', value });
+  flexWrap(value: FlexWrapType = FlexWrapToken.wrap): ViewBuilder {
+    return this.withModifier({ type: ModifierType.flexWrap, value });
   }
 
   // --- Style ---
 
   background(color: ColorValue): ViewBuilder {
-    return this.withModifier({ type: 'background', color });
+    return this.withModifier({ type: ModifierType.background, color });
   }
 
   backgroundAlpha(color: ColorValue, alpha: number): ViewBuilder {
     const alphaHex = Math.round(alpha * 255).toString(16).padStart(2, '0');
-    return this.withModifier({ type: 'backgroundAlpha', color, alphaHex });
+    return this.withModifier({ type: ModifierType.backgroundAlpha, color, alphaHex });
   }
 
   foregroundColor(color: ColorValue): ViewBuilder {
-    return this.withModifier({ type: 'foregroundColor', color });
+    return this.withModifier({ type: ModifierType.foregroundColor, color });
   }
 
   cornerRadius(value: number | BorderRadiusToken): ViewBuilder {
-    return this.withModifier({ type: 'cornerRadius', value });
+    return this.withModifier({ type: ModifierType.cornerRadius, value });
   }
 
   border(width: number, color: ColorValue): ViewBuilder {
-    return this.withModifier({ type: 'border', width, color });
+    return this.withModifier({ type: ModifierType.border, width, color });
   }
 
-  borderStyle(value: 'solid' | 'dotted' | 'dashed'): ViewBuilder {
-    return this.withModifier({ type: 'borderStyle', value });
+  borderStyle(value: BorderStyleToken): ViewBuilder {
+    return this.withModifier({ type: ModifierType.borderStyle, value });
   }
 
   shadow(options?: {
@@ -246,7 +247,7 @@ export class ViewBuilder {
     elevation?: number;
   }): ViewBuilder {
     return this.withModifier({
-      type: 'shadow',
+      type: ModifierType.shadow,
       color: options?.color ?? DSLDefaults.shadow.color,
       offset: options?.offset ?? DSLDefaults.shadow.offset,
       opacity: options?.opacity ?? DSLDefaults.shadow.opacity,
@@ -256,287 +257,674 @@ export class ViewBuilder {
   }
 
   opacity(value: number): ViewBuilder {
-    return this.withModifier({ type: 'opacity', value });
+    return this.withModifier({ type: ModifierType.opacity, value });
   }
 
   // --- Text ---
 
   font(size: FontSizeToken | number): ViewBuilder {
-    return this.withModifier({ type: 'font', size });
+    return this.withModifier({ type: ModifierType.font, size });
   }
 
   fontWeight(weight: FontWeightToken): ViewBuilder {
-    return this.withModifier({ type: 'fontWeight', weight });
+    return this.withModifier({ type: ModifierType.fontWeight, weight });
   }
 
   bold(): ViewBuilder {
-    return this.fontWeight('bold');
+    return this.fontWeight(Weight.bold);
   }
 
   semibold(): ViewBuilder {
-    return this.fontWeight('semibold');
+    return this.fontWeight(Weight.semibold);
   }
 
   medium(): ViewBuilder {
-    return this.fontWeight('medium');
+    return this.fontWeight(Weight.medium);
   }
 
   light(): ViewBuilder {
-    return this.fontWeight('light');
+    return this.fontWeight(Weight.light);
   }
 
   thin(): ViewBuilder {
-    return this.fontWeight('thin');
+    return this.fontWeight(Weight.thin);
   }
 
   heavy(): ViewBuilder {
-    return this.fontWeight('heavy');
+    return this.fontWeight(Weight.heavy);
   }
 
   black(): ViewBuilder {
-    return this.fontWeight('black');
+    return this.fontWeight(Weight.black);
   }
 
   caption(): ViewBuilder {
-    return this.font('caption');
+    return this.font(Font.caption);
   }
 
   secondary(): ViewBuilder {
-    return this.foregroundColor('secondaryText');
+    return this.foregroundColor(Color.secondaryText);
   }
 
-  textTransform(value: 'uppercase' | 'lowercase' | 'capitalize' | 'none'): ViewBuilder {
-    return this.withModifier({ type: 'textTransform', value });
+  textTransform(value: TextTransformToken): ViewBuilder {
+    return this.withModifier({ type: ModifierType.textTransform, value });
   }
 
   letterSpacing(value: number): ViewBuilder {
-    return this.withModifier({ type: 'letterSpacing', value });
+    return this.withModifier({ type: ModifierType.letterSpacing, value });
   }
 
   lineHeight(value: number): ViewBuilder {
-    return this.withModifier({ type: 'lineHeight', value });
+    return this.withModifier({ type: ModifierType.lineHeight, value });
   }
 
-  textAlign(value: 'left' | 'center' | 'right' | 'auto'): ViewBuilder {
-    return this.withModifier({ type: 'textAlign', value });
+  textAlign(value: TextAlignToken): ViewBuilder {
+    return this.withModifier({ type: ModifierType.textAlign, value });
   }
 
   lineLimit(value: number): ViewBuilder {
-    return this.withModifier({ type: 'lineLimit', value });
+    return this.withModifier({ type: ModifierType.lineLimit, value });
   }
 
   // --- SafeArea ---
 
-  edges(value: ('top' | 'bottom' | 'left' | 'right')[]): ViewBuilder {
-    return this.withModifier({ type: 'safeAreaEdges', value });
+  edges(value: EdgeToken[]): ViewBuilder {
+    return this.withModifier({ type: ModifierType.safeAreaEdges, value });
   }
 
   // --- Scroll ---
 
   hideScrollIndicator(): ViewBuilder {
-    return this.withModifier({ type: 'hideScrollIndicator', value: true });
+    return this.withModifier({ type: ModifierType.hideScrollIndicator, value: true });
   }
 
   contentPadding(value?: number | SpacingToken, edge?: PaddingEdge): ViewBuilder {
-    return this.withModifier({ type: 'scrollContentPadding', value: value ?? DSLDefaults.spacing, edge: edge ?? DSLDefaults.edge });
+    return this.withModifier({ type: ModifierType.scrollContentPadding, value: value ?? DSLDefaults.spacing, edge: edge ?? DSLDefaults.edge });
   }
 
   contentPaddingBottom(value?: number | SpacingToken): ViewBuilder {
-    return this.contentPadding(value ?? DSLDefaults.spacing, 'bottom');
+    return this.contentPadding(value ?? DSLDefaults.spacing, Edge.bottom);
   }
 
   horizontal(): ViewBuilder {
-    return this.withModifier({ type: 'scrollDirection', value: 'horizontal' });
+    return this.withModifier({ type: ModifierType.scrollDirection, value: ScrollDirection.horizontal });
   }
 
-  keyboardAvoiding(offset: number = DSLDefaults.keyboardAvoidingOffset): ViewBuilder {
-    return this.withModifier({ type: 'keyboardAvoiding', offset });
+  keyboardAvoiding(
+    offset: number = DSLDefaults.keyboardAvoidingOffset,
+    behavior?: KeyboardBehaviorToken,
+  ): ViewBuilder {
+    return this.withModifier({ type: ModifierType.keyboardAvoiding, offset, behavior });
   }
 
-  keyboardShouldPersistTaps(value: 'always' | 'never' | 'handled' = DSLDefaults.keyboardShouldPersistTaps): ViewBuilder {
-    return this.withModifier({ type: 'keyboardPersistTaps', value });
+  keyboardShouldPersistTaps(value: KeyboardPersistTapsToken = DSLDefaults.keyboardShouldPersistTaps): ViewBuilder {
+    return this.withModifier({ type: ModifierType.keyboardPersistTaps, value });
   }
 
   bounces(value: boolean = DSLDefaults.bounces): ViewBuilder {
-    return this.withModifier({ type: 'bounces', value });
+    return this.withModifier({ type: ModifierType.bounces, value });
   }
 
   // --- TextInput ---
 
   placeholder(value: string): ViewBuilder {
-    return this.withModifier({ type: 'placeholder', value });
+    return this.withModifier({ type: ModifierType.placeholder, value });
   }
 
   inputLabel(text: string): ViewBuilder {
-    return this.withModifier({ type: 'inputLabel', text });
+    return this.withModifier({ type: ModifierType.inputLabel, text });
   }
 
   inputError(message: string | undefined): ViewBuilder {
-    return this.withModifier({ type: 'inputError', message });
+    return this.withModifier({ type: ModifierType.inputError, message });
   }
 
   keyboardType(value: string): ViewBuilder {
-    return this.withModifier({ type: 'keyboardType', value });
+    return this.withModifier({ type: ModifierType.keyboardType, value });
   }
 
   multiline(lines?: number): ViewBuilder {
-    return this.withModifier({ type: 'multiline', lines });
+    return this.withModifier({ type: ModifierType.multiline, lines });
   }
 
   secureEntry(): ViewBuilder {
-    return this.withModifier({ type: 'secureEntry' });
+    return this.withModifier({ type: ModifierType.secureEntry });
   }
 
-  autoCapitalize(value: 'none' | 'sentences' | 'words' | 'characters'): ViewBuilder {
-    return this.withModifier({ type: 'autoCapitalize', value });
+  autoCapitalize(value: AutoCapitalizeToken): ViewBuilder {
+    return this.withModifier({ type: ModifierType.autoCapitalize, value });
   }
 
   returnKeyType(value: string): ViewBuilder {
-    return this.withModifier({ type: 'returnKeyType', value });
+    return this.withModifier({ type: ModifierType.returnKeyType, value });
   }
 
   maxLength(value: number): ViewBuilder {
-    return this.withModifier({ type: 'maxLength', value });
+    return this.withModifier({ type: ModifierType.maxLength, value });
   }
 
   inputHeight(value: number): ViewBuilder {
-    return this.withModifier({ type: 'inputHeight', value });
+    return this.withModifier({ type: ModifierType.inputHeight, value });
+  }
+
+  /**
+   * Attaches a ref to the TextInput for focus management.
+   *
+   * @example
+   * ```ts
+   * const emailRef = useRef(null);
+   * const passwordRef = useRef(null);
+   *
+   * TextInput(emailBinding)
+   *   .inputRef(emailRef)
+   *   .returnKeyType('next')
+   *   .onSubmitEditing(() => passwordRef.current?.focus())
+   *
+   * TextInput(passwordBinding)
+   *   .inputRef(passwordRef)
+   *   .returnKeyType('done')
+   *   .onSubmitEditing(() => handleSubmit())
+   * ```
+   */
+  inputRef(ref: React.RefObject<unknown>): ViewBuilder {
+    return this.withModifier({ type: ModifierType.inputRef, ref });
+  }
+
+  /**
+   * Called when the user presses the return key on the keyboard.
+   * Use with .returnKeyType() for focus chain management.
+   */
+  onSubmitEditing(handler: () => void): ViewBuilder {
+    return this.withModifier({ type: ModifierType.onSubmitEditing, handler });
   }
 
   // --- Screen Navigation ---
 
   screenTitle(title: string): ViewBuilder {
-    return this.withModifier({ type: 'screenTitle', value: title });
+    return this.withModifier({ type: ModifierType.screenTitle, value: title });
   }
 
   headerRight(component: () => React.ReactElement): ViewBuilder {
-    return this.withModifier({ type: 'headerRight', component });
+    return this.withModifier({ type: ModifierType.headerRight, component });
   }
 
   headerLeft(component: () => React.ReactElement): ViewBuilder {
-    return this.withModifier({ type: 'headerLeft', component });
+    return this.withModifier({ type: ModifierType.headerLeft, component });
   }
 
   // --- Interaction ---
 
   onTap(handler: () => void): ViewBuilder {
-    return this.withModifier({ type: 'onTap', handler });
+    return this.withModifier({ type: ModifierType.onTap, handler });
   }
 
   disabled(value: boolean = true): ViewBuilder {
-    return this.withModifier({ type: 'disabled', value });
+    return this.withModifier({ type: ModifierType.disabled, value });
   }
 
   // --- Position & Layout (new) ---
 
-  position(value: 'absolute' | 'relative'): ViewBuilder {
-    return this.withModifier({ type: 'position', value });
+  position(value: PositionToken): ViewBuilder {
+    return this.withModifier({ type: ModifierType.position, value });
   }
 
   positionEdges(edges: { top?: number; left?: number; right?: number; bottom?: number }): ViewBuilder {
-    return this.withModifier({ type: 'positionEdges', ...edges });
+    return this.withModifier({ type: ModifierType.positionEdges, ...edges });
   }
 
   zIndex(value: number): ViewBuilder {
-    return this.withModifier({ type: 'zIndex', value });
+    return this.withModifier({ type: ModifierType.zIndex, value });
   }
 
-  overflow(value: 'hidden' | 'visible' | 'scroll'): ViewBuilder {
-    return this.withModifier({ type: 'overflow', value });
+  overflow(value: OverflowToken): ViewBuilder {
+    return this.withModifier({ type: ModifierType.overflow, value });
   }
 
   aspectRatio(value: number): ViewBuilder {
-    return this.withModifier({ type: 'aspectRatio', value });
+    return this.withModifier({ type: ModifierType.aspectRatio, value });
   }
 
-  alignSelf(value: 'auto' | 'flexStart' | 'flexEnd' | 'center' | 'stretch' | 'baseline'): ViewBuilder {
-    return this.withModifier({ type: 'alignSelf', value });
+  alignSelf(value: AlignSelfToken): ViewBuilder {
+    return this.withModifier({ type: ModifierType.alignSelf, value });
   }
 
-  display(value: 'none' | 'flex'): ViewBuilder {
-    return this.withModifier({ type: 'display', value });
+  display(value: DisplayToken): ViewBuilder {
+    return this.withModifier({ type: ModifierType.display, value });
   }
 
   hidden(value: boolean = true): ViewBuilder {
-    return this.withModifier({ type: 'hidden', value });
+    return this.withModifier({ type: ModifierType.hidden, value });
   }
 
   // --- Text (new) ---
 
-  textDecoration(value: 'none' | 'underline' | 'line-through' | 'underline line-through'): ViewBuilder {
-    return this.withModifier({ type: 'textDecoration', value });
+  textDecoration(value: TextDecorationToken): ViewBuilder {
+    return this.withModifier({ type: ModifierType.textDecoration, value });
   }
 
   underline(): ViewBuilder {
-    return this.textDecoration('underline');
+    return this.textDecoration(TextDecoration.underline);
   }
 
   strikethrough(): ViewBuilder {
-    return this.textDecoration('line-through');
+    return this.textDecoration(TextDecoration.lineThrough);
   }
 
-  fontStyle(value: 'normal' | 'italic'): ViewBuilder {
-    return this.withModifier({ type: 'fontStyle', value });
+  fontStyle(value: FontStyleType): ViewBuilder {
+    return this.withModifier({ type: ModifierType.fontStyle, value });
   }
 
   italic(): ViewBuilder {
-    return this.fontStyle('italic');
+    return this.fontStyle(FontStyleToken.italic);
   }
 
   fontFamily(value: string): ViewBuilder {
-    return this.withModifier({ type: 'fontFamily', value });
+    return this.withModifier({ type: ModifierType.fontFamily, value });
   }
 
   // --- Interaction (new) ---
 
   onLongPress(handler: () => void): ViewBuilder {
-    return this.withModifier({ type: 'onLongPress', handler });
+    return this.withModifier({ type: ModifierType.onLongPress, handler });
   }
 
   // --- Accessibility ---
 
   accessibilityLabel(value: string): ViewBuilder {
-    return this.withModifier({ type: 'accessibilityLabel', value });
+    return this.withModifier({ type: ModifierType.accessibilityLabel, value });
   }
 
   accessibilityRole(value: string): ViewBuilder {
-    return this.withModifier({ type: 'accessibilityRole', value });
+    return this.withModifier({ type: ModifierType.accessibilityRole, value });
   }
 
   accessibilityHint(value: string): ViewBuilder {
-    return this.withModifier({ type: 'accessibilityHint', value });
+    return this.withModifier({ type: ModifierType.accessibilityHint, value });
   }
 
   testID(value: string): ViewBuilder {
-    return this.withModifier({ type: 'testID', value });
+    return this.withModifier({ type: ModifierType.testID, value });
   }
 
   // --- List modifiers ---
 
   refreshControl(onRefresh: () => void, refreshing: boolean): ViewBuilder {
-    return this.withModifier({ type: 'refreshControl', onRefresh, refreshing });
+    return this.withModifier({ type: ModifierType.refreshControl, onRefresh, refreshing });
   }
 
   onEndReached(handler: () => void, threshold?: number): ViewBuilder {
-    return this.withModifier({ type: 'onEndReached', handler, threshold });
+    return this.withModifier({ type: ModifierType.onEndReached, handler, threshold });
   }
 
   separator(builder: () => ViewBuilder): ViewBuilder {
-    return this.withModifier({ type: 'separator', builder });
+    return this.withModifier({ type: ModifierType.separator, builder });
   }
 
   numColumns(value: number): ViewBuilder {
-    return this.withModifier({ type: 'numColumns', value });
+    return this.withModifier({ type: ModifierType.numColumns, value });
   }
 
   emptyComponent(builder: () => ViewBuilder): ViewBuilder {
-    return this.withModifier({ type: 'emptyComponent', builder });
+    return this.withModifier({ type: ModifierType.emptyComponent, builder });
   }
 
   // --- Modal ---
 
   onDismiss(handler: () => void): ViewBuilder {
-    return this.withModifier({ type: 'onDismiss', handler });
+    return this.withModifier({ type: ModifierType.onDismiss, handler });
+  }
+
+  // --- ViewModifier ---
+
+  /**
+   * Applies a ViewModifier class instance or a modifier function.
+   * Accepts both class-based and function-based modifiers.
+   *
+   * @example
+   * ```ts
+   * Text('Hello').modifier(new CardModifier())
+   * Text('Hello').modifier(v => v.padding(Spacing.lg).bold())
+   * ```
+   */
+  modifier(mod: ViewModifierClass | ViewModifierFn): this {
+    if (mod instanceof ViewModifierClass) {
+      mod.body(this);
+    } else {
+      mod(this);
+    }
+    return this;
+  }
+
+  /**
+   * Alias for .modifier() — applies a ViewModifier or modifier function.
+   * Use for readability when applying style-oriented modifiers.
+   */
+  apply(mod: ViewModifierClass | ViewModifierFn): this {
+    return this.modifier(mod);
+  }
+
+  /**
+   * Conditionally applies a modifier function.
+   * When condition is false, the view passes through unchanged.
+   *
+   * @example
+   * ```ts
+   * Text('Price')
+   *   .if(isOnSale, v => v.foregroundColor(Color.error).strikethrough())
+   *   .if(isFeatured, v => v.bold().font(Font.hero))
+   * ```
+   */
+  if(condition: boolean, apply: ViewModifierFn): this {
+    if (condition) {
+      apply(this);
+    }
+    return this;
+  }
+
+  /**
+   * Creates an independent copy of this ViewBuilder.
+   * Mutations to the clone do not affect the original.
+   *
+   * @example
+   * ```ts
+   * const base = VStack(Text('Hello')).padding(Spacing.lg);
+   * const card = base.clone().background(Color.card);
+   * const alert = base.clone().background(Color.error);
+   * ```
+   */
+  clone(): ViewBuilder {
+    return new ViewBuilder(
+      this.elementType,
+      { ...this.props },
+      [...this.children],
+      [...this.modifiers],
+    );
+  }
+
+  // --- Platform ---
+
+  /**
+   * Applies modifiers only on iOS.
+   *
+   * @example
+   * ```ts
+   * Text('Hello')
+   *   .onIOS(v => v.font(Font.title).padding(Spacing.lg))
+   *   .onAndroid(v => v.font(Font.header).padding(Spacing.md))
+   * ```
+   */
+  onIOS(apply: (view: ViewBuilder) => ViewBuilder): ViewBuilder {
+    return this.withModifier({ type: ModifierType.onIOS, apply: apply as (view: unknown) => unknown });
+  }
+
+  /** Applies modifiers only on Android. */
+  onAndroid(apply: (view: ViewBuilder) => ViewBuilder): ViewBuilder {
+    return this.withModifier({ type: ModifierType.onAndroid, apply: apply as (view: unknown) => unknown });
+  }
+
+  // --- Transform ---
+
+  /**
+   * Offsets the view's position by the given x and y values.
+   *
+   * @example
+   * ```ts
+   * Text('Hello').offset(10, -5)
+   * ```
+   */
+  offset(x: number, y: number = 0): ViewBuilder {
+    return this.withModifier({ type: ModifierType.offset, x, y });
+  }
+
+  /**
+   * Rotates the view by the given degrees.
+   *
+   * @example
+   * ```ts
+   * Icon('arrow').rotation(45)
+   * Image(source).rotation(-90)
+   * ```
+   */
+  rotation(degrees: number): ViewBuilder {
+    return this.withModifier({ type: ModifierType.rotation, degrees });
+  }
+
+  /**
+   * Alias for rotation() — matches SwiftUI's rotationEffect.
+   */
+  rotationEffect(degrees: number): ViewBuilder {
+    return this.rotation(degrees);
+  }
+
+  /**
+   * Scales the view by the given x and y factors.
+   * If only x is provided, scales uniformly.
+   *
+   * @example
+   * ```ts
+   * Icon('star').scale(1.5)
+   * Image(source).scale(0.8, 1.2)
+   * ```
+   */
+  scale(x: number, y?: number): ViewBuilder {
+    return this.withModifier({ type: ModifierType.scale, x, y: y ?? x });
+  }
+
+  /**
+   * Alias for scale() — matches SwiftUI's scaleEffect.
+   */
+  scaleEffect(x: number, y?: number): ViewBuilder {
+    return this.scale(x, y);
+  }
+
+  /**
+   * Applies a blur effect to the view.
+   * Requires `@react-native-community/blur` for actual blur rendering.
+   * Without the library, this modifier is a no-op with a development warning.
+   *
+   * @example
+   * ```ts
+   * Image(source).blur(10)
+   * ```
+   */
+  blur(radius: number): ViewBuilder {
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        DSLWarnings.blurRequiresLibrary,
+      );
+    }
+    return this.withModifier({ type: ModifierType.blur, radius });
+  }
+
+  /**
+   * Overlays another view on top of this view.
+   *
+   * @example
+   * ```ts
+   * Image(source)
+   *   .overlay(() => Text('Badge').font(Font.caption).foregroundColor(Color.error))
+   * ```
+   */
+  overlay(builder: () => ViewBuilder): ViewBuilder {
+    return this.withModifier({ type: ModifierType.overlay, builder });
+  }
+
+  // --- Responsive ---
+
+  /**
+   * Applies different modifiers based on the current screen size class.
+   *
+   * @example
+   * ```ts
+   * Text('Hello')
+   *   .responsive({
+   *     compact: v => v.font(Font.body).padding(Spacing.sm),
+   *     regular: v => v.font(Font.title).padding(Spacing.md),
+   *     large: v => v.font(Font.header).padding(Spacing.lg),
+   *   })
+   * ```
+   */
+  responsive(config: ResponsiveConfig): ViewBuilder {
+    return this.withModifier({ type: ModifierType.responsive, config });
+  }
+
+  /** Applies modifiers only on compact (phone portrait) screens. */
+  onCompact(apply: ResponsiveModifierFn): ViewBuilder {
+    return this.withModifier({ type: ModifierType.onCompact, apply });
+  }
+
+  /** Applies modifiers only on regular (phone landscape, small tablet) screens. */
+  onRegular(apply: ResponsiveModifierFn): ViewBuilder {
+    return this.withModifier({ type: ModifierType.onRegular, apply });
+  }
+
+  /** Applies modifiers only on large (tablet) screens. */
+  onLarge(apply: ResponsiveModifierFn): ViewBuilder {
+    return this.withModifier({ type: ModifierType.onLarge, apply });
+  }
+
+  // --- Animation ---
+
+  /**
+   * Animates changes to the view when the tracked value changes.
+   *
+   * @example
+   * ```ts
+   * Text('Hello')
+   *   .opacity(isVisible ? 1 : 0)
+   *   .animation(Animation.easeInOut(300), isVisible)
+   * ```
+   */
+  animation(config: AnimationConfig, value: unknown): ViewBuilder {
+    return this.withModifier({ type: ModifierType.animation, config, value });
+  }
+
+  /**
+   * Defines enter/exit transitions for the view.
+   *
+   * @example
+   * ```ts
+   * Text('Hello')
+   *   .transition({ effect: Transition.opacity })
+   *   .transition({ effect: Transition.slide, edge: TransitionEdge.bottom }, { effect: Transition.opacity })
+   * ```
+   */
+  transition(enter: TransitionConfig, exit?: TransitionConfig): ViewBuilder {
+    return this.withModifier({ type: ModifierType.transition, enter, exit: exit ?? enter });
+  }
+
+  // --- Gesture ---
+
+  /**
+   * Handles swipe gestures in a specific direction.
+   *
+   * @example
+   * ```ts
+   * Image(source)
+   *   .onSwipe(SwipeDirection.left, () => handleNext())
+   *   .onSwipe(SwipeDirection.right, () => handlePrev())
+   * ```
+   */
+  onSwipe(
+    direction: SwipeDirection,
+    handler: () => void,
+    options?: { threshold?: number; velocityThreshold?: number },
+  ): ViewBuilder {
+    return this.withModifier({
+      type: ModifierType.onSwipe,
+      direction,
+      handler,
+      threshold: options?.threshold,
+      velocityThreshold: options?.velocityThreshold,
+    });
+  }
+
+  /**
+   * Handles pan (drag) gestures.
+   *
+   * @example
+   * ```ts
+   * Image(source).onPan({
+   *   onChanged: (state) => updatePosition(state.translation),
+   *   onEnded: (state) => snapToGrid(state.translation),
+   * })
+   * ```
+   */
+  onPan(
+    handlers: {
+      onStart?: (state: PanGestureState) => void;
+      onChanged: (state: PanGestureState) => void;
+      onEnded?: (state: PanGestureState) => void;
+    },
+    config?: PanGestureConfig,
+  ): ViewBuilder {
+    return this.withModifier({
+      type: ModifierType.onPan,
+      onStart: handlers.onStart,
+      onChanged: handlers.onChanged,
+      onEnded: handlers.onEnded,
+      config,
+    });
+  }
+
+  /**
+   * Handles pinch-to-zoom gestures.
+   * Requires react-native-gesture-handler for full support.
+   */
+  onPinch(
+    handlers: {
+      onChanged: (state: PinchGestureState) => void;
+      onEnded?: (state: PinchGestureState) => void;
+    },
+    config?: PinchGestureConfig,
+  ): ViewBuilder {
+    return this.withModifier({
+      type: ModifierType.onPinch,
+      onChanged: handlers.onChanged,
+      onEnded: handlers.onEnded,
+      config,
+    });
+  }
+
+  /**
+   * Handles rotation gestures.
+   * Requires react-native-gesture-handler for full support.
+   */
+  onRotate(
+    handlers: {
+      onChanged: (state: RotationGestureState) => void;
+      onEnded?: (state: RotationGestureState) => void;
+    },
+    config?: RotationGestureConfig,
+  ): ViewBuilder {
+    return this.withModifier({
+      type: ModifierType.onRotate,
+      onChanged: handlers.onChanged,
+      onEnded: handlers.onEnded,
+      config,
+    });
+  }
+
+  /** Generic gesture modifier for advanced gesture configurations. */
+  gesture(config: GestureConfig): ViewBuilder {
+    return this.withModifier({ type: ModifierType.gesture, config });
+  }
+
+  // --- Environment ---
+
+  /**
+   * Sets an environment value that child views can read.
+   *
+   * @example
+   * ```ts
+   * VStack(children)
+   *   .environment('accentColor', Color.tint)
+   *   .environment('spacing', Spacing.sm)
+   * ```
+   */
+  environment(key: string, value: unknown): ViewBuilder {
+    return this.withModifier({ type: ModifierType.environment, key, value });
   }
 
   // --- Materialization ---
@@ -544,13 +932,13 @@ export class ViewBuilder {
   private extractScreenOptions(): Record<string, unknown> | null {
     let options: Record<string, unknown> | null = null;
     for (const mod of this.modifiers) {
-      if (mod.type === 'screenTitle') {
+      if (mod.type === ModifierType.screenTitle) {
         options = options || {};
         options.title = mod.value;
-      } else if (mod.type === 'headerRight') {
+      } else if (mod.type === ModifierType.headerRight) {
         options = options || {};
         options.headerRight = mod.component;
-      } else if (mod.type === 'headerLeft') {
+      } else if (mod.type === ModifierType.headerLeft) {
         options = options || {};
         options.headerLeft = mod.component;
       }
@@ -565,7 +953,7 @@ export class ViewBuilder {
     const screenOptions = this.extractScreenOptions();
     if (screenOptions) {
       try {
-        const { ScreenConfigRenderer } = require('../Navigation/ScreenConfigRenderer');
+        const { ScreenConfigRenderer } = require('@/Navigation/ScreenConfigRenderer');
         return React.createElement(ScreenConfigRenderer, { options: screenOptions }, renderer);
       } catch {
         // expo-router not available, screen navigation modifiers are no-ops
@@ -577,9 +965,5 @@ export class ViewBuilder {
 }
 
 export function isViewBuilder(value: unknown): value is ViewBuilder {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    VIEW_BUILDER_SYMBOL in value
-  );
+  return isObject(value) && VIEW_BUILDER_SYMBOL in value;
 }

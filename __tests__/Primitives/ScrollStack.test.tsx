@@ -1,15 +1,17 @@
 import React from 'react';
-import { ScrollStack } from '../../src/Primitives/ScrollStack';
-import { Text } from '../../src/Primitives/Text';
-import { DSLDefaults } from '../../src/Config/Defaults';
-import { renderWithDSLTheme, testThemeConfig } from '../Helpers/renderWithDSLTheme';
+import { ScrollStack } from '@/Primitives/ScrollStack';
+import { Text } from '@/Primitives/Text';
+import { DSLDefaults } from '@/Config/Defaults';
+import { renderWithDSLTheme, testThemeConfig } from '@tests/Helpers/renderWithDSLTheme';
+import { ElementType, ModifierType } from '@/Tokens/ElementType';
+import { Edge } from '@/Tokens/Layout';
 
 const Layout = testThemeConfig.layout;
 
 describe('ScrollStack', () => {
   it('creates a scroll element type', () => {
     const builder = ScrollStack(Text('Hello'));
-    expect(builder.elementType).toBe('scroll');
+    expect(builder.elementType).toBe(ElementType.scroll);
   });
 
   it('renders children', () => {
@@ -22,7 +24,7 @@ describe('ScrollStack', () => {
   it('applies hideScrollIndicator modifier', () => {
     const builder = ScrollStack(Text('X')).hideScrollIndicator();
     expect(builder.modifiers).toContainEqual({
-      type: 'hideScrollIndicator',
+      type: ModifierType.hideScrollIndicator,
       value: true,
     });
   });
@@ -30,16 +32,16 @@ describe('ScrollStack', () => {
   it('applies contentPaddingBottom modifier', () => {
     const builder = ScrollStack(Text('X')).contentPaddingBottom(Layout.spacing.xl);
     expect(builder.modifiers).toContainEqual({
-      type: 'scrollContentPadding',
+      type: ModifierType.scrollContentPadding,
       value: Layout.spacing.xl,
-      edge: 'bottom',
+      edge: Edge.bottom,
     });
   });
 
   it('applies contentPadding with default values', () => {
     const builder = ScrollStack(Text('X')).contentPadding();
     expect(builder.modifiers).toContainEqual({
-      type: 'scrollContentPadding',
+      type: ModifierType.scrollContentPadding,
       value: DSLDefaults.spacing,
       edge: DSLDefaults.edge,
     });
@@ -47,7 +49,7 @@ describe('ScrollStack', () => {
 
   it('applies flex modifier', () => {
     const builder = ScrollStack(Text('X')).flex(DSLDefaults.flex);
-    expect(builder.modifiers).toContainEqual({ type: 'flex', value: DSLDefaults.flex });
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.flex, value: DSLDefaults.flex });
   });
 
   it('chains flex, contentPaddingBottom, and hideScrollIndicator', () => {
@@ -57,6 +59,6 @@ describe('ScrollStack', () => {
       .hideScrollIndicator();
 
     expect(builder.modifiers).toHaveLength(3);
-    expect(builder.elementType).toBe('scroll');
+    expect(builder.elementType).toBe(ElementType.scroll);
   });
 });

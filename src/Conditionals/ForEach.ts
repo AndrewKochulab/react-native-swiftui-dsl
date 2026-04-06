@@ -1,4 +1,4 @@
-import { DSLChild } from '../Core/ViewBuilder';
+import { DSLChild } from '@/Core/ViewBuilder';
 
 export function ForEach<T>(
   data: ReadonlyArray<T>,

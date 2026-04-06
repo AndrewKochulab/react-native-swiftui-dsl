@@ -1,8 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { Text as RNText } from 'react-native';
-import { useDSLTheme, DSLThemeContext } from '../../src/Theme/DSLThemeContext';
-import { testThemeConfig } from '../Helpers/testThemeConfig';
+import { useDSLTheme, DSLThemeContext } from '@/Theme/DSLThemeContext';
+import { testThemeConfig } from '@tests/Helpers/testThemeConfig';
 
 function ThemeReader() {
   const { config, colorScheme } = useDSLTheme();

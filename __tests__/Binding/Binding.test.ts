@@ -1,4 +1,4 @@
-import { createBinding, bindForm, Binding } from '../../src/Binding/Binding';
+import { createBinding, bindForm, Binding } from '@/Binding/Binding';
 
 describe('createBinding', () => {
   it('creates a binding with value and update', () => {

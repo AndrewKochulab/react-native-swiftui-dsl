@@ -1,8 +1,8 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { Text } from '../../src/Primitives/Text';
-import { ScrollStack } from '../../src/Primitives/ScrollStack';
-import { renderWithDSLTheme } from '../Helpers/renderWithDSLTheme';
+import { Text } from '@/Primitives/Text';
+import { ScrollStack } from '@/Primitives/ScrollStack';
+import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
 
 describe('DSLRenderer - ScrollStack', () => {
   it('renders ScrollStack with horizontal direction', () => {

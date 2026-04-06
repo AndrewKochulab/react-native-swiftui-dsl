@@ -1,8 +1,8 @@
-import { resolveColor, isColorToken } from '../../src/Core/ThemeResolver';
-import { normalizeColors } from '../../src/Theme/types';
-import { testThemeConfig } from '../Helpers/testThemeConfig';
+import { resolveColor, isColorToken } from '@/Core/ThemeResolver';
+import { normalizeColors } from '@/Core/ThemeResolver';
+import { testThemeConfig, testColors } from '@tests/Helpers/testThemeConfig';
 
-const colors = testThemeConfig.colors;
+const colors = testColors;
 const normalized = normalizeColors(colors);
 
 describe('ThemeResolver', () => {

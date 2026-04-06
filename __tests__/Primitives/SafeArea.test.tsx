@@ -1,14 +1,16 @@
 import React from 'react';
-import { SafeArea } from '../../src/Primitives/SafeArea';
-import { Text } from '../../src/Primitives/Text';
-import { renderWithDSLTheme, testThemeConfig } from '../Helpers/renderWithDSLTheme';
+import { SafeArea } from '@/Primitives/SafeArea';
+import { Text } from '@/Primitives/Text';
+import { renderWithDSLTheme, testColors } from '@tests/Helpers/renderWithDSLTheme';
+import { ElementType, ModifierType } from '@/Tokens/ElementType';
+import { Color } from '@/Tokens/Color';
 
-const Colors = testThemeConfig.colors;
+const Colors = testColors;
 
 describe('SafeArea', () => {
   it('creates a safearea element type', () => {
     const builder = SafeArea(Text('Hello'));
-    expect(builder.elementType).toBe('safearea');
+    expect(builder.elementType).toBe(ElementType.safearea);
   });
 
   it('renders children', () => {
@@ -21,14 +23,14 @@ describe('SafeArea', () => {
   it('passes edges modifier', () => {
     const builder = SafeArea(Text('X')).edges(['top']);
     expect(builder.modifiers).toContainEqual({
-      type: 'safeAreaEdges',
+      type: ModifierType.safeAreaEdges,
       value: ['top'],
     });
   });
 
   it('applies background color', () => {
     const { toJSON } = renderWithDSLTheme(
-      SafeArea(Text('X')).background('background').toElement()
+      SafeArea(Text('X')).background(Color.background).toElement()
     );
     const tree = toJSON();
     expect(tree.props.style).toMatchObject({
@@ -48,9 +50,9 @@ describe('SafeArea', () => {
     const builder = SafeArea(Text('X'))
       .edges(['top'])
       .flex(1)
-      .background('background');
+      .background(Color.background);
 
     expect(builder.modifiers).toHaveLength(3);
-    expect(builder.elementType).toBe('safearea');
+    expect(builder.elementType).toBe(ElementType.safearea);
   });
 });

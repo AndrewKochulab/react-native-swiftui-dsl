@@ -1,14 +1,16 @@
 import React from 'react';
-import { Icon } from '../../src/Primitives/Icon';
-import { DSLDefaults } from '../../src/Config/Defaults';
-import { renderWithDSLTheme, testThemeConfig } from '../Helpers/renderWithDSLTheme';
+import { Icon } from '@/Primitives/Icon';
+import { DSLDefaults } from '@/Config/Defaults';
+import { renderWithDSLTheme, testColors } from '@tests/Helpers/renderWithDSLTheme';
+import { ElementType, ModifierType } from '@/Tokens/ElementType';
+import { Spacing, Edge } from '@/Tokens/Layout';
 
-const Colors = testThemeConfig.colors;
+const Colors = testColors;
 
 describe('Icon', () => {
   it('creates an icon element type', () => {
     const builder = Icon('star');
-    expect(builder.elementType).toBe('icon');
+    expect(builder.elementType).toBe(ElementType.icon);
   });
 
   it('stores icon name in props', () => {
@@ -32,11 +34,11 @@ describe('Icon', () => {
   });
 
   it('applies padding modifier', () => {
-    const builder = Icon('star').padding('sm');
+    const builder = Icon('star').padding(Spacing.sm);
     expect(builder.modifiers).toContainEqual({
-      type: 'padding',
-      value: 'sm',
-      edge: 'all',
+      type: ModifierType.padding,
+      value: Spacing.sm,
+      edge: Edge.all,
     });
   });
 
@@ -44,13 +46,13 @@ describe('Icon', () => {
     const handler = jest.fn();
     const builder = Icon('star').onTap(handler);
     expect(builder.modifiers).toContainEqual({
-      type: 'onTap',
+      type: ModifierType.onTap,
       handler,
     });
   });
 
   it('applies testID', () => {
     const builder = Icon('star').testID('my-icon');
-    expect(builder.modifiers).toContainEqual({ type: 'testID', value: 'my-icon' });
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.testID, value: 'my-icon' });
   });
 });

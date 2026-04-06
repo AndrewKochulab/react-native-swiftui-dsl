@@ -1,4 +1,5 @@
-import { ViewBuilder, DSLChild } from '../Core/ViewBuilder';
+import { ViewBuilder } from '@/Core/ViewBuilder';
+import { ElementType } from '@/Tokens/ElementType';
 
 export interface LazyListOptions<T> {
   keyExtractor: (item: T) => string;
@@ -11,7 +12,7 @@ export function LazyList<T>(
   data: ReadonlyArray<T>,
   options: LazyListOptions<T>,
 ): ViewBuilder {
-  return new ViewBuilder('lazylist', {
+  return new ViewBuilder(ElementType.lazylist, {
     listData: data as ReadonlyArray<unknown>,
     keyExtractor: options.keyExtractor as (item: unknown) => string,
     renderItem: options.renderItem as (item: unknown) => ViewBuilder,

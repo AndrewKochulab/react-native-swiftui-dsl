@@ -1,7 +1,8 @@
 import React from 'react';
-import { LazyList } from '../../src/Primitives/LazyList';
-import { Text } from '../../src/Primitives/Text';
-import { renderWithDSLTheme } from '../Helpers/renderWithDSLTheme';
+import { LazyList } from '@/Primitives/LazyList';
+import { Text } from '@/Primitives/Text';
+import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
+import { ElementType, ModifierType } from '@/Tokens/ElementType';
 
 describe('LazyList', () => {
   const data = ['Item 1', 'Item 2', 'Item 3'];
@@ -12,7 +13,7 @@ describe('LazyList', () => {
 
   it('creates a lazylist element type', () => {
     const builder = LazyList(data, options);
-    expect(builder.elementType).toBe('lazylist');
+    expect(builder.elementType).toBe(ElementType.lazylist);
   });
 
   it('stores list data in props', () => {
@@ -53,19 +54,19 @@ describe('LazyList', () => {
 
   it('applies hideScrollIndicator modifier', () => {
     const builder = LazyList(data, options).hideScrollIndicator();
-    expect(builder.modifiers).toContainEqual({ type: 'hideScrollIndicator', value: true });
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.hideScrollIndicator, value: true });
   });
 
   it('applies testID modifier', () => {
     const builder = LazyList(data, options).testID('my-list');
-    expect(builder.modifiers).toContainEqual({ type: 'testID', value: 'my-list' });
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.testID, value: 'my-list' });
   });
 
   it('applies refreshControl modifier', () => {
     const onRefresh = jest.fn();
     const builder = LazyList(data, options).refreshControl(onRefresh, false);
     expect(builder.modifiers).toContainEqual({
-      type: 'refreshControl',
+      type: ModifierType.refreshControl,
       onRefresh,
       refreshing: false,
     });
@@ -75,7 +76,7 @@ describe('LazyList', () => {
     const handler = jest.fn();
     const builder = LazyList(data, options).onEndReached(handler, 0.8);
     expect(builder.modifiers).toContainEqual({
-      type: 'onEndReached',
+      type: ModifierType.onEndReached,
       handler,
       threshold: 0.8,
     });
@@ -83,6 +84,6 @@ describe('LazyList', () => {
 
   it('applies numColumns modifier', () => {
     const builder = LazyList(data, options).numColumns(2);
-    expect(builder.modifiers).toContainEqual({ type: 'numColumns', value: 2 });
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.numColumns, value: 2 });
   });
 });

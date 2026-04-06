@@ -1,12 +1,13 @@
 import React from 'react';
-import { Text } from '../../src/Primitives/Text';
-import { VStack } from '../../src/Primitives/Containers';
-import { Button } from '../../src/Primitives/Button';
-import { Divider } from '../../src/Primitives/Divider';
-import { Link } from '../../src/Primitives/Link';
-import { renderWithDSLTheme, testThemeConfig } from '../Helpers/renderWithDSLTheme';
+import { Text } from '@/Primitives/Text';
+import { VStack } from '@/Primitives/Containers';
+import { Button } from '@/Primitives/Button';
+import { Divider } from '@/Primitives/Divider';
+import { Link } from '@/Primitives/Link';
+import { renderWithDSLTheme, testThemeConfig, testColors } from '@tests/Helpers/renderWithDSLTheme';
+import { Color } from '@/Tokens/Color';
 
-const DarkColors = testThemeConfig.colors.dark;
+const DarkColors = testColors.dark;
 
 describe('DSLRenderer - Dark Mode', () => {
   it('resolves text color in dark mode', () => {
@@ -22,7 +23,7 @@ describe('DSLRenderer - Dark Mode', () => {
 
   it('resolves foreground color in dark mode', () => {
     const { getByText } = renderWithDSLTheme(
-      Text('Tinted').foregroundColor('tint').toElement(),
+      Text('Tinted').foregroundColor(Color.tint).toElement(),
       'dark',
     );
     const element = getByText('Tinted');
@@ -33,7 +34,7 @@ describe('DSLRenderer - Dark Mode', () => {
 
   it('resolves background color in dark mode', () => {
     const { getByTestId } = renderWithDSLTheme(
-      VStack(Text('X')).background('card').testID('dark-bg').toElement(),
+      VStack(Text('X')).background(Color.card).testID('dark-bg').toElement(),
       'dark',
     );
     const container = getByTestId('dark-bg');

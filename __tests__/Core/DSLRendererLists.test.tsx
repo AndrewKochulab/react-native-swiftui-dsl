@@ -1,11 +1,13 @@
 import React from 'react';
-import { Text } from '../../src/Primitives/Text';
-import { VStack } from '../../src/Primitives/Containers';
-import { Divider } from '../../src/Primitives/Divider';
-import { LazyList } from '../../src/Primitives/LazyList';
-import { SectionedList } from '../../src/Primitives/SectionedList';
-import { ViewBuilder } from '../../src/Core/ViewBuilder';
-import { renderWithDSLTheme } from '../Helpers/renderWithDSLTheme';
+import { Text } from '@/Primitives/Text';
+import { VStack } from '@/Primitives/Containers';
+import { Divider } from '@/Primitives/Divider';
+import { LazyList } from '@/Primitives/LazyList';
+import { SectionedList } from '@/Primitives/SectionedList';
+import { ViewBuilder } from '@/Core/ViewBuilder';
+import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
+import { Font } from '@/Tokens/Font';
+import { Spacing } from '@/Tokens/Layout';
 
 const testData = [
   { id: '1', name: 'Alpha' },
@@ -20,7 +22,7 @@ const testSections = [
 
 describe('DSLRenderer - LazyList', () => {
   it('renders LazyList with header and stickyHeader', () => {
-    const headerBuilder = Text('Header').font('title').bold();
+    const headerBuilder = Text('Header').font(Font.title).bold();
     const { toJSON } = renderWithDSLTheme(
       LazyList(testData, {
         keyExtractor: (item: any) => item.id,
@@ -47,7 +49,7 @@ describe('DSLRenderer - LazyList', () => {
       LazyList(testData, {
         keyExtractor: (item: any) => item.id,
         renderItem: (item: any) => Text(item.name),
-      }).contentPadding('md').testID('ll-cp').toElement()
+      }).contentPadding(Spacing.md).testID('ll-cp').toElement()
     );
     expect(toJSON()).toBeTruthy();
   });
@@ -181,7 +183,7 @@ describe('DSLRenderer - SectionedList', () => {
       SectionedList(testSections, {
         keyExtractor: (item: any) => item.id,
         renderItem: (item: any) => Text(item.name),
-      }).contentPadding('sm').testID('sl-cp').toElement()
+      }).contentPadding(Spacing.sm).testID('sl-cp').toElement()
     );
     expect(toJSON()).toBeTruthy();
   });

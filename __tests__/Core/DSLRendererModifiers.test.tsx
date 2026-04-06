@@ -1,28 +1,31 @@
 import React from 'react';
 import TestRenderer, { act } from 'react-test-renderer';
-import { Text } from '../../src/Primitives/Text';
-import { VStack, HStack } from '../../src/Primitives/Containers';
-import { Image } from '../../src/Primitives/Image';
-import { Toggle } from '../../src/Primitives/Toggle';
-import { Button } from '../../src/Primitives/Button';
-import { Divider } from '../../src/Primitives/Divider';
-import { Link } from '../../src/Primitives/Link';
-import { Icon } from '../../src/Primitives/Icon';
-import { Spinner } from '../../src/Primitives/Spinner';
-import { Raw } from '../../src/Primitives/Raw';
-import { createBinding } from '../../src/Binding/Binding';
-import { ViewBuilder } from '../../src/Core/ViewBuilder';
-import { DSLThemeProvider } from '../../src/Theme/DSLThemeProvider';
-import { renderWithDSLTheme, testThemeConfig } from '../Helpers/renderWithDSLTheme';
+import { Text } from '@/Primitives/Text';
+import { VStack, HStack } from '@/Primitives/Containers';
+import { Image } from '@/Primitives/Image';
+import { Toggle } from '@/Primitives/Toggle';
+import { Button } from '@/Primitives/Button';
+import { Divider } from '@/Primitives/Divider';
+import { Link } from '@/Primitives/Link';
+import { Icon } from '@/Primitives/Icon';
+import { Spinner } from '@/Primitives/Spinner';
+import { Raw } from '@/Primitives/Raw';
+import { createBinding } from '@/Binding/Binding';
+import { ViewBuilder } from '@/Core/ViewBuilder';
+import { DSLThemeProvider } from '@/Theme/DSLThemeProvider';
+import { renderWithDSLTheme, testThemeConfig, testColors } from '@tests/Helpers/renderWithDSLTheme';
+import { Color } from '@/Tokens/Color';
+import { Spacing } from '@/Tokens/Layout';
+import { ButtonVariant, SpinnerSize } from '@/Tokens/Component';
 
-const Colors = testThemeConfig.colors;
+const Colors = testColors;
 const Layout = testThemeConfig.layout;
 
 function createWithTheme(element: React.ReactElement) {
   let renderer!: TestRenderer.ReactTestRenderer;
   act(() => {
     renderer = TestRenderer.create(
-      React.createElement(DSLThemeProvider, { config: testThemeConfig, colorScheme: 'light' }, element)
+      React.createElement(DSLThemeProvider, { config: testThemeConfig, colorScheme: 'light' as const, children: element })
     );
   });
   return renderer;
@@ -221,7 +224,7 @@ describe('DSLRenderer - New Modifiers', () => {
     it('renders Button with outlined style', () => {
       const action = jest.fn();
       const { getByText } = renderWithDSLTheme(
-        Button('Cancel', action, { style: 'outlined' }).toElement()
+        Button('Cancel', action, { style: ButtonVariant.outlined }).toElement()
       );
       expect(getByText('Cancel')).toBeTruthy();
     });
@@ -229,7 +232,7 @@ describe('DSLRenderer - New Modifiers', () => {
     it('renders Button with plain style', () => {
       const action = jest.fn();
       const { getByText } = renderWithDSLTheme(
-        Button('Skip', action, { style: 'plain' }).toElement()
+        Button('Skip', action, { style: ButtonVariant.plain }).toElement()
       );
       expect(getByText('Skip')).toBeTruthy();
     });
@@ -258,7 +261,7 @@ describe('DSLRenderer - New Modifiers', () => {
 
     it('renders Divider with custom color', () => {
       const { toJSON } = renderWithDSLTheme(
-        Divider().foregroundColor('error').testID('div-colored').toElement()
+        Divider().foregroundColor(Color.error).testID('div-colored').toElement()
       );
       expect(toJSON()).toBeTruthy();
     });
@@ -268,7 +271,7 @@ describe('DSLRenderer - New Modifiers', () => {
     it('renders Toggle with trackColor', () => {
       const binding = createBinding<boolean>(true, jest.fn());
       const { toJSON } = renderWithDSLTheme(
-        Toggle(binding, { trackColor: 'success' }).testID('tgl-tc').toElement()
+        Toggle(binding, { trackColor: Color.success }).testID('tgl-tc').toElement()
       );
       expect(toJSON()).toBeTruthy();
     });
@@ -276,7 +279,7 @@ describe('DSLRenderer - New Modifiers', () => {
     it('renders Toggle with thumbColor', () => {
       const binding = createBinding<boolean>(false, jest.fn());
       const { toJSON } = renderWithDSLTheme(
-        Toggle(binding, { thumbColor: 'card' }).testID('tgl-thc').toElement()
+        Toggle(binding, { thumbColor: Color.card }).testID('tgl-thc').toElement()
       );
       expect(toJSON()).toBeTruthy();
     });
@@ -284,7 +287,7 @@ describe('DSLRenderer - New Modifiers', () => {
     it('renders Toggle with viewStyle', () => {
       const binding = createBinding<boolean>(true, jest.fn());
       const { toJSON } = renderWithDSLTheme(
-        Toggle(binding).padding('sm').testID('tgl-vs').toElement()
+        Toggle(binding).padding(Spacing.sm).testID('tgl-vs').toElement()
       );
       expect(toJSON()).toBeTruthy();
     });
@@ -309,7 +312,7 @@ describe('DSLRenderer - New Modifiers', () => {
   describe('Spinner with viewStyle', () => {
     it('renders Spinner wrapped in View when has viewStyle', () => {
       const { toJSON } = renderWithDSLTheme(
-        Spinner('small').padding('sm').testID('sp-vs').toElement()
+        Spinner(SpinnerSize.small).padding(Spacing.sm).testID('sp-vs').toElement()
       );
       expect(toJSON()).toBeTruthy();
     });
@@ -319,7 +322,7 @@ describe('DSLRenderer - New Modifiers', () => {
     it('renders Raw with viewStyle', () => {
       const child = React.createElement('View', { testID: 'raw-child' });
       const { toJSON } = renderWithDSLTheme(
-        Raw(child).padding('md').testID('raw-vs').toElement()
+        Raw(child).padding(Spacing.md).testID('raw-vs').toElement()
       );
       expect(toJSON()).toBeTruthy();
     });
@@ -345,7 +348,7 @@ describe('DSLRenderer - New Modifiers', () => {
   describe('Icon with viewStyle', () => {
     it('renders Icon wrapped in View when has viewStyle', () => {
       const { toJSON } = renderWithDSLTheme(
-        Icon('star', { size: 24, color: 'tint' }).padding('sm').testID('icon-vs').toElement()
+        Icon('star', { size: 24, color: Color.tint }).padding(Spacing.sm).testID('icon-vs').toElement()
       );
       expect(toJSON()).toBeTruthy();
     });
@@ -387,7 +390,7 @@ describe('DSLRenderer - New Modifiers', () => {
     it('renders Button with custom foregroundColor', () => {
       const action = jest.fn();
       const { getByText } = renderWithDSLTheme(
-        Button('Custom', action).foregroundColor('error').toElement()
+        Button('Custom', action).foregroundColor(Color.error).toElement()
       );
       expect(getByText('Custom')).toBeTruthy();
     });
@@ -411,7 +414,7 @@ describe('DSLRenderer - New Modifiers', () => {
     it('renders outlined Button with custom foregroundColor', () => {
       const action = jest.fn();
       const { getByText } = renderWithDSLTheme(
-        Button('Outlined', action, { style: 'outlined' }).foregroundColor('error').toElement()
+        Button('Outlined', action, { style: ButtonVariant.outlined }).foregroundColor(Color.error).toElement()
       );
       expect(getByText('Outlined')).toBeTruthy();
     });
@@ -480,7 +483,7 @@ describe('DSLRenderer - New Modifiers', () => {
       const pressable = findByStyleFn(root);
       expect(pressable).toBeTruthy();
       // Trigger onPress — it should not throw because linkURL is undefined
-      expect(() => pressable!.props.onPress()).not.toThrow();
+      expect(() => (pressable!.props as Record<string, () => void>).onPress()).not.toThrow();
     });
   });
 
@@ -490,20 +493,18 @@ describe('DSLRenderer - New Modifiers', () => {
         VStack(Text('X')).hidden(false).testID('not-hidden').toElement()
       );
       const el = getByTestId('not-hidden');
-      expect(el.props.style.display).not.toBe('none');
+      expect((el.props.style as Record<string, unknown>).display).not.toBe('none');
     });
   });
 
   describe('shadow without elevation', () => {
     it('applies shadow without elevation property', () => {
-      const builder = new ViewBuilder('vstack', {}, [Text('X')]);
-      builder.withModifier({
-        type: 'shadow',
-        color: 'text',
+      const builder = new ViewBuilder('vstack', {}, [Text('X')]).shadow({
+        color: Color.text,
         offset: { width: 0, height: 2 },
         opacity: 0.25,
         radius: 4,
-      } as any);
+      });
       const { toJSON } = renderWithDSLTheme(builder.toElement());
       expect(toJSON()).toBeTruthy();
     });
@@ -551,7 +552,7 @@ describe('DSLRenderer - New Modifiers', () => {
         ? pressable!
         : findByStyleFn(renderer.root);
       expect(withStyleFn).toBeTruthy();
-      const styleFn = withStyleFn!.props.style;
+      const styleFn = withStyleFn!.props.style as (state: { pressed: boolean }) => Record<string, unknown>;
       expect(typeof styleFn).toBe('function');
       const unpressedStyle = styleFn({ pressed: false });
       const pressedStyle = styleFn({ pressed: true });
@@ -565,7 +566,7 @@ describe('DSLRenderer - New Modifiers', () => {
       );
       const withStyleFn = findByStyleFn(renderer.root);
       expect(withStyleFn).toBeTruthy();
-      const styleFn = withStyleFn!.props.style;
+      const styleFn = withStyleFn!.props.style as (state: { pressed: boolean }) => Record<string, unknown>;
       expect(typeof styleFn).toBe('function');
       const unpressedStyle = styleFn({ pressed: false });
       const pressedStyle = styleFn({ pressed: true });
@@ -580,7 +581,7 @@ describe('DSLRenderer - New Modifiers', () => {
       );
       const withStyleFn = findByStyleFn(renderer.root);
       expect(withStyleFn).toBeTruthy();
-      const styleFn = withStyleFn!.props.style;
+      const styleFn = withStyleFn!.props.style as (state: { pressed: boolean }) => Record<string, unknown>;
       expect(typeof styleFn).toBe('function');
       const unpressedStyle = styleFn({ pressed: false });
       const pressedStyle = styleFn({ pressed: true });

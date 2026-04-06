@@ -1,7 +1,8 @@
 import React from 'react';
-import { Toggle } from '../../src/Primitives/Toggle';
-import { createBinding } from '../../src/Binding/Binding';
-import { renderWithDSLTheme } from '../Helpers/renderWithDSLTheme';
+import { Toggle } from '@/Primitives/Toggle';
+import { createBinding } from '@/Binding/Binding';
+import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
+import { ElementType, ModifierType } from '@/Tokens/ElementType';
 
 describe('Toggle', () => {
   const mockUpdate = jest.fn();
@@ -13,7 +14,7 @@ describe('Toggle', () => {
 
   it('creates a toggle element type', () => {
     const builder = Toggle(binding);
-    expect(builder.elementType).toBe('toggle');
+    expect(builder.elementType).toBe(ElementType.toggle);
   });
 
   it('stores binding in props', () => {
@@ -40,11 +41,11 @@ describe('Toggle', () => {
 
   it('applies disabled modifier', () => {
     const builder = Toggle(binding).disabled();
-    expect(builder.modifiers).toContainEqual({ type: 'disabled', value: true });
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.disabled, value: true });
   });
 
   it('applies testID modifier', () => {
     const builder = Toggle(binding).testID('my-toggle');
-    expect(builder.modifiers).toContainEqual({ type: 'testID', value: 'my-toggle' });
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.testID, value: 'my-toggle' });
   });
 });

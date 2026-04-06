@@ -5,116 +5,145 @@ import {
   FontWeightToken,
   DSLLayout,
   DSLFonts,
-} from '../Theme/types';
+} from '@/Theme/types';
 import { ColorValue } from './ThemeResolver';
+import { isNumber } from '@/Tokens/TypeGuards';
+import type { AnimationConfig, TransitionConfig } from '@/Animation/types';
+import type { PanGestureState, PinchGestureState, RotationGestureState, PanGestureConfig, PinchGestureConfig, RotationGestureConfig, GestureConfig } from '@/Gesture/types';
+import type { ResponsiveConfig, ResponsiveModifierFn } from '@/Responsive/types';
+import { ModifierType } from '@/Tokens/ElementType';
+import type { EdgeToken } from '@/Tokens/Layout';
+import type { AlignmentToken, FrameAlignmentToken, JustifyContentToken, AlignItemsToken, AlignSelfToken, FlexWrapToken, TextTransformToken, TextAlignToken, TextDecorationToken, FontStyleToken, BorderStyleToken, PositionToken, OverflowToken, DisplayToken } from '@/Tokens/Style';
+import type { AutoCapitalizeToken, KeyboardBehaviorToken, KeyboardPersistTapsToken, ScrollDirectionToken } from '@/Tokens/Component';
+import type { SwipeDirectionToken } from '@/Tokens/Interaction';
 
 export type { SpacingToken, BorderRadiusToken, FontSizeToken, FontWeightToken };
 
-export type PaddingEdge =
-  | 'all'
-  | 'horizontal'
-  | 'vertical'
-  | 'top'
-  | 'bottom'
-  | 'left'
-  | 'right';
+export type PaddingEdge = EdgeToken;
 
 export type Modifier =
   // Layout
-  | { type: 'padding'; value: number | SpacingToken; edge: PaddingEdge }
-  | { type: 'margin'; value: number | SpacingToken; edge: PaddingEdge }
-  | { type: 'background'; color: ColorValue }
-  | { type: 'backgroundAlpha'; color: ColorValue; alphaHex: string }
-  | { type: 'foregroundColor'; color: ColorValue }
-  | { type: 'cornerRadius'; value: number | BorderRadiusToken }
-  | { type: 'font'; size: FontSizeToken | number }
-  | { type: 'fontWeight'; weight: FontWeightToken }
-  | { type: 'flex'; value: number }
-  | { type: 'frame'; width?: number; height?: number; minWidth?: number; maxWidth?: number; minHeight?: number; maxHeight?: number; alignment?: 'center' | 'leading' | 'trailing' }
-  | { type: 'border'; width: number; color: ColorValue }
-  | { type: 'borderStyle'; value: 'solid' | 'dotted' | 'dashed' }
-  | { type: 'shadow'; color: ColorValue; offset: { width: number; height: number }; opacity: number; radius: number; elevation?: number }
-  | { type: 'opacity'; value: number }
-  | { type: 'spacing'; value: number }
-  | { type: 'alignment'; value: 'center' | 'leading' | 'trailing' | 'stretch' }
-  | { type: 'justifyContent'; value: 'flexStart' | 'flexEnd' | 'center' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly' }
-  | { type: 'alignItems'; value: 'flexStart' | 'flexEnd' | 'center' | 'stretch' | 'baseline' }
-  | { type: 'flexWrap'; value: 'wrap' | 'nowrap' }
-  | { type: 'gap'; value: number }
+  | { type: ModifierType.padding; value: number | SpacingToken; edge: PaddingEdge }
+  | { type: ModifierType.margin; value: number | SpacingToken; edge: PaddingEdge }
+  | { type: ModifierType.background; color: ColorValue }
+  | { type: ModifierType.backgroundAlpha; color: ColorValue; alphaHex: string }
+  | { type: ModifierType.foregroundColor; color: ColorValue }
+  | { type: ModifierType.cornerRadius; value: number | BorderRadiusToken }
+  | { type: ModifierType.font; size: FontSizeToken | number }
+  | { type: ModifierType.fontWeight; weight: FontWeightToken }
+  | { type: ModifierType.flex; value: number }
+  | { type: ModifierType.frame; width?: number; height?: number; minWidth?: number; maxWidth?: number; minHeight?: number; maxHeight?: number; alignment?: FrameAlignmentToken }
+  | { type: ModifierType.border; width: number; color: ColorValue }
+  | { type: ModifierType.borderStyle; value: BorderStyleToken }
+  | { type: ModifierType.shadow; color: ColorValue; offset: { width: number; height: number }; opacity: number; radius: number; elevation?: number }
+  | { type: ModifierType.opacity; value: number }
+  | { type: ModifierType.spacing; value: number }
+  | { type: ModifierType.alignment; value: AlignmentToken }
+  | { type: ModifierType.justifyContent; value: JustifyContentToken }
+  | { type: ModifierType.alignItems; value: AlignItemsToken }
+  | { type: ModifierType.flexWrap; value: FlexWrapToken }
+  | { type: ModifierType.gap; value: number }
   // Text
-  | { type: 'textTransform'; value: 'uppercase' | 'lowercase' | 'capitalize' | 'none' }
-  | { type: 'letterSpacing'; value: number }
-  | { type: 'lineHeight'; value: number }
-  | { type: 'textAlign'; value: 'left' | 'center' | 'right' | 'auto' }
-  | { type: 'lineLimit'; value: number }
+  | { type: ModifierType.textTransform; value: TextTransformToken }
+  | { type: ModifierType.letterSpacing; value: number }
+  | { type: ModifierType.lineHeight; value: number }
+  | { type: ModifierType.textAlign; value: TextAlignToken }
+  | { type: ModifierType.lineLimit; value: number }
   // Interaction
-  | { type: 'onTap'; handler: () => void }
-  | { type: 'disabled'; value: boolean }
+  | { type: ModifierType.onTap; handler: () => void }
+  | { type: ModifierType.disabled; value: boolean }
   // Accessibility
-  | { type: 'accessibilityLabel'; value: string }
-  | { type: 'testID'; value: string }
+  | { type: ModifierType.accessibilityLabel; value: string }
+  | { type: ModifierType.testID; value: string }
   // SafeArea
-  | { type: 'safeAreaEdges'; value: ('top' | 'bottom' | 'left' | 'right')[] }
+  | { type: ModifierType.safeAreaEdges; value: EdgeToken[] }
   // Scroll
-  | { type: 'hideScrollIndicator'; value: boolean }
-  | { type: 'scrollContentPadding'; value: number | SpacingToken; edge: PaddingEdge }
-  | { type: 'scrollDirection'; value: 'horizontal' }
-  | { type: 'keyboardAvoiding'; offset: number }
-  | { type: 'keyboardPersistTaps'; value: 'always' | 'never' | 'handled' }
-  | { type: 'bounces'; value: boolean }
+  | { type: ModifierType.hideScrollIndicator; value: boolean }
+  | { type: ModifierType.scrollContentPadding; value: number | SpacingToken; edge: PaddingEdge }
+  | { type: ModifierType.scrollDirection; value: ScrollDirectionToken }
+  | { type: ModifierType.keyboardAvoiding; offset: number; behavior?: KeyboardBehaviorToken }
+  | { type: ModifierType.keyboardPersistTaps; value: KeyboardPersistTapsToken }
+  | { type: ModifierType.bounces; value: boolean }
   // TextInput
-  | { type: 'placeholder'; value: string }
-  | { type: 'inputLabel'; text: string }
-  | { type: 'inputError'; message: string | undefined }
-  | { type: 'keyboardType'; value: string }
-  | { type: 'multiline'; lines?: number }
-  | { type: 'secureEntry' }
-  | { type: 'autoCapitalize'; value: 'none' | 'sentences' | 'words' | 'characters' }
-  | { type: 'returnKeyType'; value: string }
-  | { type: 'maxLength'; value: number }
-  | { type: 'inputHeight'; value: number }
+  | { type: ModifierType.placeholder; value: string }
+  | { type: ModifierType.inputLabel; text: string }
+  | { type: ModifierType.inputError; message: string | undefined }
+  | { type: ModifierType.keyboardType; value: string }
+  | { type: ModifierType.multiline; lines?: number }
+  | { type: ModifierType.secureEntry }
+  | { type: ModifierType.autoCapitalize; value: AutoCapitalizeToken }
+  | { type: ModifierType.returnKeyType; value: string }
+  | { type: ModifierType.maxLength; value: number }
+  | { type: ModifierType.inputHeight; value: number }
+  | { type: ModifierType.inputRef; ref: React.RefObject<unknown> }
+  | { type: ModifierType.onSubmitEditing; handler: () => void }
   // Screen Navigation
-  | { type: 'screenTitle'; value: string }
-  | { type: 'headerRight'; component: () => React.ReactElement }
-  | { type: 'headerLeft'; component: () => React.ReactElement }
-  // Position & Layout (new)
-  | { type: 'position'; value: 'absolute' | 'relative' }
-  | { type: 'positionEdges'; top?: number; left?: number; right?: number; bottom?: number }
-  | { type: 'zIndex'; value: number }
-  | { type: 'overflow'; value: 'hidden' | 'visible' | 'scroll' }
-  | { type: 'aspectRatio'; value: number }
-  | { type: 'alignSelf'; value: 'auto' | 'flexStart' | 'flexEnd' | 'center' | 'stretch' | 'baseline' }
-  | { type: 'display'; value: 'none' | 'flex' }
-  | { type: 'hidden'; value: boolean }
-  // Text (new)
-  | { type: 'textDecoration'; value: 'none' | 'underline' | 'line-through' | 'underline line-through' }
-  | { type: 'fontStyle'; value: 'normal' | 'italic' }
-  | { type: 'fontFamily'; value: string }
-  // Interaction (new)
-  | { type: 'onLongPress'; handler: () => void }
-  // Accessibility (new)
-  | { type: 'accessibilityRole'; value: string }
-  | { type: 'accessibilityHint'; value: string }
-  // List (new)
-  | { type: 'refreshControl'; onRefresh: () => void; refreshing: boolean }
-  | { type: 'onEndReached'; handler: () => void; threshold?: number }
-  | { type: 'separator'; builder: () => unknown }
-  | { type: 'numColumns'; value: number }
-  | { type: 'emptyComponent'; builder: () => unknown }
+  | { type: ModifierType.screenTitle; value: string }
+  | { type: ModifierType.headerRight; component: () => React.ReactElement }
+  | { type: ModifierType.headerLeft; component: () => React.ReactElement }
+  // Position & Layout
+  | { type: ModifierType.position; value: PositionToken }
+  | { type: ModifierType.positionEdges; top?: number; left?: number; right?: number; bottom?: number }
+  | { type: ModifierType.zIndex; value: number }
+  | { type: ModifierType.overflow; value: OverflowToken }
+  | { type: ModifierType.aspectRatio; value: number }
+  | { type: ModifierType.alignSelf; value: AlignSelfToken }
+  | { type: ModifierType.display; value: DisplayToken }
+  | { type: ModifierType.hidden; value: boolean }
+  // Text decoration
+  | { type: ModifierType.textDecoration; value: TextDecorationToken }
+  | { type: ModifierType.fontStyle; value: FontStyleToken }
+  | { type: ModifierType.fontFamily; value: string }
+  // Interaction
+  | { type: ModifierType.onLongPress; handler: () => void }
+  // Accessibility
+  | { type: ModifierType.accessibilityRole; value: string }
+  | { type: ModifierType.accessibilityHint; value: string }
+  // List
+  | { type: ModifierType.refreshControl; onRefresh: () => void; refreshing: boolean }
+  | { type: ModifierType.onEndReached; handler: () => void; threshold?: number }
+  | { type: ModifierType.separator; builder: () => unknown }
+  | { type: ModifierType.numColumns; value: number }
+  | { type: ModifierType.emptyComponent; builder: () => unknown }
   // Modal
-  | { type: 'onDismiss'; handler: () => void };
+  | { type: ModifierType.onDismiss; handler: () => void }
+  // Transform
+  | { type: ModifierType.offset; x: number; y: number }
+  | { type: ModifierType.rotation; degrees: number }
+  | { type: ModifierType.scale; x: number; y: number }
+  | { type: ModifierType.blur; radius: number }
+  | { type: ModifierType.overlay; builder: () => unknown }
+  // Platform
+  | { type: ModifierType.onIOS; apply: (view: unknown) => unknown }
+  | { type: ModifierType.onAndroid; apply: (view: unknown) => unknown }
+  // Responsive
+  | { type: ModifierType.responsive; config: ResponsiveConfig }
+  | { type: ModifierType.onCompact; apply: ResponsiveModifierFn }
+  | { type: ModifierType.onRegular; apply: ResponsiveModifierFn }
+  | { type: ModifierType.onLarge; apply: ResponsiveModifierFn }
+  // Animation
+  | { type: ModifierType.animation; config: AnimationConfig; value: unknown }
+  | { type: ModifierType.transition; enter: TransitionConfig; exit: TransitionConfig }
+  // Gesture
+  | { type: ModifierType.onSwipe; direction: SwipeDirectionToken; handler: () => void; threshold?: number; velocityThreshold?: number }
+  | { type: ModifierType.onPan; onStart?: (state: PanGestureState) => void; onChanged: (state: PanGestureState) => void; onEnded?: (state: PanGestureState) => void; config?: PanGestureConfig }
+  | { type: ModifierType.onPinch; onChanged: (state: PinchGestureState) => void; onEnded?: (state: PinchGestureState) => void; config?: PinchGestureConfig }
+  | { type: ModifierType.onRotate; onChanged: (state: RotationGestureState) => void; onEnded?: (state: RotationGestureState) => void; config?: RotationGestureConfig }
+  | { type: ModifierType.gesture; config: GestureConfig }
+  // Environment
+  | { type: ModifierType.environment; key: string; value: unknown };
 
 export function resolveSpacing(value: number | SpacingToken, layout: DSLLayout): number {
-  if (typeof value === 'number') return value;
+  if (isNumber(value)) return value;
   return layout.spacing[value];
 }
 
 export function resolveBorderRadius(value: number | BorderRadiusToken, layout: DSLLayout): number {
-  if (typeof value === 'number') return value;
+  if (isNumber(value)) return value;
   return layout.borderRadius[value];
 }
 
 export function resolveFontSize(value: FontSizeToken | number, fonts: DSLFonts): number {
-  if (typeof value === 'number') return value;
+  if (isNumber(value)) return value;
   return fonts.size[value];
 }

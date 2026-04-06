@@ -1,8 +1,9 @@
 import React from 'react';
-import { TextInput } from '../../src/Primitives/TextInput';
-import { createBinding } from '../../src/Binding/Binding';
-import { ViewBuilder } from '../../src/Core/ViewBuilder';
-import { renderWithDSLTheme, testThemeConfig } from '../Helpers/renderWithDSLTheme';
+import { TextInput } from '@/Primitives/TextInput';
+import { createBinding } from '@/Binding/Binding';
+import { ViewBuilder } from '@/Core/ViewBuilder';
+import { renderWithDSLTheme, testThemeConfig } from '@tests/Helpers/renderWithDSLTheme';
+import { Spacing } from '@/Tokens/Layout';
 
 describe('DSLRenderer - TextInput', () => {
   const makeBinding = (val = '') => createBinding<string>(val, jest.fn());
@@ -124,7 +125,7 @@ describe('DSLRenderer - TextInput', () => {
   it('renders TextInput with viewStyle but no label/error', () => {
     const binding = makeBinding();
     const { toJSON } = renderWithDSLTheme(
-      TextInput(binding).padding('sm').testID('ti-vs').toElement()
+      TextInput(binding).padding(Spacing.sm).testID('ti-vs').toElement()
     );
     const tree = toJSON();
     expect(tree).toBeTruthy();

@@ -7,6 +7,8 @@
  *   TextInput($form.title).placeholder('Enter title')
  */
 
+import { isSymbol } from '@/Tokens/TypeGuards';
+
 export interface Binding<T> {
   readonly value: T;
   readonly update: (newValue: T) => void;
@@ -28,17 +30,18 @@ export function bindForm<T extends object>(
 
   return new Proxy({} as BindingMap<T>, {
     get(_target, prop: string | symbol) {
-      if (typeof prop === 'symbol') return undefined;
+      if (isSymbol(prop)) return undefined;
 
       const key = prop as keyof T & string;
       const cached = cache.get(key);
+      const currentValue = (data as Record<string, unknown>)[key];
 
-      if (cached && cached.value === (data as any)[key]) {
+      if (cached && cached.value === currentValue) {
         return cached;
       }
 
       const binding: Binding<T[typeof key]> = {
-        value: (data as any)[key],
+        value: currentValue as T[typeof key],
         update: (newValue: T[typeof key]) => setter(key, newValue),
       };
 

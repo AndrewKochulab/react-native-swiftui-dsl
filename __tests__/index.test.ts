@@ -1,7 +1,7 @@
 describe('barrel export (src/index.ts)', () => {
   // Use require to force the barrel file to be instrumented by coverage
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const barrel = require('../src/index');
+  const barrel = require('@/index');
 
   it('exports theme utilities', () => {
     expect(barrel.DSLThemeProvider).toBeDefined();
@@ -53,5 +53,47 @@ describe('barrel export (src/index.ts)', () => {
     expect(barrel.If).toBeDefined();
     expect(barrel.ForEach).toBeDefined();
     expect(barrel.Group).toBeDefined();
+  });
+
+  it('exports token enums', () => {
+    expect(barrel.Color).toBeDefined();
+    expect(barrel.Font).toBeDefined();
+    expect(barrel.Weight).toBeDefined();
+    expect(barrel.Spacing).toBeDefined();
+    expect(barrel.Radius).toBeDefined();
+    expect(barrel.Edge).toBeDefined();
+    expect(barrel.Alignment).toBeDefined();
+    expect(barrel.ButtonVariant).toBeDefined();
+    expect(barrel.SpinnerSize).toBeDefined();
+    expect(barrel.ModalAnimation).toBeDefined();
+    expect(barrel.AnimationType).toBeDefined();
+    expect(barrel.Easing).toBeDefined();
+    expect(barrel.Transition).toBeDefined();
+    expect(barrel.ElementType).toBeDefined();
+    expect(barrel.ModifierType).toBeDefined();
+  });
+
+  it('exports animation utilities', () => {
+    expect(barrel.Animation).toBeDefined();
+    expect(barrel.createAnimationPresets).toBeDefined();
+    expect(barrel.withAnimation).toBeDefined();
+  });
+
+  it('exports responsive utilities', () => {
+    expect(barrel.useResponsive).toBeDefined();
+  });
+
+  it('exports ViewModifier utilities', () => {
+    expect(barrel.ViewModifier).toBeDefined();
+    expect(barrel.composeModifiers).toBeDefined();
+    expect(barrel.createModifiers).toBeDefined();
+  });
+
+  it('exports DSLView', () => {
+    expect(barrel.DSLView).toBeDefined();
+  });
+
+  it('exports Environment', () => {
+    expect(barrel.useEnvironment).toBeDefined();
   });
 });

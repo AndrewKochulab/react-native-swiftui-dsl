@@ -21,7 +21,7 @@ import {
   ImageStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDSLTheme } from '../Theme/DSLThemeContext';
+import { useDSLTheme } from '@/Theme/DSLThemeContext';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let FontAwesomeComponent: React.ComponentType<any> | null = null;
@@ -35,8 +35,22 @@ try {
 export function _setIconComponent(component: React.ComponentType<unknown> | null): void {
   FontAwesomeComponent = component;
 }
-import { DSLThemeConfig, normalizeColors } from '../Theme/types';
-import { DSLDefaults } from '../Config/Defaults';
+import { DSLThemeConfig } from '@/Theme/types';
+import { DSLDefaults } from '@/Config/Defaults';
+import { Color } from '@/Tokens/Color';
+import { DSLWarnings } from '@/Constants/Messages';
+import { FlexDirection, Alignment as AlignmentToken, JustifyContent as JustifyContentToken, AlignItems as AlignItemsToken, AlignSelf as AlignSelfToken, Position as PositionToken, Overflow as OverflowConstant } from '@/Tokens/Style';
+import { ButtonVariant, AccessibilityRole, KeyboardPersistTaps, KeyboardBehavior, ModalAnimation, ScrollDirection as ScrollDirectionToken, SpinnerSize } from '@/Tokens/Component';
+import { DSLPlatform } from '@/Tokens/Interaction';
+import { Transition, AnimationType } from '@/Tokens/Animation';
+import { SwipeDirection as SwipeDirectionToken } from '@/Tokens/Interaction';
+import { Edge } from '@/Tokens/Layout';
+import { isString, isNumber, isBoolean, isNil } from '@/Tokens/TypeGuards';
+import { RNAlign, RNDisplay, RNColor, RNTextAlignVertical, RNPointerEvents, ApplyEdgePrefix, RNKey } from '@/Tokens/RNStyle';
+import type { ApplyEdgePrefixToken } from '@/Tokens/RNStyle';
+import type { EdgeToken } from '@/Tokens/Layout';
+import type { KeyboardBehaviorToken, KeyboardPersistTapsToken, ScrollDirectionToken as ScrollDirType } from '@/Tokens/Component';
+import { ElementType, GestureType, ModifierType } from '@/Tokens/ElementType';
 import { ViewBuilder, DSLChild, isViewBuilder } from './ViewBuilder';
 import {
   Modifier,
@@ -45,6 +59,22 @@ import {
   resolveFontSize,
 } from './Modifier';
 import { ColorValue, resolveColor } from './ThemeResolver';
+import { useResponsiveContext } from '@/Responsive/ResponsiveContext';
+import { resolveResponsiveModifiers } from '@/Responsive/resolveResponsiveModifiers';
+import type { ResponsiveContext } from '@/Responsive/types';
+import type { ComputedAnimation, ComputedTransition } from '@/Animation/types';
+import { AnimatedWrapper, TransitionWrapper } from '@/Animation/AnimatedWrapper';
+import type { GestureConfig } from '@/Gesture/types';
+import { EnvironmentCtx } from './Environment';
+
+type FlexDirectionStyle = ViewStyle['flexDirection'];
+type JustifyContentStyle = ViewStyle['justifyContent'];
+type AlignItemsStyle = ViewStyle['alignItems'];
+type AlignSelfStyle = ViewStyle['alignSelf'];
+type FontWeightStyle = TextStyle['fontWeight'];
+type TextDecorationLineStyle = TextStyle['textDecorationLine'];
+type TransformStyle = ViewStyle['transform'];
+type DSLProps = ViewBuilder['props'];
 
 interface DSLRendererProps {
   builder: ViewBuilder;
@@ -54,110 +84,159 @@ type ColorResolver = (color: ColorValue) => string;
 
 export function DSLRenderer({ builder }: DSLRendererProps): React.ReactElement {
   const { config, colorScheme } = useDSLTheme();
+  const responsiveCtx = useResponsiveContext();
   const resolve: ColorResolver = (color) => resolveColor(color, colorScheme, config.colors);
 
-  return renderBuilder(builder, resolve, config);
+  return renderBuilder(builder, resolve, config, responsiveCtx);
 }
 
 function renderBuilder(
   builder: ViewBuilder,
   resolve: ColorResolver,
   config: DSLThemeConfig,
+  responsiveCtx: ResponsiveContext | null,
 ): React.ReactElement {
   const { elementType, props, children, modifiers } = builder;
-  const computed = computeStyles(modifiers, resolve, config);
 
-  const resolvedChildren = resolveChildren(children, resolve, config);
+  // Resolve responsive modifiers before computing styles
+  const resolvedModifiers = responsiveCtx
+    ? resolveResponsiveModifiers(modifiers, responsiveCtx, config.responsive?.customBreakpoints)
+    : modifiers;
+
+  const computed = computeStyles(resolvedModifiers, resolve, config);
+
+  const resolvedChildren = resolveChildren(children, resolve, config, responsiveCtx);
+
+  let element: React.ReactElement;
 
   switch (elementType) {
-    case 'text':
-      return renderText(props, computed, resolve);
+    case ElementType.text:
+      element = renderText(props, computed, resolve);
+      break;
 
-    case 'vstack':
-      return renderContainer('column', resolvedChildren, computed);
+    case ElementType.vstack:
+      element = renderContainer(FlexDirection.column, resolvedChildren, computed);
+      break;
 
-    case 'hstack':
-      return renderContainer('row', resolvedChildren, computed);
+    case ElementType.hstack:
+      element = renderContainer(FlexDirection.row, resolvedChildren, computed);
+      break;
 
-    case 'zstack':
-      return renderZStack(resolvedChildren, computed);
+    case ElementType.zstack:
+      element = renderZStack(resolvedChildren, computed);
+      break;
 
-    case 'icon':
-      return renderIcon(props, computed, resolve);
+    case ElementType.icon:
+      element = renderIcon(props, computed, resolve);
+      break;
 
-    case 'safearea':
-      return renderSafeArea(resolvedChildren, computed);
+    case ElementType.safearea:
+      element = renderSafeArea(resolvedChildren, computed);
+      break;
 
-    case 'scroll':
-      return renderScroll(resolvedChildren, computed, resolve);
+    case ElementType.scroll:
+      element = renderScroll(resolvedChildren, computed, resolve);
+      break;
 
-    case 'textinput':
-      return renderTextInput(props, computed, resolve, config);
+    case ElementType.textinput:
+      element = renderTextInput(props, computed, resolve, config);
+      break;
 
-    case 'spinner':
-      return renderSpinner(props, computed, resolve);
+    case ElementType.spinner:
+      element = renderSpinner(props, computed, resolve);
+      break;
 
-    case 'lazylist':
-      return renderLazyList(props, computed, resolve, config);
+    case ElementType.lazylist:
+      element = renderLazyList(props, computed, resolve, config, responsiveCtx);
+      break;
 
-    case 'image':
-      return renderImage(props, computed);
+    case ElementType.image:
+      element = renderImage(props, computed);
+      break;
 
-    case 'toggle':
-      return renderToggle(props, computed, resolve);
+    case ElementType.toggle:
+      element = renderToggle(props, computed, resolve);
+      break;
 
-    case 'button':
-      return renderButton(props, computed, resolve, config);
+    case ElementType.button:
+      element = renderButton(props, computed, resolve, config);
+      break;
 
-    case 'divider':
-      return renderDivider(computed, resolve);
+    case ElementType.divider:
+      element = renderDivider(computed, resolve);
+      break;
 
-    case 'link':
-      return renderLink(props, computed, resolve, config);
+    case ElementType.link:
+      element = renderLink(props, computed, resolve, config);
+      break;
 
-    case 'sectionlist':
-      return renderSectionList(props, computed, resolve, config);
+    case ElementType.sectionlist:
+      element = renderSectionList(props, computed, resolve, config, responsiveCtx);
+      break;
 
-    case 'modal':
-      return renderModal(props, resolvedChildren, computed);
+    case ElementType.modal:
+      element = renderModal(props, resolvedChildren, computed);
+      break;
 
-    case 'progressbar':
-      return renderProgressBar(props, computed, resolve);
+    case ElementType.progressbar:
+      element = renderProgressBar(props, computed, resolve);
+      break;
 
-    case 'spacer':
-      return React.createElement(View, {
+    case ElementType.spacer:
+      element = React.createElement(View, {
         style: { flex: 1, ...computed.viewStyle },
       });
+      break;
 
-    case 'raw':
+    case ElementType.raw:
       if (Object.keys(computed.viewStyle).length > 0 || computed.onTap || computed.onLongPress) {
-        return wrapWithInteraction(
+        element = wrapWithInteraction(
           React.createElement(View, { style: computed.viewStyle }, props.rawElement),
           computed,
         );
+      } else {
+        element = props.rawElement!;
       }
-      return props.rawElement!;
+      break;
 
-    case 'fragment':
-      return React.createElement(React.Fragment, null, ...resolvedChildren);
+    case ElementType.fragment:
+      element = React.createElement(React.Fragment, null, ...resolvedChildren);
+      break;
 
     default:
-      return React.createElement(
+      element = React.createElement(
         View,
         { style: computed.viewStyle, testID: computed.testID },
         ...resolvedChildren,
       );
+      break;
   }
+
+  // Apply wrapping chain: interaction → overlay → gestures → animation → environment
+  element = wrapWithOverlay(element, computed, resolve, config, responsiveCtx);
+  element = wrapWithGestures(element, computed);
+  element = wrapWithAnimation(element, computed);
+
+  // Wrap with environment context if environment values are set
+  if (computed.environmentValues && Object.keys(computed.environmentValues).length > 0) {
+    element = React.createElement(
+      EnvironmentCtx.Provider,
+      { value: computed.environmentValues },
+      element,
+    );
+  }
+
+  return element;
 }
 
 // --- Render functions ---
 
 function renderText(
-  props: ViewBuilder['props'],
+  props: DSLProps,
   computed: ComputedStyles,
   resolve: ColorResolver,
 ): React.ReactElement {
-  const textColor = computed.textStyle.color ?? resolve('text');
+  const textColor = computed.textStyle.color ?? resolve(Color.text);
   const mergedStyle: TextStyle = {
     ...computed.viewStyle as TextStyle,
     ...computed.textStyle,
@@ -178,12 +257,12 @@ function renderText(
 }
 
 function renderContainer(
-  direction: 'column' | 'row',
+  direction: string,
   children: React.ReactNode[],
   computed: ComputedStyles,
 ): React.ReactElement {
   const style: ViewStyle = {
-    flexDirection: direction,
+    flexDirection: direction as FlexDirectionStyle,
     ...computed.viewStyle,
   };
 
@@ -243,12 +322,11 @@ function renderScroll(
   if (computed.contentPadding && Object.keys(computed.contentPadding).length > 0) {
     scrollProps.contentContainerStyle = computed.contentPadding;
   }
-  if (computed.scrollDirection === 'horizontal') {
+  if (computed.scrollDirection === ScrollDirectionToken.horizontal) {
     scrollProps.horizontal = true;
   }
-  if (computed.keyboardPersistTaps) {
-    scrollProps.keyboardShouldPersistTaps = computed.keyboardPersistTaps;
-  }
+  // Always apply keyboardShouldPersistTaps — use modifier value or default
+  scrollProps.keyboardShouldPersistTaps = computed.keyboardPersistTaps ?? DSLDefaults.keyboardShouldPersistTaps;
   if (computed.bounces !== undefined) {
     scrollProps.bounces = computed.bounces;
   }
@@ -258,7 +336,7 @@ function renderScroll(
     scrollProps.refreshControl = React.createElement(RefreshControl, {
       refreshing: computed.refreshControlData.refreshing,
       onRefresh: computed.refreshControlData.onRefresh,
-      tintColor: resolve('tint'),
+      tintColor: resolve(Color.tint),
     });
   }
 
@@ -268,7 +346,7 @@ function renderScroll(
     return React.createElement(
       KeyboardAvoidingView,
       {
-        behavior: Platform.OS === 'ios' ? 'padding' : undefined,
+        behavior: computed.keyboardAvoidingBehavior ?? (Platform.OS === DSLPlatform.ios ? KeyboardBehavior.padding : undefined),
         keyboardVerticalOffset: computed.keyboardAvoiding,
         style: { flex: 1 } as ViewStyle,
       },
@@ -280,7 +358,7 @@ function renderScroll(
 }
 
 function renderTextInput(
-  props: ViewBuilder['props'],
+  props: DSLProps,
   computed: ComputedStyles,
   resolve: ColorResolver,
   config: DSLThemeConfig,
@@ -290,10 +368,10 @@ function renderTextInput(
     return React.createElement(View, null);
   }
 
-  const textColor = resolve('text');
-  const placeholderColor = resolve('secondaryText');
-  const errorColor = resolve('error');
-  const inputBg = resolve('inputBackground');
+  const textColor = resolve(Color.text);
+  const placeholderColor = resolve(config.components?.input?.placeholderColor ?? DSLDefaults.input.placeholderColor);
+  const errorColor = resolve(Color.error);
+  const inputBg = resolve(Color.inputBackground);
 
   const inputStyle: TextStyle = {
     fontSize: computed.textStyle.fontSize ?? config.fonts.size.body,
@@ -304,7 +382,7 @@ function renderTextInput(
     paddingHorizontal: DSLDefaults.input.paddingHorizontal,
     paddingVertical: DSLDefaults.input.paddingVertical,
     ...(computed.inputHeight ? { height: computed.inputHeight } : {}),
-    ...(computed.multiline ? { textAlignVertical: 'top' as const, minHeight: computed.inputHeight ?? DSLDefaults.input.minHeight } : {}),
+    ...(computed.multiline ? { textAlignVertical: RNTextAlignVertical.top, minHeight: computed.inputHeight ?? DSLDefaults.input.minHeight } : {}),
   };
 
   const inputProps: Record<string, unknown> = {
@@ -326,6 +404,8 @@ function renderTextInput(
   if (computed.returnKeyType) inputProps.returnKeyType = computed.returnKeyType;
   if (computed.maxLength) inputProps.maxLength = computed.maxLength;
   if (computed.accessibilityLabel) inputProps.accessibilityLabel = computed.accessibilityLabel;
+  if (computed.inputRef) inputProps.ref = computed.inputRef;
+  if (computed.onSubmitEditing) inputProps.onSubmitEditing = computed.onSubmitEditing;
 
   const textInput = React.createElement(RNTextInput, inputProps);
 
@@ -335,29 +415,29 @@ function renderTextInput(
     if (computed.inputLabel) {
       wrapperChildren.push(
         React.createElement(RNText, {
-          key: 'label',
+          key: RNKey.label,
           style: {
-            fontSize: config.fonts.size.caption,
-            fontWeight: config.fonts.weight.semibold,
+            fontSize: config.fonts.size[config.components?.input?.labelFontSize ?? DSLDefaults.input.labelFontSize],
+            fontWeight: (config.fonts.weight[config.components?.input?.labelFontWeight ?? DSLDefaults.input.labelFontWeight] ?? config.fonts.weight.semibold) as FontWeightStyle,
             color: textColor,
-            marginBottom: DSLDefaults.input.labelMarginBottom,
+            marginBottom: config.components?.input?.labelMarginBottom ?? DSLDefaults.input.labelMarginBottom,
           } as TextStyle,
         }, computed.inputLabel),
       );
     }
 
     wrapperChildren.push(
-      React.cloneElement(textInput, { key: 'input' }),
+      React.cloneElement(textInput, { key: RNKey.input }),
     );
 
     if (computed.inputError) {
       wrapperChildren.push(
         React.createElement(RNText, {
-          key: 'error',
+          key: RNKey.error,
           style: {
-            fontSize: config.fonts.size.caption,
+            fontSize: config.fonts.size[config.components?.input?.errorFontSize ?? DSLDefaults.input.errorFontSize],
             color: errorColor,
-            marginTop: DSLDefaults.input.errorMarginTop,
+            marginTop: config.components?.input?.errorMarginTop ?? DSLDefaults.input.errorMarginTop,
           } as TextStyle,
         }, computed.inputError),
       );
@@ -378,13 +458,13 @@ function renderTextInput(
 }
 
 function renderSpinner(
-  props: ViewBuilder['props'],
+  props: DSLProps,
   computed: ComputedStyles,
   resolve: ColorResolver,
 ): React.ReactElement {
-  const color = resolve('tint');
+  const color = resolve(Color.tint);
   const spinner = React.createElement(ActivityIndicator, {
-    size: props.spinnerSize ?? 'large',
+    size: props.spinnerSize ?? SpinnerSize.large,
     color,
     testID: computed.testID,
   });
@@ -397,10 +477,11 @@ function renderSpinner(
 }
 
 function renderLazyList(
-  props: ViewBuilder['props'],
+  props: DSLProps,
   computed: ComputedStyles,
   resolve: ColorResolver,
   config: DSLThemeConfig,
+  responsiveCtx: ResponsiveContext | null,
 ): React.ReactElement {
   const { listData, keyExtractor, renderItem, listHeader, stickyHeader } = props;
 
@@ -410,7 +491,7 @@ function renderLazyList(
 
   const flatListRenderItem = ({ item }: { item: unknown }) => {
     const builder = renderItem(item);
-    return renderBuilder(builder, resolve, config);
+    return renderBuilder(builder, resolve, config, responsiveCtx);
   };
 
   const listProps: Record<string, unknown> = {
@@ -432,7 +513,7 @@ function renderLazyList(
   if (computed.testID) listProps.testID = computed.testID;
 
   if (listHeader) {
-    const headerComponent = renderBuilder(listHeader, resolve, config);
+    const headerComponent = renderBuilder(listHeader, resolve, config, responsiveCtx);
     listProps.ListHeaderComponent = () => headerComponent;
     if (stickyHeader) {
       listProps.stickyHeaderIndices = [0];
@@ -443,7 +524,7 @@ function renderLazyList(
     listProps.refreshControl = React.createElement(RefreshControl, {
       refreshing: computed.refreshControlData.refreshing,
       onRefresh: computed.refreshControlData.onRefresh,
-      tintColor: resolve('tint'),
+      tintColor: resolve(Color.tint),
     });
   }
 
@@ -453,11 +534,10 @@ function renderLazyList(
   }
 
   if (computed.separatorBuilder) {
-    const SeparatorComponent = () => {
-      const builder = computed.separatorBuilder!();
-      return renderBuilder(builder as ViewBuilder, resolve, config);
-    };
-    listProps.ItemSeparatorComponent = SeparatorComponent;
+    const separatorElement = renderBuilder(
+      computed.separatorBuilder() as ViewBuilder, resolve, config, responsiveCtx,
+    );
+    listProps.ItemSeparatorComponent = () => separatorElement;
   }
 
   if (computed.numColumns !== undefined) {
@@ -465,11 +545,10 @@ function renderLazyList(
   }
 
   if (computed.emptyComponentBuilder) {
-    const EmptyComponent = () => {
-      const builder = computed.emptyComponentBuilder!();
-      return renderBuilder(builder as ViewBuilder, resolve, config);
-    };
-    listProps.ListEmptyComponent = EmptyComponent;
+    const emptyElement = renderBuilder(
+      computed.emptyComponentBuilder() as ViewBuilder, resolve, config, responsiveCtx,
+    );
+    listProps.ListEmptyComponent = () => emptyElement;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -477,23 +556,23 @@ function renderLazyList(
 }
 
 function renderIcon(
-  props: ViewBuilder['props'],
+  props: DSLProps,
   computed: ComputedStyles,
   resolve: ColorResolver,
 ): React.ReactElement {
-  const color = props.iconColor ? resolve(props.iconColor) : resolve('tint');
+  const color = props.iconColor ? resolve(props.iconColor) : resolve(Color.tint);
 
   let iconElement: React.ReactElement;
   if (FontAwesomeComponent) {
     iconElement = React.createElement(FontAwesomeComponent, {
       name: props.iconName,
-      size: props.iconSize ?? DSLDefaults.iconSize,
+      size: props.iconSize ?? DSLDefaults.icon.defaultSize,
       color,
       testID: computed.testID,
     });
   } else {
     iconElement = React.createElement(RNText, {
-      style: { fontSize: props.iconSize ?? DSLDefaults.iconSize, color } as TextStyle,
+      style: { fontSize: props.iconSize ?? DSLDefaults.icon.defaultSize, color } as TextStyle,
       testID: computed.testID,
     }, props.iconName);
   }
@@ -511,7 +590,7 @@ function renderIcon(
 // --- New render functions ---
 
 function renderImage(
-  props: ViewBuilder['props'],
+  props: DSLProps,
   computed: ComputedStyles,
 ): React.ReactElement {
   const imageStyle: ImageStyle = {
@@ -521,7 +600,7 @@ function renderImage(
   const imageProps: Record<string, unknown> = {
     source: props.imageSource,
     style: imageStyle,
-    resizeMode: props.resizeMode ?? DSLDefaults.imageResizeMode,
+    resizeMode: props.resizeMode ?? DSLDefaults.image.resizeMode,
   };
 
   if (computed.testID) imageProps.testID = computed.testID;
@@ -534,7 +613,7 @@ function renderImage(
 }
 
 function renderToggle(
-  props: ViewBuilder['props'],
+  props: DSLProps,
   computed: ComputedStyles,
   resolve: ColorResolver,
 ): React.ReactElement {
@@ -568,21 +647,21 @@ function renderToggle(
 }
 
 function renderButton(
-  props: ViewBuilder['props'],
+  props: DSLProps,
   computed: ComputedStyles,
   resolve: ColorResolver,
   config: DSLThemeConfig,
 ): React.ReactElement {
-  const { buttonTitle, buttonAction, buttonStyle = 'filled', buttonIcon } = props;
-  const tintColor = resolve('tint');
+  const { buttonTitle, buttonAction, buttonStyle = ButtonVariant.filled, buttonIcon } = props;
+  const tintColor = resolve(Color.tint);
 
   const containerStyle: ViewStyle = {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: computed.viewStyle.height ?? DSLDefaults.buttonHeight,
-    borderRadius: computed.viewStyle.borderRadius ?? DSLDefaults.buttonCornerRadius,
-    paddingHorizontal: DSLDefaults.buttonPaddingHorizontal,
+    flexDirection: FlexDirection.row,
+    alignItems: RNAlign.center,
+    justifyContent: RNAlign.center,
+    height: computed.viewStyle.height ?? DSLDefaults.button.height,
+    borderRadius: computed.viewStyle.borderRadius ?? DSLDefaults.button.cornerRadius,
+    paddingHorizontal: DSLDefaults.button.paddingHorizontal,
     ...computed.viewStyle,
   };
 
@@ -590,26 +669,26 @@ function renderButton(
   const customTextColor = computed.textStyle.color as string | undefined;
 
   switch (buttonStyle) {
-    case 'filled':
+    case ButtonVariant.filled:
       containerStyle.backgroundColor = containerStyle.backgroundColor ?? tintColor;
-      textColor = customTextColor ?? resolve('buttonText');
+      textColor = customTextColor ?? resolve(Color.buttonText);
       break;
-    case 'outlined':
-      containerStyle.borderWidth = containerStyle.borderWidth ?? DSLDefaults.buttonBorderWidth;
+    case ButtonVariant.outlined:
+      containerStyle.borderWidth = containerStyle.borderWidth ?? DSLDefaults.button.borderWidth;
       containerStyle.borderColor = containerStyle.borderColor ?? tintColor;
-      containerStyle.backgroundColor = containerStyle.backgroundColor ?? 'transparent';
+      containerStyle.backgroundColor = containerStyle.backgroundColor ?? RNColor.transparent;
       textColor = customTextColor ?? tintColor;
       break;
-    case 'plain':
+    case ButtonVariant.plain:
     default:
-      containerStyle.backgroundColor = containerStyle.backgroundColor ?? 'transparent';
+      containerStyle.backgroundColor = containerStyle.backgroundColor ?? RNColor.transparent;
       textColor = customTextColor ?? tintColor;
       break;
   }
 
   const textStyleObj: TextStyle = {
-    fontSize: computed.textStyle.fontSize ?? config.fonts.size[DSLDefaults.buttonFontSize],
-    fontWeight: computed.textStyle.fontWeight ?? (config.fonts.weight.semibold as TextStyle['fontWeight']),
+    fontSize: computed.textStyle.fontSize ?? config.fonts.size[DSLDefaults.button.fontSize],
+    fontWeight: computed.textStyle.fontWeight ?? (config.fonts.weight[config.components?.button?.fontWeight ?? DSLDefaults.button.fontWeight] ?? config.fonts.weight.semibold) as FontWeightStyle,
     color: textColor,
   };
 
@@ -619,25 +698,25 @@ function renderButton(
     if (FontAwesomeComponent) {
       children.push(
         React.createElement(FontAwesomeComponent, {
-          key: 'icon',
+          key: RNKey.icon,
           name: buttonIcon,
-          size: DSLDefaults.iconSize,
+          size: DSLDefaults.icon.defaultSize,
           color: textColor,
-          style: { marginRight: DSLDefaults.buttonIconSpacing } as TextStyle,
+          style: { marginEnd: DSLDefaults.button.iconSpacing } as TextStyle,
         }),
       );
     } else {
       children.push(
         React.createElement(RNText, {
-          key: 'icon',
-          style: { fontSize: DSLDefaults.iconSize, color: textColor, marginRight: DSLDefaults.buttonIconSpacing } as TextStyle,
+          key: RNKey.icon,
+          style: { fontSize: DSLDefaults.icon.defaultSize, color: textColor, marginEnd: DSLDefaults.button.iconSpacing } as TextStyle,
         }, buttonIcon),
       );
     }
   }
 
   children.push(
-    React.createElement(RNText, { key: 'text', style: textStyleObj }, buttonTitle),
+    React.createElement(RNText, { key: RNKey.text, style: textStyleObj }, buttonTitle),
   );
 
   return React.createElement(
@@ -647,10 +726,10 @@ function renderButton(
       disabled: computed.disabled,
       testID: computed.testID,
       accessibilityLabel: computed.accessibilityLabel,
-      accessibilityRole: 'button',
+      accessibilityRole: AccessibilityRole.button,
       style: ({ pressed }: { pressed: boolean }) => ({
         ...containerStyle,
-        opacity: pressed ? DSLDefaults.pressedOpacity : DSLDefaults.fullOpacity,
+        opacity: pressed ? DSLDefaults.interaction.pressedOpacity : DSLDefaults.interaction.fullOpacity,
       }),
     },
     ...children,
@@ -661,12 +740,12 @@ function renderDivider(
   computed: ComputedStyles,
   resolve: ColorResolver,
 ): React.ReactElement {
-  const color = computed.textStyle.color ?? resolve(DSLDefaults.dividerColor);
+  const color = computed.textStyle.color ?? resolve(DSLDefaults.divider.color);
 
   const style: ViewStyle = {
     height: StyleSheet.hairlineWidth,
     backgroundColor: color,
-    alignSelf: 'stretch' as const,
+    alignSelf: RNAlign.stretch,
     ...computed.viewStyle,
   };
 
@@ -674,16 +753,16 @@ function renderDivider(
 }
 
 function renderLink(
-  props: ViewBuilder['props'],
+  props: DSLProps,
   computed: ComputedStyles,
   resolve: ColorResolver,
   config: DSLThemeConfig,
 ): React.ReactElement {
-  const linkColor = computed.textStyle.color ?? resolve(DSLDefaults.linkColor);
+  const linkColor = computed.textStyle.color ?? resolve(DSLDefaults.link.color);
 
   const textStyleObj: TextStyle = {
-    textDecorationLine: 'underline',
-    fontSize: computed.textStyle.fontSize ?? config.fonts.size.body,
+    textDecorationLine: (config.components?.link?.textDecoration ?? DSLDefaults.link.textDecoration) as TextDecorationLineStyle,
+    fontSize: computed.textStyle.fontSize ?? config.fonts.size[config.components?.link?.fontSize ?? DSLDefaults.link.fontSize],
     ...computed.textStyle,
     color: linkColor,
   };
@@ -700,10 +779,10 @@ function renderLink(
       },
       testID: computed.testID,
       accessibilityLabel: computed.accessibilityLabel,
-      accessibilityRole: 'link',
+      accessibilityRole: AccessibilityRole.link,
       style: ({ pressed }: { pressed: boolean }) => ({
         ...computed.viewStyle,
-        opacity: pressed ? DSLDefaults.pressedOpacity : DSLDefaults.fullOpacity,
+        opacity: pressed ? DSLDefaults.interaction.pressedOpacity : DSLDefaults.interaction.fullOpacity,
       }),
     },
     textElement,
@@ -711,10 +790,11 @@ function renderLink(
 }
 
 function renderSectionList(
-  props: ViewBuilder['props'],
+  props: DSLProps,
   computed: ComputedStyles,
   resolve: ColorResolver,
   config: DSLThemeConfig,
+  responsiveCtx: ResponsiveContext | null,
 ): React.ReactElement {
   const { sectionListData, keyExtractor, sectionRenderItem, sectionRenderHeader } = props;
 
@@ -724,7 +804,7 @@ function renderSectionList(
 
   const sectionListRenderItem = ({ item }: { item: unknown }) => {
     const builder = sectionRenderItem(item);
-    return renderBuilder(builder, resolve, config);
+    return renderBuilder(builder, resolve, config, responsiveCtx);
   };
 
   const sectionListProps: Record<string, unknown> = {
@@ -737,7 +817,7 @@ function renderSectionList(
   if (sectionRenderHeader) {
     sectionListProps.renderSectionHeader = ({ section }: { section: { title: string } }) => {
       const builder = sectionRenderHeader(section.title);
-      return renderBuilder(builder, resolve, config);
+      return renderBuilder(builder, resolve, config, responsiveCtx);
     };
   }
 
@@ -756,24 +836,22 @@ function renderSectionList(
     sectionListProps.refreshControl = React.createElement(RefreshControl, {
       refreshing: computed.refreshControlData.refreshing,
       onRefresh: computed.refreshControlData.onRefresh,
-      tintColor: resolve('tint'),
+      tintColor: resolve(Color.tint),
     });
   }
 
   if (computed.separatorBuilder) {
-    const SeparatorComponent = () => {
-      const builder = computed.separatorBuilder!();
-      return renderBuilder(builder as ViewBuilder, resolve, config);
-    };
-    sectionListProps.ItemSeparatorComponent = SeparatorComponent;
+    const separatorElement = renderBuilder(
+      computed.separatorBuilder() as ViewBuilder, resolve, config, responsiveCtx,
+    );
+    sectionListProps.ItemSeparatorComponent = () => separatorElement;
   }
 
   if (computed.emptyComponentBuilder) {
-    const EmptyComponent = () => {
-      const builder = computed.emptyComponentBuilder!();
-      return renderBuilder(builder as ViewBuilder, resolve, config);
-    };
-    sectionListProps.ListEmptyComponent = EmptyComponent;
+    const emptyElement = renderBuilder(
+      computed.emptyComponentBuilder() as ViewBuilder, resolve, config, responsiveCtx,
+    );
+    sectionListProps.ListEmptyComponent = () => emptyElement;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -781,7 +859,7 @@ function renderSectionList(
 }
 
 function renderModal(
-  props: ViewBuilder['props'],
+  props: DSLProps,
   children: React.ReactNode[],
   computed: ComputedStyles,
 ): React.ReactElement {
@@ -789,7 +867,7 @@ function renderModal(
 
   const modalProps: Record<string, unknown> = {
     visible: modalBinding?.value ?? false,
-    animationType: modalAnimationType ?? 'slide',
+    animationType: modalAnimationType ?? ModalAnimation.slide,
     transparent: modalTransparent ?? false,
     onRequestClose: () => {
       if (computed.onDismiss) computed.onDismiss();
@@ -811,21 +889,21 @@ function renderModal(
 }
 
 function renderProgressBar(
-  props: ViewBuilder['props'],
+  props: DSLProps,
   computed: ComputedStyles,
   resolve: ColorResolver,
 ): React.ReactElement {
   const value = Math.max(0, Math.min(1, props.progressValue ?? 0));
-  const trackColor = props.progressTrackColor ? resolve(props.progressTrackColor) : resolve('separator');
-  const progressColor = props.progressColor ? resolve(props.progressColor) : resolve('tint');
-  const height = computed.viewStyle.height ?? DSLDefaults.progressBarHeight;
-  const borderRadius = computed.viewStyle.borderRadius ?? DSLDefaults.progressBarCornerRadius;
+  const trackColor = props.progressTrackColor ? resolve(props.progressTrackColor) : resolve(Color.separator);
+  const progressColor = props.progressColor ? resolve(props.progressColor) : resolve(Color.tint);
+  const height = computed.viewStyle.height ?? DSLDefaults.progressBar.height;
+  const borderRadius = computed.viewStyle.borderRadius ?? DSLDefaults.progressBar.cornerRadius;
 
   const trackStyle: ViewStyle = {
     height,
     borderRadius,
     backgroundColor: trackColor,
-    overflow: 'hidden',
+    overflow: OverflowConstant.hidden,
     ...computed.viewStyle,
   };
 
@@ -838,7 +916,7 @@ function renderProgressBar(
 
   return React.createElement(
     View,
-    { style: trackStyle, testID: computed.testID, accessibilityRole: 'progressbar' },
+    { style: trackStyle, testID: computed.testID, accessibilityRole: AccessibilityRole.progressbar },
     React.createElement(View, { style: fillStyle }),
   );
 }
@@ -863,7 +941,7 @@ function wrapWithInteraction(
         accessibilityLabel: computed.accessibilityLabel,
         style: ({ pressed }: { pressed: boolean }) => ({
           ...pressableStyle,
-          opacity: pressed ? DSLDefaults.pressedOpacity : DSLDefaults.fullOpacity,
+          opacity: pressed ? DSLDefaults.interaction.pressedOpacity : DSLDefaults.interaction.fullOpacity,
         }),
       },
       element,
@@ -872,29 +950,237 @@ function wrapWithInteraction(
   return element;
 }
 
+// --- Overlay wrapper ---
+
+function wrapWithOverlay(
+  element: React.ReactElement,
+  computed: ComputedStyles,
+  resolve: ColorResolver,
+  config: DSLThemeConfig,
+  responsiveCtx: ResponsiveContext | null,
+): React.ReactElement {
+  if (!computed.overlayBuilder) return element;
+
+  const overlayView = computed.overlayBuilder() as ViewBuilder;
+  const overlayElement = renderBuilder(overlayView, resolve, config, responsiveCtx);
+
+  return React.createElement(
+    View,
+    { style: { position: PositionToken.relative } },
+    element,
+    React.createElement(
+      View,
+      {
+        style: {
+          position: PositionToken.absolute,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          justifyContent: RNAlign.center,
+          alignItems: RNAlign.center,
+        },
+        pointerEvents: RNPointerEvents.boxNone,
+      },
+      overlayElement,
+    ),
+  );
+}
+
+// --- Animation wrapper ---
+
+function wrapWithAnimation(
+  element: React.ReactElement,
+  computed: ComputedStyles,
+): React.ReactElement {
+  if (computed.animationData) {
+    return React.createElement(AnimatedWrapper, {
+      animation: computed.animationData,
+      children: element,
+    });
+  }
+  if (computed.transitionData) {
+    return React.createElement(TransitionWrapper, {
+      transition: computed.transitionData,
+      visible: true,
+      children: element,
+    });
+  }
+  return element;
+}
+
+// --- Gesture wrapper ---
+
+function wrapWithGestures(
+  element: React.ReactElement,
+  computed: ComputedStyles,
+): React.ReactElement {
+  if (!computed.gestures || computed.gestures.length === 0) {
+    return element;
+  }
+
+  // Try react-native-gesture-handler first
+  try {
+    const GestureHandler = require('react-native-gesture-handler');
+    return wrapWithGestureHandler(element, computed.gestures, GestureHandler);
+  } catch {
+    // Fall back to PanResponder for swipe/pan only
+    return wrapWithPanResponder(element, computed.gestures);
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function wrapWithGestureHandler(
+  element: React.ReactElement,
+  gestures: GestureConfig[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  GH: any,
+): React.ReactElement {
+  const { Gesture, GestureDetector } = GH;
+  const gestureObjects: unknown[] = [];
+
+  for (const g of gestures) {
+    switch (g.type) {
+      case GestureType.swipe: {
+        const pan = Gesture.Pan()
+          .onEnd((event: { translationX: number; translationY: number; velocityX: number; velocityY: number }) => {
+            const threshold = g.threshold ?? DSLDefaults.gesture.swipeThreshold;
+            const velThreshold = g.velocityThreshold ?? DSLDefaults.gesture.swipeVelocityThreshold;
+
+            switch (g.direction) {
+              case SwipeDirectionToken.left:
+                if (event.translationX < -threshold && Math.abs(event.velocityX) > velThreshold) g.handler();
+                break;
+              case SwipeDirectionToken.right:
+                if (event.translationX > threshold && Math.abs(event.velocityX) > velThreshold) g.handler();
+                break;
+              case SwipeDirectionToken.up:
+                if (event.translationY < -threshold && Math.abs(event.velocityY) > velThreshold) g.handler();
+                break;
+              case SwipeDirectionToken.down:
+                if (event.translationY > threshold && Math.abs(event.velocityY) > velThreshold) g.handler();
+                break;
+            }
+          });
+        gestureObjects.push(pan);
+        break;
+      }
+      case GestureType.pan: {
+        let pan = Gesture.Pan();
+        if (g.config?.minDistance !== undefined) pan = pan.minDistance(g.config.minDistance);
+        if (g.config?.maxPointers !== undefined) pan = pan.maxPointers(g.config.maxPointers);
+        if (g.config?.minPointers !== undefined) pan = pan.minPointers(g.config.minPointers);
+        if (g.config?.enabled === false) pan = pan.enabled(false);
+
+        if (g.onStart) {
+          const startHandler = g.onStart;
+          pan = pan.onStart((e: { translationX: number; translationY: number; absoluteX: number; absoluteY: number; velocityX: number; velocityY: number }) => {
+            startHandler({ translation: { x: e.translationX, y: e.translationY }, velocity: { x: e.velocityX, y: e.velocityY }, position: { x: e.absoluteX, y: e.absoluteY } });
+          });
+        }
+        pan = pan.onUpdate((e: { translationX: number; translationY: number; absoluteX: number; absoluteY: number; velocityX: number; velocityY: number }) => {
+          g.onChanged({ translation: { x: e.translationX, y: e.translationY }, velocity: { x: e.velocityX, y: e.velocityY }, position: { x: e.absoluteX, y: e.absoluteY } });
+        });
+        if (g.onEnded) {
+          const endHandler = g.onEnded;
+          pan = pan.onEnd((e: { translationX: number; translationY: number; absoluteX: number; absoluteY: number; velocityX: number; velocityY: number }) => {
+            endHandler({ translation: { x: e.translationX, y: e.translationY }, velocity: { x: e.velocityX, y: e.velocityY }, position: { x: e.absoluteX, y: e.absoluteY } });
+          });
+        }
+        gestureObjects.push(pan);
+        break;
+      }
+      case GestureType.pinch: {
+        let pinch = Gesture.Pinch();
+        if (g.config?.enabled === false) pinch = pinch.enabled(false);
+        pinch = pinch.onUpdate((e: { scale: number; focalX: number; focalY: number; velocity: number }) => {
+          g.onChanged({ scale: e.scale, focalPoint: { x: e.focalX, y: e.focalY }, velocity: e.velocity });
+        });
+        if (g.onEnded) {
+          const endHandler = g.onEnded;
+          pinch = pinch.onEnd((e: { scale: number; focalX: number; focalY: number; velocity: number }) => {
+            endHandler({ scale: e.scale, focalPoint: { x: e.focalX, y: e.focalY }, velocity: e.velocity });
+          });
+        }
+        gestureObjects.push(pinch);
+        break;
+      }
+      case GestureType.rotation: {
+        let rotation = Gesture.Rotation();
+        if (g.config?.enabled === false) rotation = rotation.enabled(false);
+        rotation = rotation.onUpdate((e: { rotation: number; anchorX: number; anchorY: number; velocity: number }) => {
+          g.onChanged({ rotation: e.rotation, velocity: e.velocity, anchor: { x: e.anchorX, y: e.anchorY } });
+        });
+        if (g.onEnded) {
+          const endHandler = g.onEnded;
+          rotation = rotation.onEnd((e: { rotation: number; anchorX: number; anchorY: number; velocity: number }) => {
+            endHandler({ rotation: e.rotation, velocity: e.velocity, anchor: { x: e.anchorX, y: e.anchorY } });
+          });
+        }
+        gestureObjects.push(rotation);
+        break;
+      }
+    }
+  }
+
+  if (gestureObjects.length === 0) return element;
+
+  // Compose multiple gestures simultaneously
+  const composed = gestureObjects.length === 1
+    ? gestureObjects[0]
+    : Gesture.Simultaneous(...gestureObjects);
+
+  return React.createElement(GestureDetector, { gesture: composed }, element);
+}
+
+function wrapWithPanResponder(
+  element: React.ReactElement,
+  gestures: GestureConfig[],
+): React.ReactElement {
+  // PanResponder fallback only supports swipe and pan gestures
+  const supportedGestures = gestures.filter(g => g.type === GestureType.swipe || g.type === GestureType.pan);
+  const unsupportedGestures = gestures.filter(g => g.type === GestureType.pinch || g.type === GestureType.rotation);
+
+  if (unsupportedGestures.length > 0) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      DSLWarnings.gestureHandlerRequired,
+    );
+  }
+
+  if (supportedGestures.length === 0) return element;
+
+  // For PanResponder fallback, we wrap with a View that has a PanResponder
+  // The actual PanResponder setup happens in the GestureWrapper component
+  const { GestureResponderView } = require('@/Gesture/GestureWrapper');
+  return React.createElement(GestureResponderView, { gestures: supportedGestures }, element);
+}
+
 // --- Children resolution ---
 
 function resolveChildren(
   children: ReadonlyArray<DSLChild>,
   resolve: ColorResolver,
   config: DSLThemeConfig,
+  responsiveCtx: ResponsiveContext | null,
 ): React.ReactNode[] {
   return children
     .filter((c): c is Exclude<DSLChild, null | undefined | boolean> =>
-      c != null && typeof c !== 'boolean')
-    .map((child, index) => resolveChild(child, resolve, config, index));
+      !isNil(c) && !isBoolean(c))
+    .map((child, index) => resolveChild(child, resolve, config, responsiveCtx, index));
 }
 
 function resolveChild(
   child: Exclude<DSLChild, null | undefined | boolean>,
   resolve: ColorResolver,
   config: DSLThemeConfig,
+  responsiveCtx: ResponsiveContext | null,
   _index: number,
 ): React.ReactNode {
   if (isViewBuilder(child)) {
-    return renderBuilder(child, resolve, config);
+    return renderBuilder(child, resolve, config, responsiveCtx);
   }
-  if (typeof child === 'string' || typeof child === 'number') {
+  if (isString(child) || isNumber(child)) {
     return String(child);
   }
   return child;
@@ -914,12 +1200,13 @@ interface ComputedStyles {
   testID?: string;
   lineLimit?: number;
   gap?: number;
-  safeAreaEdges?: ('top' | 'bottom' | 'left' | 'right')[];
+  safeAreaEdges?: EdgeToken[];
   hideScrollIndicator?: boolean;
   contentPadding?: ViewStyle;
-  scrollDirection?: 'horizontal';
+  scrollDirection?: ScrollDirType;
   keyboardAvoiding?: number;
-  keyboardPersistTaps?: 'always' | 'never' | 'handled';
+  keyboardAvoidingBehavior?: KeyboardBehaviorToken;
+  keyboardPersistTaps?: KeyboardPersistTapsToken;
   bounces?: boolean;
   // TextInput
   placeholder?: string;
@@ -933,6 +1220,8 @@ interface ComputedStyles {
   returnKeyType?: string;
   maxLength?: number;
   inputHeight?: number;
+  inputRef?: React.RefObject<unknown>;
+  onSubmitEditing?: () => void;
   // List
   refreshControlData?: { onRefresh: () => void; refreshing: boolean };
   onEndReachedData?: { handler: () => void; threshold?: number };
@@ -941,6 +1230,15 @@ interface ComputedStyles {
   emptyComponentBuilder?: () => unknown;
   // Modal
   onDismiss?: () => void;
+  // Transform
+  overlayBuilder?: () => unknown;
+  // Animation
+  animationData?: ComputedAnimation;
+  transitionData?: ComputedTransition;
+  // Gesture
+  gestures?: GestureConfig[];
+  // Environment
+  environmentValues?: Record<string, unknown>;
 }
 
 // --- computeStyles ---
@@ -961,12 +1259,13 @@ function computeStyles(
   let testID: string | undefined;
   let lineLimit: number | undefined;
   let gap: number | undefined;
-  let safeAreaEdges: ('top' | 'bottom' | 'left' | 'right')[] | undefined;
+  let safeAreaEdges: EdgeToken[] | undefined;
   let hideScrollIndicator: boolean | undefined;
   const contentPadding: ViewStyle = {};
-  let scrollDirection: 'horizontal' | undefined;
+  let scrollDirection: ScrollDirType | undefined;
   let keyboardAvoiding: number | undefined;
-  let keyboardPersistTaps: 'always' | 'never' | 'handled' | undefined;
+  let keyboardAvoidingBehavior: KeyboardBehaviorToken | undefined;
+  let keyboardPersistTaps: KeyboardPersistTapsToken | undefined;
   let bounces: boolean | undefined;
   // TextInput
   let placeholder: string | undefined;
@@ -980,6 +1279,8 @@ function computeStyles(
   let returnKeyType: string | undefined;
   let maxLength: number | undefined;
   let inputHeight: number | undefined;
+  let inputRef: React.RefObject<unknown> | undefined;
+  let onSubmitEditing: (() => void) | undefined;
   // List
   let refreshControlData: { onRefresh: () => void; refreshing: boolean } | undefined;
   let onEndReachedData: { handler: () => void; threshold?: number } | undefined;
@@ -988,283 +1289,388 @@ function computeStyles(
   let emptyComponentBuilder: (() => unknown) | undefined;
   // Modal
   let onDismiss: (() => void) | undefined;
+  // Transform
+  let overlayBuilder: (() => unknown) | undefined;
+  // Animation
+  let animationData: ComputedAnimation | undefined;
+  let transitionData: ComputedTransition | undefined;
+  // Gesture
+  let gestures: GestureConfig[] | undefined;
+  // Environment
+  let environmentValues: Record<string, unknown> | undefined;
 
   for (const mod of modifiers) {
     switch (mod.type) {
-      case 'padding': {
+      case ModifierType.padding: {
         const px = resolveSpacing(mod.value, config.layout);
-        applyEdge(viewStyle, 'padding', mod.edge, px);
+        applyEdge(viewStyle, ApplyEdgePrefix.padding, mod.edge, px);
         break;
       }
-      case 'margin': {
+      case ModifierType.margin: {
         const px = resolveSpacing(mod.value, config.layout);
-        applyEdge(viewStyle, 'margin', mod.edge, px);
+        applyEdge(viewStyle, ApplyEdgePrefix.margin, mod.edge, px);
         break;
       }
-      case 'background':
+      case ModifierType.background:
         viewStyle.backgroundColor = resolve(mod.color);
         break;
-      case 'backgroundAlpha':
+      case ModifierType.backgroundAlpha:
         viewStyle.backgroundColor = resolve(mod.color) + mod.alphaHex;
         break;
-      case 'foregroundColor':
+      case ModifierType.foregroundColor:
         textStyle.color = resolve(mod.color);
         break;
-      case 'cornerRadius':
+      case ModifierType.cornerRadius:
         viewStyle.borderRadius = resolveBorderRadius(mod.value, config.layout);
         break;
-      case 'border':
+      case ModifierType.border:
         viewStyle.borderWidth = mod.width;
         viewStyle.borderColor = resolve(mod.color);
         break;
-      case 'borderStyle':
+      case ModifierType.borderStyle:
         viewStyle.borderStyle = mod.value;
         break;
-      case 'shadow':
+      case ModifierType.shadow:
         viewStyle.shadowColor = resolve(mod.color);
         viewStyle.shadowOffset = mod.offset;
         viewStyle.shadowOpacity = mod.opacity;
         viewStyle.shadowRadius = mod.radius;
         if (mod.elevation !== undefined) viewStyle.elevation = mod.elevation;
         break;
-      case 'opacity':
+      case ModifierType.opacity:
         viewStyle.opacity = mod.value;
         break;
-      case 'flex':
+      case ModifierType.flex:
         viewStyle.flex = mod.value;
         break;
-      case 'frame':
+      case ModifierType.frame:
         if (mod.width !== undefined) viewStyle.width = mod.width;
         if (mod.height !== undefined) viewStyle.height = mod.height;
         if (mod.minWidth !== undefined) viewStyle.minWidth = mod.minWidth;
         if (mod.maxWidth !== undefined) viewStyle.maxWidth = mod.maxWidth;
         if (mod.minHeight !== undefined) viewStyle.minHeight = mod.minHeight;
         if (mod.maxHeight !== undefined) viewStyle.maxHeight = mod.maxHeight;
-        if (mod.alignment === 'center') {
-          viewStyle.alignItems = 'center';
-          viewStyle.justifyContent = 'center';
-        } else if (mod.alignment === 'leading') {
-          viewStyle.alignItems = 'flex-start';
-        } else if (mod.alignment === 'trailing') {
-          viewStyle.alignItems = 'flex-end';
+        if (mod.alignment === AlignmentToken.center) {
+          viewStyle.alignItems = RNAlign.center;
+          viewStyle.justifyContent = RNAlign.center;
+        } else if (mod.alignment === AlignmentToken.leading) {
+          viewStyle.alignItems = RNAlign.flexStart;
+        } else if (mod.alignment === AlignmentToken.trailing) {
+          viewStyle.alignItems = RNAlign.flexEnd;
         }
         break;
-      case 'spacing':
+      case ModifierType.spacing:
         gap = mod.value;
         break;
-      case 'gap':
+      case ModifierType.gap:
         gap = mod.value;
         break;
-      case 'justifyContent': {
-        const jcMap: Record<string, ViewStyle['justifyContent']> = {
-          flexStart: 'flex-start',
-          flexEnd: 'flex-end',
-          center: 'center',
-          spaceBetween: 'space-between',
-          spaceAround: 'space-around',
-          spaceEvenly: 'space-evenly',
+      case ModifierType.justifyContent: {
+        const jcMap: Record<string, JustifyContentStyle> = {
+          [JustifyContentToken.flexStart]: RNAlign.flexStart,
+          [JustifyContentToken.flexEnd]: RNAlign.flexEnd,
+          [JustifyContentToken.center]: RNAlign.center,
+          [JustifyContentToken.spaceBetween]: RNAlign.spaceBetween,
+          [JustifyContentToken.spaceAround]: RNAlign.spaceAround,
+          [JustifyContentToken.spaceEvenly]: RNAlign.spaceEvenly,
         };
         viewStyle.justifyContent = jcMap[mod.value];
         break;
       }
-      case 'alignItems': {
-        const aiMap: Record<string, ViewStyle['alignItems']> = {
-          flexStart: 'flex-start',
-          flexEnd: 'flex-end',
-          center: 'center',
-          stretch: 'stretch',
-          baseline: 'baseline',
+      case ModifierType.alignItems: {
+        const aiMap: Record<string, AlignItemsStyle> = {
+          [AlignItemsToken.flexStart]: RNAlign.flexStart,
+          [AlignItemsToken.flexEnd]: RNAlign.flexEnd,
+          [AlignItemsToken.center]: RNAlign.center,
+          [AlignItemsToken.stretch]: RNAlign.stretch,
+          [AlignItemsToken.baseline]: RNAlign.baseline,
         };
         viewStyle.alignItems = aiMap[mod.value];
         break;
       }
-      case 'alignment': {
-        const alignMap: Record<string, ViewStyle['alignItems']> = {
-          center: 'center',
-          leading: 'flex-start',
-          trailing: 'flex-end',
-          stretch: 'stretch',
+      case ModifierType.alignment: {
+        const alignMap: Record<string, AlignItemsStyle> = {
+          [AlignmentToken.center]: RNAlign.center,
+          [AlignmentToken.leading]: RNAlign.flexStart,
+          [AlignmentToken.trailing]: RNAlign.flexEnd,
+          [AlignmentToken.stretch]: RNAlign.stretch,
         };
         viewStyle.alignItems = alignMap[mod.value];
         break;
       }
-      case 'flexWrap':
+      case ModifierType.flexWrap:
         viewStyle.flexWrap = mod.value;
         break;
-      case 'font':
+      case ModifierType.font:
         textStyle.fontSize = resolveFontSize(mod.size, config.fonts);
         break;
-      case 'fontWeight': {
+      case ModifierType.fontWeight: {
         const resolved = config.fonts.weight[mod.weight] ?? DSLDefaults.fontWeightFallbacks[mod.weight];
         if (resolved) {
-          textStyle.fontWeight = resolved as TextStyle['fontWeight'];
+          textStyle.fontWeight = resolved as FontWeightStyle;
         }
         break;
       }
-      case 'textTransform':
+      case ModifierType.textTransform:
         textStyle.textTransform = mod.value;
         break;
-      case 'letterSpacing':
+      case ModifierType.letterSpacing:
         textStyle.letterSpacing = mod.value;
         break;
-      case 'lineHeight':
+      case ModifierType.lineHeight:
         textStyle.lineHeight = mod.value;
         break;
-      case 'textAlign':
+      case ModifierType.textAlign:
         textStyle.textAlign = mod.value;
         break;
-      case 'lineLimit':
+      case ModifierType.lineLimit:
         lineLimit = mod.value;
         break;
-      case 'onTap':
+      case ModifierType.onTap:
         onTap = mod.handler;
         break;
-      case 'onLongPress':
+      case ModifierType.onLongPress:
         onLongPress = mod.handler;
         break;
-      case 'disabled':
+      case ModifierType.disabled:
         disabled = mod.value;
         break;
-      case 'accessibilityLabel':
+      case ModifierType.accessibilityLabel:
         accessibilityLabel = mod.value;
         break;
-      case 'accessibilityRole':
+      case ModifierType.accessibilityRole:
         accessibilityRole = mod.value;
         break;
-      case 'accessibilityHint':
+      case ModifierType.accessibilityHint:
         accessibilityHint = mod.value;
         break;
-      case 'testID':
+      case ModifierType.testID:
         testID = mod.value;
         break;
-      case 'safeAreaEdges':
+      case ModifierType.safeAreaEdges:
         safeAreaEdges = mod.value;
         break;
-      case 'hideScrollIndicator':
+      case ModifierType.hideScrollIndicator:
         hideScrollIndicator = mod.value;
         break;
-      case 'scrollContentPadding': {
+      case ModifierType.scrollContentPadding: {
         const cpx = resolveSpacing(mod.value, config.layout);
-        applyEdge(contentPadding, 'padding', mod.edge, cpx);
+        applyEdge(contentPadding, ApplyEdgePrefix.padding, mod.edge, cpx);
         break;
       }
-      case 'scrollDirection':
+      case ModifierType.scrollDirection:
         scrollDirection = mod.value;
         break;
-      case 'keyboardAvoiding':
+      case ModifierType.keyboardAvoiding:
         keyboardAvoiding = mod.offset;
+        keyboardAvoidingBehavior = mod.behavior;
         break;
-      case 'keyboardPersistTaps':
+      case ModifierType.keyboardPersistTaps:
         keyboardPersistTaps = mod.value;
         break;
-      case 'bounces':
+      case ModifierType.bounces:
         bounces = mod.value;
         break;
       // TextInput modifiers
-      case 'placeholder':
+      case ModifierType.placeholder:
         placeholder = mod.value;
         break;
-      case 'inputLabel':
+      case ModifierType.inputLabel:
         inputLabel = mod.text;
         break;
-      case 'inputError':
+      case ModifierType.inputError:
         inputError = mod.message;
         break;
-      case 'keyboardType':
+      case ModifierType.keyboardType:
         keyboardType = mod.value;
         break;
-      case 'multiline':
+      case ModifierType.multiline:
         multiline = true;
         multilineLines = mod.lines;
         break;
-      case 'secureEntry':
+      case ModifierType.secureEntry:
         secureEntry = true;
         break;
-      case 'autoCapitalize':
+      case ModifierType.autoCapitalize:
         autoCapitalize = mod.value;
         break;
-      case 'returnKeyType':
+      case ModifierType.returnKeyType:
         returnKeyType = mod.value;
         break;
-      case 'maxLength':
+      case ModifierType.maxLength:
         maxLength = mod.value;
         break;
-      case 'inputHeight':
+      case ModifierType.inputHeight:
         inputHeight = mod.value;
         break;
+      case ModifierType.inputRef:
+        inputRef = mod.ref;
+        break;
+      case ModifierType.onSubmitEditing:
+        onSubmitEditing = mod.handler;
+        break;
       // New layout modifiers
-      case 'position':
+      case ModifierType.position:
         viewStyle.position = mod.value;
         break;
-      case 'positionEdges':
+      case ModifierType.positionEdges:
         if (mod.top !== undefined) viewStyle.top = mod.top;
         if (mod.left !== undefined) viewStyle.left = mod.left;
         if (mod.right !== undefined) viewStyle.right = mod.right;
         if (mod.bottom !== undefined) viewStyle.bottom = mod.bottom;
         break;
-      case 'zIndex':
+      case ModifierType.zIndex:
         viewStyle.zIndex = mod.value;
         break;
-      case 'overflow':
+      case ModifierType.overflow:
         viewStyle.overflow = mod.value;
         break;
-      case 'aspectRatio':
+      case ModifierType.aspectRatio:
         viewStyle.aspectRatio = mod.value;
         break;
-      case 'alignSelf': {
-        const asMap: Record<string, ViewStyle['alignSelf']> = {
-          auto: 'auto',
-          flexStart: 'flex-start',
-          flexEnd: 'flex-end',
-          center: 'center',
-          stretch: 'stretch',
-          baseline: 'baseline',
+      case ModifierType.alignSelf: {
+        const asMap: Record<string, AlignSelfStyle> = {
+          [AlignSelfToken.auto]: RNAlign.auto,
+          [AlignSelfToken.flexStart]: RNAlign.flexStart,
+          [AlignSelfToken.flexEnd]: RNAlign.flexEnd,
+          [AlignSelfToken.center]: RNAlign.center,
+          [AlignSelfToken.stretch]: RNAlign.stretch,
+          [AlignSelfToken.baseline]: RNAlign.baseline,
         };
         viewStyle.alignSelf = asMap[mod.value];
         break;
       }
-      case 'display':
+      case ModifierType.display:
         viewStyle.display = mod.value;
         break;
-      case 'hidden':
+      case ModifierType.hidden:
         if (mod.value) {
-          viewStyle.display = 'none';
+          viewStyle.display = RNDisplay.none;
         }
         break;
       // New text modifiers
-      case 'textDecoration':
-        textStyle.textDecorationLine = mod.value as TextStyle['textDecorationLine'];
+      case ModifierType.textDecoration:
+        textStyle.textDecorationLine = mod.value as TextDecorationLineStyle;
         break;
-      case 'fontStyle':
+      case ModifierType.fontStyle:
         textStyle.fontStyle = mod.value;
         break;
-      case 'fontFamily':
+      case ModifierType.fontFamily:
         textStyle.fontFamily = mod.value;
         break;
       // List modifiers
-      case 'refreshControl':
+      case ModifierType.refreshControl:
         refreshControlData = { onRefresh: mod.onRefresh, refreshing: mod.refreshing };
         break;
-      case 'onEndReached':
+      case ModifierType.onEndReached:
         onEndReachedData = { handler: mod.handler, threshold: mod.threshold };
         break;
-      case 'separator':
+      case ModifierType.separator:
         separatorBuilder = mod.builder;
         break;
-      case 'numColumns':
+      case ModifierType.numColumns:
         numColumns = mod.value;
         break;
-      case 'emptyComponent':
+      case ModifierType.emptyComponent:
         emptyComponentBuilder = mod.builder;
         break;
       // Modal
-      case 'onDismiss':
+      case ModifierType.onDismiss:
         onDismiss = mod.handler;
         break;
       // Screen navigation modifiers are handled by ViewBuilder.toElement()
-      case 'screenTitle':
-      case 'headerRight':
-      case 'headerLeft':
+      case ModifierType.screenTitle:
+      case ModifierType.headerRight:
+      case ModifierType.headerLeft:
+        break;
+      // Transform
+      case ModifierType.offset: {
+        const transforms = (viewStyle.transform as unknown[]) ?? [];
+        transforms.push({ translateX: mod.x }, { translateY: mod.y });
+        viewStyle.transform = transforms as TransformStyle;
+        break;
+      }
+      case ModifierType.rotation: {
+        const transforms = (viewStyle.transform as unknown[]) ?? [];
+        transforms.push({ rotate: `${mod.degrees}deg` });
+        viewStyle.transform = transforms as TransformStyle;
+        break;
+      }
+      case ModifierType.scale: {
+        const transforms = (viewStyle.transform as unknown[]) ?? [];
+        transforms.push({ scaleX: mod.x }, { scaleY: mod.y });
+        viewStyle.transform = transforms as TransformStyle;
+        break;
+      }
+      case ModifierType.blur:
+        // No-op: blur requires @react-native-community/blur
+        // The warning is emitted in ViewBuilder.blur()
+        break;
+      case ModifierType.overlay:
+        overlayBuilder = mod.builder;
+        break;
+      // Animation
+      case ModifierType.animation:
+        animationData = { config: mod.config, value: mod.value };
+        break;
+      case ModifierType.transition:
+        transitionData = { enter: mod.enter, exit: mod.exit };
+        break;
+      // Gesture
+      case ModifierType.onSwipe:
+        gestures = gestures ?? [];
+        gestures.push({
+          type: GestureType.swipe,
+          direction: mod.direction,
+          handler: mod.handler,
+          threshold: mod.threshold,
+          velocityThreshold: mod.velocityThreshold,
+        });
+        break;
+      case ModifierType.onPan:
+        gestures = gestures ?? [];
+        gestures.push({
+          type: GestureType.pan,
+          config: mod.config,
+          onStart: mod.onStart,
+          onChanged: mod.onChanged,
+          onEnded: mod.onEnded,
+        });
+        break;
+      case ModifierType.onPinch:
+        gestures = gestures ?? [];
+        gestures.push({
+          type: GestureType.pinch,
+          config: mod.config,
+          onChanged: mod.onChanged,
+          onEnded: mod.onEnded,
+        });
+        break;
+      case ModifierType.onRotate:
+        gestures = gestures ?? [];
+        gestures.push({
+          type: GestureType.rotation,
+          config: mod.config,
+          onChanged: mod.onChanged,
+          onEnded: mod.onEnded,
+        });
+        break;
+      case ModifierType.gesture:
+        gestures = gestures ?? [];
+        gestures.push(mod.config);
+        break;
+      // Environment
+      case ModifierType.environment:
+        environmentValues = environmentValues ?? {};
+        environmentValues[mod.key] = mod.value;
+        break;
+      // Responsive/platform modifiers are resolved before computeStyles — skip here
+      case ModifierType.responsive:
+      case ModifierType.onCompact:
+      case ModifierType.onRegular:
+      case ModifierType.onLarge:
+      case ModifierType.onIOS:
+      case ModifierType.onAndroid:
         break;
     }
   }
@@ -1273,12 +1679,13 @@ function computeStyles(
     viewStyle, textStyle, onTap, onLongPress, disabled,
     accessibilityLabel, accessibilityRole, accessibilityHint, testID,
     lineLimit, gap, safeAreaEdges, hideScrollIndicator, contentPadding,
-    scrollDirection, keyboardAvoiding, keyboardPersistTaps, bounces,
+    scrollDirection, keyboardAvoiding, keyboardAvoidingBehavior, keyboardPersistTaps, bounces,
     placeholder, inputLabel, inputError, keyboardType, multiline,
     multilineLines, secureEntry, autoCapitalize, returnKeyType,
-    maxLength, inputHeight,
+    maxLength, inputHeight, inputRef, onSubmitEditing,
     refreshControlData, onEndReachedData, separatorBuilder, numColumns, emptyComponentBuilder,
-    onDismiss,
+    onDismiss, overlayBuilder,
+    animationData, transitionData, gestures, environmentValues,
   };
 }
 
@@ -1286,27 +1693,27 @@ function computeStyles(
 
 function applyEdge(
   style: ViewStyle,
-  prefix: 'padding' | 'margin',
+  prefix: ApplyEdgePrefixToken,
   edge: string,
   value: number,
 ): void {
   switch (edge) {
-    case 'horizontal':
+    case Edge.horizontal:
       (style as Record<string, unknown>)[`${prefix}Horizontal`] = value;
       break;
-    case 'vertical':
+    case Edge.vertical:
       (style as Record<string, unknown>)[`${prefix}Vertical`] = value;
       break;
-    case 'top':
+    case Edge.top:
       (style as Record<string, unknown>)[`${prefix}Top`] = value;
       break;
-    case 'bottom':
+    case Edge.bottom:
       (style as Record<string, unknown>)[`${prefix}Bottom`] = value;
       break;
-    case 'left':
+    case Edge.left:
       (style as Record<string, unknown>)[`${prefix}Left`] = value;
       break;
-    case 'right':
+    case Edge.right:
       (style as Record<string, unknown>)[`${prefix}Right`] = value;
       break;
     default:

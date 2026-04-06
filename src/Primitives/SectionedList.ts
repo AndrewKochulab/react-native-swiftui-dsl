@@ -1,4 +1,5 @@
-import { ViewBuilder } from '../Core/ViewBuilder';
+import { ViewBuilder } from '@/Core/ViewBuilder';
+import { ElementType } from '@/Tokens/ElementType';
 
 export interface SectionData<T> {
   title: string;
@@ -15,7 +16,7 @@ export function SectionedList<T>(
   sections: ReadonlyArray<SectionData<T>>,
   options: SectionedListOptions<T>,
 ): ViewBuilder {
-  return new ViewBuilder('sectionlist', {
+  return new ViewBuilder(ElementType.sectionlist, {
     sectionListData: sections as ReadonlyArray<{ title: string; data: ReadonlyArray<unknown> }>,
     keyExtractor: options.keyExtractor as (item: unknown) => string,
     sectionRenderItem: options.renderItem as (item: unknown) => ViewBuilder,

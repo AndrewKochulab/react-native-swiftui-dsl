@@ -1,13 +1,14 @@
-import { ViewBuilder, DSLChild } from '../Core/ViewBuilder';
+import { ViewBuilder, DSLChild } from '@/Core/ViewBuilder';
+import { ElementType } from '@/Tokens/ElementType';
 
 export function VStack(...children: DSLChild[]): ViewBuilder {
-  return new ViewBuilder('vstack', {}, children);
+  return new ViewBuilder(ElementType.vstack, {}, children);
 }
 
 export function HStack(...children: DSLChild[]): ViewBuilder {
-  return new ViewBuilder('hstack', {}, children);
+  return new ViewBuilder(ElementType.hstack, {}, children);
 }
 
 export function ZStack(...children: DSLChild[]): ViewBuilder {
-  return new ViewBuilder('zstack', {}, children);
+  return new ViewBuilder(ElementType.zstack, {}, children);
 }

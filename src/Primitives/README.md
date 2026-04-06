@@ -36,11 +36,16 @@ function Text(content: string): ViewBuilder
 ```
 
 ```ts
+import { Text } from '@/Primitives/Text';
+import { Font } from '@/Tokens/Font';
+import { Color } from '@/Tokens/Color';
+import { Spacing } from '@/Tokens/Layout';
+
 Text('Hello, world!')
-  .font('title')
+  .font(Font.title)
   .bold()
-  .foregroundColor('tint')
-  .padding()
+  .foregroundColor(Color.tint)
+  .padding(Spacing.md)
   .toElement();
 ```
 
@@ -55,6 +60,11 @@ function ZStack(...children: DSLChild[]): ViewBuilder
 ```
 
 ```ts
+import { VStack, HStack } from '@/Primitives/Containers';
+import { Text } from '@/Primitives/Text';
+import { Icon } from '@/Primitives/Icon';
+import { Spacing } from '@/Tokens/Layout';
+
 VStack(
   Text('Top'),
   HStack(
@@ -62,7 +72,7 @@ VStack(
     Text('Rating'),
   ).spacing(8),
   Text('Bottom'),
-).spacing(12).padding().toElement();
+).spacing(12).padding(Spacing.md).toElement();
 ```
 
 ### `Icon(name, options?)`
@@ -77,7 +87,10 @@ function Icon(
 ```
 
 ```ts
-Icon('heart', { size: 24, color: 'error' }).onTap(() => toggleFavorite());
+import { Icon } from '@/Primitives/Icon';
+import { Color } from '@/Tokens/Color';
+
+Icon('heart', { size: 24, color: Color.error }).onTap(() => toggleFavorite());
 ```
 
 ### `Spacer()`
@@ -89,6 +102,10 @@ function Spacer(): ViewBuilder
 ```
 
 ```ts
+import { HStack } from '@/Primitives/Containers';
+import { Text } from '@/Primitives/Text';
+import { Spacer } from '@/Primitives/Spacer';
+
 HStack(
   Text('Left'),
   Spacer(),
@@ -105,9 +122,12 @@ function Raw(element: React.ReactElement): ViewBuilder
 ```
 
 ```ts
+import { Raw } from '@/Primitives/Raw';
+import { Spacing, Radius } from '@/Tokens/Layout';
+
 Raw(<MyCustomChart data={chartData} />)
-  .padding()
-  .cornerRadius('md')
+  .padding(Spacing.md)
+  .cornerRadius(Radius.md)
   .toElement();
 ```
 
@@ -120,9 +140,13 @@ function SafeArea(...children: DSLChild[]): ViewBuilder
 ```
 
 ```ts
+import { SafeArea } from '@/Primitives/SafeArea';
+import { Text } from '@/Primitives/Text';
+import { Color } from '@/Tokens/Color';
+
 SafeArea(
   Text('Safe content'),
-).edges(['top', 'bottom']).background('background').flex().toElement();
+).edges(['top', 'bottom']).background(Color.background).flex().toElement();
 ```
 
 ### `ScrollStack(...children)`
@@ -134,13 +158,17 @@ function ScrollStack(...children: DSLChild[]): ViewBuilder
 ```
 
 ```ts
+import { ScrollStack } from '@/Primitives/ScrollStack';
+import { Text } from '@/Primitives/Text';
+import { Spacing } from '@/Tokens/Layout';
+
 ScrollStack(
   Text('Item 1'),
   Text('Item 2'),
   Text('Item 3'),
 )
 .hideScrollIndicator()
-.contentPadding('lg')
+.contentPadding(Spacing.lg)
 .keyboardAvoiding()
 .toElement();
 ```
@@ -154,13 +182,17 @@ function TextInput(binding: Binding<string>): ViewBuilder
 ```
 
 ```ts
+import { TextInput } from '@/Primitives/TextInput';
+import { createBinding } from '@/Binding/Binding';
+import { AutoCapitalize } from '@/Tokens/Component';
+
 const nameBinding = createBinding(name, setName);
 
 TextInput(nameBinding)
   .placeholder('Your name')
   .inputLabel('Full Name')
   .inputError(errors.name)
-  .autoCapitalize('words')
+  .autoCapitalize(AutoCapitalize.words)
   .maxLength(50)
   .toElement();
 ```
@@ -174,7 +206,11 @@ function Spinner(size?: 'small' | 'large'): ViewBuilder
 ```
 
 ```ts
-Spinner('small').padding().toElement();
+import { Spinner } from '@/Primitives/Spinner';
+import { SpinnerSize } from '@/Tokens/Component';
+import { Spacing } from '@/Tokens/Layout';
+
+Spinner(SpinnerSize.small).padding(Spacing.md).toElement();
 ```
 
 ### `LazyList<T>(data, options)`
@@ -196,20 +232,28 @@ function LazyList<T>(
 ```
 
 ```ts
+import { LazyList } from '@/Primitives/LazyList';
+import { HStack } from '@/Primitives/Containers';
+import { Text } from '@/Primitives/Text';
+import { Spacer } from '@/Primitives/Spacer';
+import { Divider } from '@/Primitives/Divider';
+import { Font } from '@/Tokens/Font';
+import { Spacing } from '@/Tokens/Layout';
+
 LazyList(users, {
   keyExtractor: (u) => u.id,
   renderItem: (u) => HStack(
     Text(u.name).bold(),
     Spacer(),
     Text(u.role).secondary(),
-  ).padding(),
-  listHeader: Text('All Users').font('title').bold().padding(),
+  ).padding(Spacing.md),
+  listHeader: Text('All Users').font(Font.title).bold().padding(Spacing.md),
   stickyHeader: true,
 })
 .refreshControl(onRefresh, isRefreshing)
 .onEndReached(loadMore)
 .separator(() => Divider().marginHorizontal())
-.emptyComponent(() => Text('No users found').secondary().padding())
+.emptyComponent(() => Text('No users found').secondary().padding(Spacing.md))
 .toElement();
 ```
 
@@ -227,12 +271,16 @@ function Image(
 ```
 
 ```ts
+import { Image } from '@/Primitives/Image';
+import { ImageResize } from '@/Tokens/Component';
+import { Radius } from '@/Tokens/Layout';
+
 Image({ uri: 'https://example.com/photo.jpg' }, { alt: 'Profile photo' })
   .frame({ width: 100, height: 100 })
-  .cornerRadius(50)
+  .cornerRadius(Radius.lg)
   .toElement();
 
-Image(require('./assets/banner.png'), { resizeMode: 'contain' })
+Image(require('./assets/banner.png'), { resizeMode: ImageResize.contain })
   .frame({ height: 200 })
   .toElement();
 ```
@@ -249,13 +297,21 @@ function Toggle(
 ```
 
 ```ts
+import { Toggle } from '@/Primitives/Toggle';
+import { HStack } from '@/Primitives/Containers';
+import { Text } from '@/Primitives/Text';
+import { Spacer } from '@/Primitives/Spacer';
+import { createBinding } from '@/Binding/Binding';
+import { Color } from '@/Tokens/Color';
+import { Spacing } from '@/Tokens/Layout';
+
 const notifBinding = createBinding(notificationsEnabled, setNotificationsEnabled);
 
 HStack(
   Text('Notifications'),
   Spacer(),
-  Toggle(notifBinding, { trackColor: 'success' }),
-).padding().toElement();
+  Toggle(notifBinding, { trackColor: Color.success }),
+).padding(Spacing.md).toElement();
 ```
 
 ### `Button(title, action, options?)`
@@ -273,14 +329,18 @@ function Button(
 ```
 
 ```ts
+import { Button } from '@/Primitives/Button';
+import { ButtonVariant } from '@/Tokens/Component';
+import { Color } from '@/Tokens/Color';
+
 Button('Save', handleSave)
   .toElement();
 
-Button('Delete', handleDelete, { style: 'outlined', icon: 'trash' })
-  .foregroundColor('error')
+Button('Delete', handleDelete, { style: ButtonVariant.outlined, icon: 'trash' })
+  .foregroundColor(Color.error)
   .toElement();
 
-Button('Cancel', handleCancel, { style: 'plain' })
+Button('Cancel', handleCancel, { style: ButtonVariant.plain })
   .toElement();
 ```
 
@@ -293,6 +353,10 @@ function Divider(): ViewBuilder
 ```
 
 ```ts
+import { Divider } from '@/Primitives/Divider';
+import { VStack } from '@/Primitives/Containers';
+import { Text } from '@/Primitives/Text';
+
 VStack(
   Text('Section 1'),
   Divider().marginHorizontal(),
@@ -309,8 +373,11 @@ function Link(title: string, url: string): ViewBuilder
 ```
 
 ```ts
+import { Link } from '@/Primitives/Link';
+import { Font } from '@/Tokens/Font';
+
 Link('Visit our website', 'https://example.com')
-  .font('body')
+  .font(Font.body)
   .toElement();
 ```
 
@@ -337,6 +404,11 @@ function SectionedList<T>(
 ```
 
 ```ts
+import { SectionedList } from '@/Primitives/SectionedList';
+import { Text } from '@/Primitives/Text';
+import { Font } from '@/Tokens/Font';
+import { Spacing } from '@/Tokens/Layout';
+
 SectionedList(
   [
     { title: 'Fruits', data: [{ id: '1', name: 'Apple' }, { id: '2', name: 'Banana' }] },
@@ -344,8 +416,8 @@ SectionedList(
   ],
   {
     keyExtractor: (item) => item.id,
-    renderItem: (item) => Text(item.name).padding(),
-    renderSectionHeader: (title) => Text(title).font('subtitle').bold().padding('sm'),
+    renderItem: (item) => Text(item.name).padding(Spacing.md),
+    renderSectionHeader: (title) => Text(title).font(Font.subtitle).bold().padding(Spacing.sm),
   },
 ).toElement();
 ```
@@ -365,16 +437,26 @@ function Modal(
 ```
 
 ```ts
+import { Modal } from '@/Primitives/Modal';
+import { VStack, HStack } from '@/Primitives/Containers';
+import { Text } from '@/Primitives/Text';
+import { Button } from '@/Primitives/Button';
+import { createBinding } from '@/Binding/Binding';
+import { ModalAnimation, ButtonVariant } from '@/Tokens/Component';
+import { Font } from '@/Tokens/Font';
+import { Color } from '@/Tokens/Color';
+import { Spacing, Radius } from '@/Tokens/Layout';
+
 const showModal = createBinding(isModalVisible, setIsModalVisible);
 
-Modal(showModal, { animationType: 'fade', transparent: true },
+Modal(showModal, { animationType: ModalAnimation.fade, transparent: true },
   VStack(
-    Text('Are you sure?').font('title').bold(),
+    Text('Are you sure?').font(Font.title).bold(),
     HStack(
-      Button('Cancel', () => showModal.update(false), { style: 'plain' }),
+      Button('Cancel', () => showModal.update(false), { style: ButtonVariant.plain }),
       Button('Confirm', handleConfirm),
     ).spacing(12),
-  ).padding().background('card').cornerRadius('lg'),
+  ).padding(Spacing.lg).background(Color.card).cornerRadius(Radius.lg),
 ).onDismiss(() => console.log('Modal dismissed')).toElement();
 ```
 
@@ -390,8 +472,12 @@ function ProgressBar(
 ```
 
 ```ts
-ProgressBar(0.65, { progressColor: 'success' })
-  .cornerRadius('sm')
+import { ProgressBar } from '@/Primitives/ProgressBar';
+import { Color } from '@/Tokens/Color';
+import { Radius } from '@/Tokens/Layout';
+
+ProgressBar(0.65, { progressColor: Color.success })
+  .cornerRadius(Radius.sm)
   .marginVertical()
   .toElement();
 ```

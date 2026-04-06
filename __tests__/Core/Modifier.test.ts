@@ -2,8 +2,8 @@ import {
   resolveSpacing,
   resolveBorderRadius,
   resolveFontSize,
-} from '../../src/Core/Modifier';
-import { testThemeConfig } from '../Helpers/testThemeConfig';
+} from '@/Core/Modifier';
+import { testThemeConfig } from '@tests/Helpers/testThemeConfig';
 
 const layout = testThemeConfig.layout;
 const fonts = testThemeConfig.fonts;

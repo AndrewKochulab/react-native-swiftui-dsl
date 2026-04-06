@@ -1,8 +1,8 @@
 import React from 'react';
-import { renderWithDSLTheme } from '../Helpers/renderWithDSLTheme';
-import { Icon } from '../../src/Primitives/Icon';
-import { Button } from '../../src/Primitives/Button';
-import { DSLRenderer, _setIconComponent } from '../../src/Core/DSLRenderer';
+import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
+import { Icon } from '@/Primitives/Icon';
+import { Button } from '@/Primitives/Button';
+import { DSLRenderer, _setIconComponent } from '@/Core/DSLRenderer';
 
 jest.mock('expo-router', () => ({
   Stack: { Screen: () => null },

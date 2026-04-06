@@ -1,7 +1,8 @@
 import React from 'react';
-import { SectionedList } from '../../src/Primitives/SectionedList';
-import { Text } from '../../src/Primitives/Text';
-import { renderWithDSLTheme } from '../Helpers/renderWithDSLTheme';
+import { SectionedList } from '@/Primitives/SectionedList';
+import { Text } from '@/Primitives/Text';
+import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
+import { ElementType, ModifierType } from '@/Tokens/ElementType';
 
 describe('SectionedList', () => {
   const sections = [
@@ -17,7 +18,7 @@ describe('SectionedList', () => {
 
   it('creates a sectionlist element type', () => {
     const builder = SectionedList(sections, options);
-    expect(builder.elementType).toBe('sectionlist');
+    expect(builder.elementType).toBe(ElementType.sectionlist);
   });
 
   it('stores sections data in props', () => {
@@ -49,11 +50,11 @@ describe('SectionedList', () => {
 
   it('applies hideScrollIndicator modifier', () => {
     const builder = SectionedList(sections, options).hideScrollIndicator();
-    expect(builder.modifiers).toContainEqual({ type: 'hideScrollIndicator', value: true });
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.hideScrollIndicator, value: true });
   });
 
   it('applies testID modifier', () => {
     const builder = SectionedList(sections, options).testID('sections');
-    expect(builder.modifiers).toContainEqual({ type: 'testID', value: 'sections' });
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.testID, value: 'sections' });
   });
 });

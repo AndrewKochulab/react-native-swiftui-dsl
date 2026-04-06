@@ -33,12 +33,17 @@ function createBinding<T>(value: T, update: (newValue: T) => void): Binding<T>
 
 ```ts
 import { createBinding } from 'react-native-swiftui-dsl';
+import { TextInput } from '@/Primitives/TextInput';
+import { Font } from '@/Tokens/Font';
+import { Spacing } from '@/Tokens/Layout';
 
 const [name, setName] = useState('');
 const nameBinding = createBinding(name, setName);
 
 // Use with TextInput primitive
-TextInput(nameBinding).placeholder('Enter your name');
+TextInput(nameBinding)
+  .placeholder('Enter your name')
+  .font(Font.body);
 ```
 
 ### `bindForm<T>(data, setter)`
@@ -55,7 +60,11 @@ function bindForm<T extends object>(
 **Example:**
 
 ```ts
-import { bindForm, TextInput, VStack } from 'react-native-swiftui-dsl';
+import { bindForm } from 'react-native-swiftui-dsl';
+import { TextInput } from '@/Primitives/TextInput';
+import { VStack } from '@/Primitives/Containers';
+import { Spacing } from '@/Tokens/Layout';
+import { AutoCapitalize } from '@/Tokens/Component';
 
 interface FormData {
   title: string;
@@ -76,6 +85,7 @@ function MyForm({ state, updateField }: {
     TextInput($form.email)
       .placeholder('email@example.com')
       .keyboardType('email-address')
+      .autoCapitalize(AutoCapitalize.none)
       .inputLabel('Email'),
     TextInput($form.bio)
       .placeholder('Tell us about yourself')

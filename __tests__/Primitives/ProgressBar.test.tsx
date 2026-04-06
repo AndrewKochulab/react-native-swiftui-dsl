@@ -1,7 +1,7 @@
 import React from 'react';
-import { renderWithDSLTheme } from '../Helpers/renderWithDSLTheme';
-import { ProgressBar } from '../../src/Primitives/ProgressBar';
-import { DSLRenderer } from '../../src/Core/DSLRenderer';
+import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
+import { ProgressBar } from '@/Primitives/ProgressBar';
+import { DSLRenderer } from '@/Core/DSLRenderer';
 
 jest.mock('expo-router', () => ({
   Stack: { Screen: () => null },
@@ -63,7 +63,7 @@ describe('ProgressBar primitive', () => {
     const builder = ProgressBar(0.5, { trackColor: '#E0E0E0', progressColor: '#00FF00' }).testID('custom-colors');
     const { getByTestId } = renderWithDSLTheme(<DSLRenderer builder={builder} />);
     const track = getByTestId('custom-colors');
-    expect(track.props.style.backgroundColor).toBe('#E0E0E0');
+    expect((track.props.style as Record<string, unknown>).backgroundColor).toBe('#E0E0E0');
     const fillChild = track.children?.[0] as { props?: { style?: { backgroundColor?: string } } };
     expect(fillChild?.props?.style?.backgroundColor).toBe('#00FF00');
   });
@@ -72,6 +72,6 @@ describe('ProgressBar primitive', () => {
     const builder = ProgressBar(0.5).frame({ height: 10 }).testID('height');
     const { getByTestId } = renderWithDSLTheme(<DSLRenderer builder={builder} />);
     const track = getByTestId('height');
-    expect(track.props.style.height).toBe(10);
+    expect((track.props.style as Record<string, unknown>).height).toBe(10);
   });
 });

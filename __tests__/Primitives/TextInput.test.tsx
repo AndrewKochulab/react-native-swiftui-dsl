@@ -1,7 +1,8 @@
 import React from 'react';
-import { TextInput } from '../../src/Primitives/TextInput';
-import { createBinding } from '../../src/Binding/Binding';
-import { renderWithDSLTheme } from '../Helpers/renderWithDSLTheme';
+import { TextInput } from '@/Primitives/TextInput';
+import { createBinding } from '@/Binding/Binding';
+import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
+import { ElementType, ModifierType } from '@/Tokens/ElementType';
 
 describe('TextInput', () => {
   const mockUpdate = jest.fn();
@@ -13,7 +14,7 @@ describe('TextInput', () => {
 
   it('creates a textinput element type', () => {
     const builder = TextInput(binding);
-    expect(builder.elementType).toBe('textinput');
+    expect(builder.elementType).toBe(ElementType.textinput);
   });
 
   it('stores binding in props', () => {
@@ -31,7 +32,7 @@ describe('TextInput', () => {
   it('applies placeholder modifier', () => {
     const builder = TextInput(binding).placeholder('Enter text');
     expect(builder.modifiers).toContainEqual({
-      type: 'placeholder',
+      type: ModifierType.placeholder,
       value: 'Enter text',
     });
   });
@@ -39,7 +40,7 @@ describe('TextInput', () => {
   it('applies inputLabel modifier', () => {
     const builder = TextInput(binding).inputLabel('Name');
     expect(builder.modifiers).toContainEqual({
-      type: 'inputLabel',
+      type: ModifierType.inputLabel,
       text: 'Name',
     });
   });
@@ -54,7 +55,7 @@ describe('TextInput', () => {
   it('applies inputError modifier', () => {
     const builder = TextInput(binding).inputError('Required');
     expect(builder.modifiers).toContainEqual({
-      type: 'inputError',
+      type: ModifierType.inputError,
       message: 'Required',
     });
   });
@@ -69,7 +70,7 @@ describe('TextInput', () => {
   it('applies keyboardType modifier', () => {
     const builder = TextInput(binding).keyboardType('email-address');
     expect(builder.modifiers).toContainEqual({
-      type: 'keyboardType',
+      type: ModifierType.keyboardType,
       value: 'email-address',
     });
   });
@@ -77,23 +78,23 @@ describe('TextInput', () => {
   it('applies multiline modifier', () => {
     const builder = TextInput(binding).multiline(4);
     expect(builder.modifiers).toContainEqual({
-      type: 'multiline',
+      type: ModifierType.multiline,
       lines: 4,
     });
   });
 
   it('applies secureEntry modifier', () => {
     const builder = TextInput(binding).secureEntry();
-    expect(builder.modifiers).toContainEqual({ type: 'secureEntry' });
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.secureEntry });
   });
 
   it('applies testID modifier', () => {
     const builder = TextInput(binding).testID('input-field');
-    expect(builder.modifiers).toContainEqual({ type: 'testID', value: 'input-field' });
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.testID, value: 'input-field' });
   });
 
   it('applies maxLength modifier', () => {
     const builder = TextInput(binding).maxLength(50);
-    expect(builder.modifiers).toContainEqual({ type: 'maxLength', value: 50 });
+    expect(builder.modifiers).toContainEqual({ type: ModifierType.maxLength, value: 50 });
   });
 });

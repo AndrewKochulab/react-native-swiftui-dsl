@@ -1,7 +1,7 @@
 import React from 'react';
-import { Group } from '../../src/Conditionals/Group';
-import { Text } from '../../src/Primitives/Text';
-import { renderWithDSLTheme } from '../Helpers/renderWithDSLTheme';
+import { Group } from '@/Conditionals/Group';
+import { Text } from '@/Primitives/Text';
+import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
 
 describe('Group', () => {
   it('creates a fragment element type', () => {

@@ -15,7 +15,10 @@
     "declarationDir": "./dist",
     "outDir": "./dist",
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@/*": ["src/*"],
+      "@tests/*": ["__tests__/*"]
+    }
   },
   "include": [
     "src/**/*",

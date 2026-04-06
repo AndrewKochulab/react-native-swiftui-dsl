@@ -1,4 +1,4 @@
-import type { DSLThemeConfig } from '../../src/Theme/types';
+import type { DSLThemeConfig, DSLColors } from '@/Theme/types';
 
 /**
  * Self-contained test theme configuration for DSL framework tests.
@@ -87,3 +87,9 @@ export const testThemeConfig: DSLThemeConfig = {
     },
   },
 };
+
+/**
+ * Pre-narrowed colors for test assertions.
+ * Avoids TypeScript DSLColorConfig union narrowing issues.
+ */
+export const testColors = testThemeConfig.colors as { light: DSLColors; dark: DSLColors };

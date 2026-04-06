@@ -1,4 +1,4 @@
-import { DSLDefaults, defaultThemeConfig } from '../../src/Config/Defaults';
+import { DSLDefaults, defaultThemeConfig } from '@/Config/Defaults';
 
 describe('DSLDefaults', () => {
   it('has spacing default', () => {
@@ -77,54 +77,58 @@ describe('DSLDefaults', () => {
     });
   });
 
-  it('has iconSize default', () => {
-    expect(DSLDefaults.iconSize).toBe(18);
+  it('has icon defaultSize', () => {
+    expect(DSLDefaults.icon.defaultSize).toBe(18);
   });
 
-  it('has pressedOpacity', () => {
-    expect(DSLDefaults.pressedOpacity).toBe(0.9);
+  it('has interaction pressedOpacity', () => {
+    expect(DSLDefaults.interaction.pressedOpacity).toBe(0.9);
   });
 
-  it('has fullOpacity', () => {
-    expect(DSLDefaults.fullOpacity).toBe(1);
+  it('has interaction fullOpacity', () => {
+    expect(DSLDefaults.interaction.fullOpacity).toBe(1);
   });
 
   describe('button defaults', () => {
-    it('has buttonHeight', () => {
-      expect(DSLDefaults.buttonHeight).toBe(48);
+    it('has height', () => {
+      expect(DSLDefaults.button.height).toBe(48);
     });
 
-    it('has buttonCornerRadius', () => {
-      expect(DSLDefaults.buttonCornerRadius).toBe(12);
+    it('has cornerRadius', () => {
+      expect(DSLDefaults.button.cornerRadius).toBe(12);
     });
 
-    it('has buttonPaddingHorizontal', () => {
-      expect(DSLDefaults.buttonPaddingHorizontal).toBe(16);
+    it('has paddingHorizontal', () => {
+      expect(DSLDefaults.button.paddingHorizontal).toBe(16);
     });
 
-    it('has buttonIconSpacing', () => {
-      expect(DSLDefaults.buttonIconSpacing).toBe(8);
+    it('has iconSpacing', () => {
+      expect(DSLDefaults.button.iconSpacing).toBe(8);
     });
 
-    it('has buttonFontSize', () => {
-      expect(DSLDefaults.buttonFontSize).toBe('body');
+    it('has fontSize', () => {
+      expect(DSLDefaults.button.fontSize).toBe('body');
     });
 
-    it('has buttonBorderWidth', () => {
-      expect(DSLDefaults.buttonBorderWidth).toBe(1.5);
+    it('has borderWidth', () => {
+      expect(DSLDefaults.button.borderWidth).toBe(1.5);
+    });
+
+    it('has defaultStyle', () => {
+      expect(DSLDefaults.button.defaultStyle).toBe('filled');
     });
   });
 
-  it('has imageResizeMode default', () => {
-    expect(DSLDefaults.imageResizeMode).toBe('cover');
+  it('has image resizeMode default', () => {
+    expect(DSLDefaults.image.resizeMode).toBe('cover');
   });
 
-  it('has dividerColor default', () => {
-    expect(DSLDefaults.dividerColor).toBe('separator');
+  it('has divider color default', () => {
+    expect(DSLDefaults.divider.color).toBe('separator');
   });
 
-  it('has linkColor default', () => {
-    expect(DSLDefaults.linkColor).toBe('tint');
+  it('has link color default', () => {
+    expect(DSLDefaults.link.color).toBe('tint');
   });
 
   it('has onEndReachedThreshold default', () => {
@@ -132,7 +136,6 @@ describe('DSLDefaults', () => {
   });
 
   it('is frozen (as const)', () => {
-    // Verify the object is read-only at runtime level
     expect(typeof DSLDefaults).toBe('object');
     expect(Object.keys(DSLDefaults).length).toBeGreaterThan(10);
   });
@@ -160,12 +163,61 @@ describe('DSLDefaults', () => {
   });
 
   describe('progressBar defaults', () => {
-    it('has progressBarHeight', () => {
-      expect(DSLDefaults.progressBarHeight).toBe(4);
+    it('has height', () => {
+      expect(DSLDefaults.progressBar.height).toBe(4);
     });
 
-    it('has progressBarCornerRadius', () => {
-      expect(DSLDefaults.progressBarCornerRadius).toBe(2);
+    it('has cornerRadius', () => {
+      expect(DSLDefaults.progressBar.cornerRadius).toBe(2);
+    });
+  });
+
+  describe('animation defaults', () => {
+    it('has defaultDuration', () => {
+      expect(DSLDefaults.animation.defaultDuration).toBe(300);
+    });
+
+    it('has defaultEasing', () => {
+      expect(DSLDefaults.animation.defaultEasing).toBe('easeInOut');
+    });
+
+    it('has spring config', () => {
+      expect(DSLDefaults.animation.spring.damping).toBe(10);
+      expect(DSLDefaults.animation.spring.stiffness).toBe(100);
+    });
+  });
+
+  describe('gesture defaults', () => {
+    it('has swipeThreshold', () => {
+      expect(DSLDefaults.gesture.swipeThreshold).toBe(50);
+    });
+
+    it('has panMinDistance', () => {
+      expect(DSLDefaults.gesture.panMinDistance).toBe(10);
+    });
+  });
+
+  describe('responsive defaults', () => {
+    it('has breakpoints', () => {
+      expect(DSLDefaults.responsive.breakpoints.compact).toEqual({ min: 0, max: 599 });
+      expect(DSLDefaults.responsive.breakpoints.regular).toEqual({ min: 600, max: 1023 });
+      expect(DSLDefaults.responsive.breakpoints.large.min).toBe(1024);
+    });
+  });
+
+  describe('modal defaults', () => {
+    it('has animationType', () => {
+      expect(DSLDefaults.modal.animationType).toBe('slide');
+    });
+
+    it('has transparent', () => {
+      expect(DSLDefaults.modal.transparent).toBe(false);
+    });
+  });
+
+  describe('spinner defaults', () => {
+    it('has defaultSize', () => {
+      expect(DSLDefaults.spinner.defaultSize).toBe('large');
     });
   });
 });
