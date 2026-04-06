@@ -1,18 +1,27 @@
 {
   "name": "react-native-swiftui-dsl",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A SwiftUI-inspired declarative DSL for building React Native UIs with chainable modifiers, theme system, and two-way bindings.",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./globals": "./src/globals.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./globals": {
+      "types": "./dist/globals.d.ts",
+      "default": "./dist/globals.js"
+    }
   },
   "files": [
-    "src/"
+    "dist/"
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf dist",
+    "prepare": "npm run clean && npm run build",
     "test": "jest",
     "test:coverage": "jest --coverage --collectCoverageFrom='src/**/*.{ts,tsx}'"
   },
