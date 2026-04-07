@@ -1,6 +1,6 @@
 import type { AnimationConfig } from './types';
-import { DSLDefaults } from '@/Config/Defaults';
-import { AnimationType } from '@/Tokens/Animation';
+import { DSLDefaults } from '@config';
+import { AnimationType } from '@tokens';
 
 /**
  * Tracks the currently active animation config.

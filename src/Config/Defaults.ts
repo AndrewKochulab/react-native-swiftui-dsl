@@ -1,11 +1,9 @@
-import type { SpacingToken, FontWeightToken, FontSizeToken, DSLThemeConfig } from '@/Theme/types';
-import type { EasingPreset, TransitionEffect } from '@/Animation/types';
-import { Color } from '@/Tokens/Color';
-import { Font, Weight } from '@/Tokens/Font';
-import { Spacing, Edge } from '@/Tokens/Layout';
-import { Easing as EasingToken, Transition, AnimationType } from '@/Tokens/Animation';
-import { ButtonVariant, ModalAnimation, ImageResize, SpinnerSize, KeyboardPersistTaps } from '@/Tokens/Component';
-import { TextDecoration } from '@/Tokens/Style';
+import type { SpacingToken, FontWeightToken, FontSizeToken, DSLThemeConfig } from '@theme';
+import type { EasingPreset, TransitionEffect } from '@animation';
+import {
+  Color, Font, Weight, Spacing, Edge, Easing as EasingToken, Transition, AnimationType,
+  ButtonVariant, ModalAnimation, ImageResize, SpinnerSize, KeyboardPersistTaps, TextDecoration,
+} from '@tokens';
 
 /**
  * Centralized default values used across the DSL framework.

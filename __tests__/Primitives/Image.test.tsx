@@ -1,9 +1,8 @@
 import React from 'react';
-import { Image } from '@/Primitives/Image';
-import { DSLDefaults } from '@/Config/Defaults';
+import { Image } from '@primitives';
+import { DSLDefaults } from '@config';
 import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
-import { ElementType, ModifierType } from '@/Tokens/ElementType';
-import { Radius } from '@/Tokens/Layout';
+import { ElementType, ModifierType, Radius } from '@tokens';
 
 describe('Image', () => {
   it('creates an image element type', () => {

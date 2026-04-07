@@ -1,4 +1,4 @@
-import { DSLDefaults, defaultThemeConfig } from '@/Config/Defaults';
+import { DSLDefaults, defaultThemeConfig } from '@config';
 
 describe('DSLDefaults', () => {
   it('has spacing default', () => {

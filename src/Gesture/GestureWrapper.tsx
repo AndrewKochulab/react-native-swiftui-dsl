@@ -1,9 +1,8 @@
 import React, { useRef } from 'react';
 import { PanResponder, View } from 'react-native';
 import type { GestureConfig, PanGestureState } from './types';
-import { DSLDefaults } from '@/Config/Defaults';
-import { SwipeDirection } from '@/Tokens/Interaction';
-import { GestureType } from '@/Tokens/ElementType';
+import { DSLDefaults } from '@config';
+import { SwipeDirection, GestureType } from '@tokens';
 
 interface GestureResponderViewProps {
   gestures: GestureConfig[];

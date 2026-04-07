@@ -1,9 +1,7 @@
 import React from 'react';
-import { SafeArea } from '@/Primitives/SafeArea';
-import { Text } from '@/Primitives/Text';
+import { SafeArea, Text } from '@primitives';
 import { renderWithDSLTheme, testColors } from '@tests/Helpers/renderWithDSLTheme';
-import { ElementType, ModifierType } from '@/Tokens/ElementType';
-import { Color } from '@/Tokens/Color';
+import { ElementType, ModifierType, Color } from '@tokens';
 
 const Colors = testColors;
 

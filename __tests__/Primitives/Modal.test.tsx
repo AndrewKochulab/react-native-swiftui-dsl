@@ -1,12 +1,10 @@
 import React from 'react';
 import { Modal as RNModal } from 'react-native';
 import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
-import { Modal } from '@/Primitives/Modal';
-import { ModalAnimation } from '@/Tokens/Component';
-import { Text } from '@/Primitives/Text';
-import { VStack } from '@/Primitives/Containers';
-import { DSLRenderer } from '@/Core/DSLRenderer';
-import { createBinding } from '@/Binding/Binding';
+import { Modal, Text, VStack } from '@primitives';
+import { ModalAnimation } from '@tokens';
+import { DSLRenderer } from '@core';
+import { createBinding } from '@binding';
 
 jest.mock('expo-router', () => ({
   Stack: { Screen: () => null },

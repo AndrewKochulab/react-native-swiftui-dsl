@@ -1,8 +1,6 @@
-import { Text } from '@/Primitives/Text';
-import { Animation } from '@/Animation/presets';
-import { withAnimation, getActiveAnimation } from '@/Animation/withAnimation';
-import { ModifierType } from '@/Tokens/ElementType';
-import { Transition, TransitionEdge, AnimationType } from '@/Tokens/Animation';
+import { Text } from '@primitives';
+import { Animation, withAnimation, getActiveAnimation } from '@animation';
+import { ModifierType, Transition, TransitionEdge, AnimationType } from '@tokens';
 
 describe('Animation modifiers', () => {
   describe('.animation()', () => {

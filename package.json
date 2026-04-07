@@ -1,6 +1,6 @@
 {
   "name": "react-native-swiftui-dsl",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A SwiftUI-inspired declarative DSL for building React Native UIs with chainable modifiers, theme system, and two-way bindings.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "clean": "rm -rf dist",
     "prepare": "npm run clean && npm run build",
     "test": "jest",
@@ -80,12 +80,27 @@
     "react-native": "0.81.5",
     "react-native-safe-area-context": "~5.6.0",
     "react-test-renderer": "19.1.0",
+    "tsc-alias": "^1.8.16",
     "typescript": "~5.8.0"
   },
   "jest": {
     "preset": "jest-expo",
     "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/src/$1",
+      "^@tokens$": "<rootDir>/src/Tokens",
+      "^@constants$": "<rootDir>/src/Constants",
+      "^@logger$": "<rootDir>/src/Logger",
+      "^@screen-state$": "<rootDir>/src/ScreenState",
+      "^@utils$": "<rootDir>/src/Utils",
+      "^@binding$": "<rootDir>/src/Binding",
+      "^@gesture$": "<rootDir>/src/Gesture",
+      "^@animation$": "<rootDir>/src/Animation",
+      "^@config$": "<rootDir>/src/Config",
+      "^@theme$": "<rootDir>/src/Theme",
+      "^@responsive$": "<rootDir>/src/Responsive",
+      "^@core$": "<rootDir>/src/Core",
+      "^@primitives$": "<rootDir>/src/Primitives",
+      "^@conditionals$": "<rootDir>/src/Conditionals",
+      "^@navigation$": "<rootDir>/src/Navigation",
       "^@tests/(.*)$": "<rootDir>/__tests__/$1"
     },
     "testPathIgnorePatterns": [

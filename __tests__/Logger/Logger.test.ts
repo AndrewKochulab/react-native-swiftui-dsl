@@ -1,5 +1,4 @@
-import { Logger, LogLevel, ConsoleLogOutput, DSLLogger } from '@/Logger/Logger';
-import type { LogOutput } from '@/Logger/Logger';
+import { Logger, LogLevel, ConsoleLogOutput, DSLLogger, type LogOutput } from '@logger';
 
 describe('Logger', () => {
   describe('LogLevel enum', () => {

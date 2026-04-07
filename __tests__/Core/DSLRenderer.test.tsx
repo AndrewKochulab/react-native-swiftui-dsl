@@ -1,16 +1,9 @@
 import React from 'react';
-import { Text } from '@/Primitives/Text';
-import { VStack, HStack } from '@/Primitives/Containers';
-import { Icon } from '@/Primitives/Icon';
-import { Spacer } from '@/Primitives/Spacer';
-import { SafeArea } from '@/Primitives/SafeArea';
-import { Group } from '@/Conditionals/Group';
-import { DSLDefaults } from '@/Config/Defaults';
+import { Text, VStack, HStack, Icon, Spacer, SafeArea } from '@primitives';
+import { Group } from '@conditionals';
+import { DSLDefaults } from '@config';
 import { renderWithDSLTheme, testThemeConfig, testColors } from '@tests/Helpers/renderWithDSLTheme';
-import { Alignment } from '@/Tokens/Style';
-import { Font } from '@/Tokens/Font';
-import { Color } from '@/Tokens/Color';
-import { Spacing, Radius } from '@/Tokens/Layout';
+import { Alignment, Font, Color, Spacing, Radius } from '@tokens';
 
 jest.mock('expo-router', () => ({
   Stack: {

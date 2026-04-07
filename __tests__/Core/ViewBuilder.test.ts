@@ -1,17 +1,9 @@
-import { isViewBuilder } from '@/Core/ViewBuilder';
-import { Text } from '@/Primitives/Text';
-import { VStack, HStack } from '@/Primitives/Containers';
-import { Icon } from '@/Primitives/Icon';
-import { Spacer } from '@/Primitives/Spacer';
-import { Alignment } from '@/Tokens/Style';
-import { Color } from '@/Tokens/Color';
-import { Font } from '@/Tokens/Font';
-import { Spacing, Radius } from '@/Tokens/Layout';
-import { ModifierType } from '@/Tokens/ElementType';
-import { ButtonVariant, ModalAnimation, SpinnerSize } from '@/Tokens/Component';
-import { SafeArea } from '@/Primitives/SafeArea';
-import { ScrollStack } from '@/Primitives/ScrollStack';
-import { DSLDefaults } from '@/Config/Defaults';
+import { isViewBuilder } from '@core';
+import { Text, VStack, HStack, Icon, Spacer, SafeArea, ScrollStack } from '@primitives';
+import {
+  Alignment, Color, Font, Spacing, Radius, ModifierType, ButtonVariant, ModalAnimation, SpinnerSize,
+} from '@tokens';
+import { DSLDefaults } from '@config';
 
 // Mock expo-router for toElement() with screen options
 jest.mock('expo-router', () => ({
@@ -821,15 +813,15 @@ describe('ViewBuilder', () => {
 
   describe('new element type construction', () => {
     it('creates an image element', () => {
-      const { Image } = require('@/Primitives/Image');
+      const { Image } = require('@primitives');
       const builder = Image({ uri: 'https://example.com/img.png' });
       expect(builder.elementType).toBe('image');
       expect(builder.props.imageSource).toEqual({ uri: 'https://example.com/img.png' });
     });
 
     it('creates a toggle element', () => {
-      const { Toggle } = require('@/Primitives/Toggle');
-      const { createBinding } = require('@/Binding/Binding');
+      const { Toggle } = require('@primitives');
+      const { createBinding } = require('@binding');
       const binding = createBinding(false, jest.fn());
       const builder = Toggle(binding);
       expect(builder.elementType).toBe('toggle');
@@ -837,7 +829,7 @@ describe('ViewBuilder', () => {
     });
 
     it('creates a button element', () => {
-      const { Button } = require('@/Primitives/Button');
+      const { Button } = require('@primitives');
       const action = jest.fn();
       const builder = Button('Click', action, { style: ButtonVariant.outlined, icon: 'star' });
       expect(builder.elementType).toBe('button');
@@ -848,13 +840,13 @@ describe('ViewBuilder', () => {
     });
 
     it('creates a divider element', () => {
-      const { Divider } = require('@/Primitives/Divider');
+      const { Divider } = require('@primitives');
       const builder = Divider();
       expect(builder.elementType).toBe('divider');
     });
 
     it('creates a link element', () => {
-      const { Link } = require('@/Primitives/Link');
+      const { Link } = require('@primitives');
       const builder = Link('Visit', 'https://example.com');
       expect(builder.elementType).toBe('link');
       expect(builder.props.text).toBe('Visit');
@@ -862,7 +854,7 @@ describe('ViewBuilder', () => {
     });
 
     it('creates a sectionlist element', () => {
-      const { SectionedList } = require('@/Primitives/SectionedList');
+      const { SectionedList } = require('@primitives');
       const sections = [{ title: 'A', data: ['1', '2'] }];
       const builder = SectionedList(sections, {
         keyExtractor: (item: string) => item,
@@ -873,8 +865,8 @@ describe('ViewBuilder', () => {
     });
 
     it('creates a modal element', () => {
-      const { Modal } = require('@/Primitives/Modal');
-      const { createBinding } = require('@/Binding/Binding');
+      const { Modal } = require('@primitives');
+      const { createBinding } = require('@binding');
       const binding = createBinding(true, jest.fn());
       const builder = Modal(binding, { animationType: ModalAnimation.fade, transparent: true }, Text('Content'));
       expect(builder.elementType).toBe('modal');
@@ -885,8 +877,8 @@ describe('ViewBuilder', () => {
     });
 
     it('creates a modal with defaults', () => {
-      const { Modal } = require('@/Primitives/Modal');
-      const { createBinding } = require('@/Binding/Binding');
+      const { Modal } = require('@primitives');
+      const { createBinding } = require('@binding');
       const binding = createBinding(false, jest.fn());
       const builder = Modal(binding);
       expect(builder.elementType).toBe('modal');
@@ -895,7 +887,7 @@ describe('ViewBuilder', () => {
     });
 
     it('creates a progressbar element', () => {
-      const { ProgressBar } = require('@/Primitives/ProgressBar');
+      const { ProgressBar } = require('@primitives');
       const builder = ProgressBar(0.75, { trackColor: '#E0E0E0', progressColor: Color.tint });
       expect(builder.elementType).toBe('progressbar');
       expect(builder.props.progressValue).toBe(0.75);
@@ -904,7 +896,7 @@ describe('ViewBuilder', () => {
     });
 
     it('creates a progressbar with defaults', () => {
-      const { ProgressBar } = require('@/Primitives/ProgressBar');
+      const { ProgressBar } = require('@primitives');
       const builder = ProgressBar(0.5);
       expect(builder.elementType).toBe('progressbar');
       expect(builder.props.progressValue).toBe(0.5);

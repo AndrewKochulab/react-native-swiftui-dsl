@@ -21,7 +21,7 @@ import {
   ImageStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDSLTheme } from '@/Theme/DSLThemeContext';
+import { useDSLTheme, type DSLThemeConfig } from '@theme';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let FontAwesomeComponent: React.ComponentType<any> | null = null;
@@ -35,22 +35,19 @@ try {
 export function _setIconComponent(component: React.ComponentType<unknown> | null): void {
   FontAwesomeComponent = component;
 }
-import { DSLThemeConfig } from '@/Theme/types';
-import { DSLDefaults } from '@/Config/Defaults';
-import { Color } from '@/Tokens/Color';
-import { DSLWarnings } from '@/Constants/Messages';
-import { FlexDirection, Alignment as AlignmentToken, JustifyContent as JustifyContentToken, AlignItems as AlignItemsToken, AlignSelf as AlignSelfToken, Position as PositionToken, Overflow as OverflowConstant } from '@/Tokens/Style';
-import { ButtonVariant, AccessibilityRole, KeyboardPersistTaps, KeyboardBehavior, ModalAnimation, ScrollDirection as ScrollDirectionToken, SpinnerSize } from '@/Tokens/Component';
-import { DSLPlatform } from '@/Tokens/Interaction';
-import { Transition, AnimationType } from '@/Tokens/Animation';
-import { SwipeDirection as SwipeDirectionToken } from '@/Tokens/Interaction';
-import { Edge } from '@/Tokens/Layout';
-import { isString, isNumber, isBoolean, isNil } from '@/Tokens/TypeGuards';
-import { RNAlign, RNDisplay, RNColor, RNTextAlignVertical, RNPointerEvents, ApplyEdgePrefix, RNKey } from '@/Tokens/RNStyle';
-import type { ApplyEdgePrefixToken } from '@/Tokens/RNStyle';
-import type { EdgeToken } from '@/Tokens/Layout';
-import type { KeyboardBehaviorToken, KeyboardPersistTapsToken, ScrollDirectionToken as ScrollDirType } from '@/Tokens/Component';
-import { ElementType, GestureType, ModifierType } from '@/Tokens/ElementType';
+import { DSLDefaults } from '@config';
+import {
+  Color, FlexDirection, Alignment as AlignmentToken, JustifyContent as JustifyContentToken,
+  AlignItems as AlignItemsToken, AlignSelf as AlignSelfToken, Position as PositionToken,
+  Overflow as OverflowConstant, ButtonVariant, AccessibilityRole, KeyboardPersistTaps,
+  KeyboardBehavior, ModalAnimation, ScrollDirection as ScrollDirectionToken, SpinnerSize,
+  DSLPlatform, Transition, AnimationType, SwipeDirection as SwipeDirectionToken, Edge, isString,
+  isNumber, isBoolean, isNil, RNAlign, RNDisplay, RNColor, RNTextAlignVertical, RNPointerEvents,
+  ApplyEdgePrefix, RNKey, ElementType, GestureType, ModifierType, type ApplyEdgePrefixToken,
+  type EdgeToken, type KeyboardBehaviorToken, type KeyboardPersistTapsToken,
+  type ScrollDirectionToken as ScrollDirType,
+} from '@tokens';
+import { DSLWarnings } from '@constants';
 import { ViewBuilder, DSLChild, isViewBuilder } from './ViewBuilder';
 import {
   Modifier,
@@ -59,12 +56,13 @@ import {
   resolveFontSize,
 } from './Modifier';
 import { ColorValue, resolveColor } from './ThemeResolver';
-import { useResponsiveContext } from '@/Responsive/ResponsiveContext';
-import { resolveResponsiveModifiers } from '@/Responsive/resolveResponsiveModifiers';
-import type { ResponsiveContext } from '@/Responsive/types';
-import type { ComputedAnimation, ComputedTransition } from '@/Animation/types';
-import { AnimatedWrapper, TransitionWrapper } from '@/Animation/AnimatedWrapper';
-import type { GestureConfig } from '@/Gesture/types';
+import {
+  useResponsiveContext, resolveResponsiveModifiers, type ResponsiveContext,
+} from '@responsive';
+import {
+  AnimatedWrapper, TransitionWrapper, type ComputedAnimation, type ComputedTransition,
+} from '@animation';
+import type { GestureConfig } from '@gesture';
 import { EnvironmentCtx } from './Environment';
 
 type FlexDirectionStyle = ViewStyle['flexDirection'];

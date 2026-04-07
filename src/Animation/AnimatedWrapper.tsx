@@ -1,9 +1,12 @@
 import React, { useRef, useEffect } from 'react';
 import { Animated, Easing, ViewStyle } from 'react-native';
-import type { AnimationConfig, ComputedAnimation, ComputedTransition, TransitionConfig } from './types';
-import { DSLDefaults } from '@/Config/Defaults';
-import { Transition, AnimationType, Easing as EasingToken, TransitionEdge } from '@/Tokens/Animation';
-import { RNTransform } from '@/Tokens/RNStyle';
+import type {
+  AnimationConfig, ComputedAnimation, ComputedTransition, TransitionConfig,
+} from './types';
+import { DSLDefaults } from '@config';
+import {
+  Transition, AnimationType, Easing as EasingToken, TransitionEdge, RNTransform,
+} from '@tokens';
 
 // --- Optional reanimated detection ---
 

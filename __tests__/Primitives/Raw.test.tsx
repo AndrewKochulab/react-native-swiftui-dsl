@@ -1,8 +1,8 @@
 import React from 'react';
 import { View as RNView, Text as RNText } from 'react-native';
-import { Raw } from '@/Primitives/Raw';
+import { Raw } from '@primitives';
 import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
-import { Spacing } from '@/Tokens/Layout';
+import { Spacing } from '@tokens';
 
 describe('Raw', () => {
   it('creates a raw element type', () => {

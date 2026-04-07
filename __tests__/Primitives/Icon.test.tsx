@@ -1,9 +1,8 @@
 import React from 'react';
-import { Icon } from '@/Primitives/Icon';
-import { DSLDefaults } from '@/Config/Defaults';
+import { Icon } from '@primitives';
+import { DSLDefaults } from '@config';
 import { renderWithDSLTheme, testColors } from '@tests/Helpers/renderWithDSLTheme';
-import { ElementType, ModifierType } from '@/Tokens/ElementType';
-import { Spacing, Edge } from '@/Tokens/Layout';
+import { ElementType, ModifierType, Spacing, Edge } from '@tokens';
 
 const Colors = testColors;
 

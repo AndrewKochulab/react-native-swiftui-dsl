@@ -1,11 +1,9 @@
 import { Platform } from 'react-native';
-import type { Modifier } from '@/Core/Modifier';
-import { ViewBuilder } from '@/Core/ViewBuilder';
-import { ElementType, ModifierType } from '@/Tokens/ElementType';
+import { ViewBuilder, type Modifier } from '@core';
+import { ElementType, ModifierType, SizeClass, DSLPlatform } from '@tokens';
 import type { ResponsiveContext, ResponsiveModifierFn } from './types';
-import type { CustomBreakpoint } from '@/Theme/types';
+import type { CustomBreakpoint } from '@theme';
 import { matchesCustomBreakpoint } from './useResponsive';
-import { SizeClass, DSLPlatform } from '@/Tokens/Interaction';
 
 /**
  * Resolves responsive and platform modifiers into concrete modifiers.

@@ -1,9 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { Text as RNText } from 'react-native';
-import { DSLThemeProvider } from '@/Theme/DSLThemeProvider';
-import { useDSLTheme } from '@/Theme/DSLThemeContext';
-import { normalizeColors } from '@/Core/ThemeResolver';
+import { DSLThemeProvider, useDSLTheme } from '@theme';
+import { normalizeColors } from '@core';
 import { testThemeConfig, testColors } from '@tests/Helpers/testThemeConfig';
 
 function ThemeConsumer() {

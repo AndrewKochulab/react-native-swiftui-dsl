@@ -1,8 +1,7 @@
 import React from 'react';
-import { LazyList } from '@/Primitives/LazyList';
-import { Text } from '@/Primitives/Text';
+import { LazyList, Text } from '@primitives';
 import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
-import { ElementType, ModifierType } from '@/Tokens/ElementType';
+import { ElementType, ModifierType } from '@tokens';
 
 describe('LazyList', () => {
   const data = ['Item 1', 'Item 2', 'Item 3'];

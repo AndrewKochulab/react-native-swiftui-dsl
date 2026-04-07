@@ -1,4 +1,4 @@
-import { DSLWarnings, DSLErrors } from '@/Constants/Messages';
+import { DSLWarnings, DSLErrors } from '@constants';
 
 describe('DSLWarnings', () => {
   it('has blur warning', () => {

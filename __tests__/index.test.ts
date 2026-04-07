@@ -1,7 +1,7 @@
 describe('barrel export (src/index.ts)', () => {
   // Use require to force the barrel file to be instrumented by coverage
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const barrel = require('@/index');
+  const barrel = require('../src/index');
 
   it('exports theme utilities', () => {
     expect(barrel.DSLThemeProvider).toBeDefined();

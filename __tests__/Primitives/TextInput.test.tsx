@@ -1,8 +1,8 @@
 import React from 'react';
-import { TextInput } from '@/Primitives/TextInput';
-import { createBinding } from '@/Binding/Binding';
+import { TextInput } from '@primitives';
+import { createBinding } from '@binding';
 import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
-import { ElementType, ModifierType } from '@/Tokens/ElementType';
+import { ElementType, ModifierType } from '@tokens';
 
 describe('TextInput', () => {
   const mockUpdate = jest.fn();

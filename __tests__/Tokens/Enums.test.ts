@@ -1,52 +1,12 @@
-import { Color } from '@/Tokens/Color';
-import { Font, Weight } from '@/Tokens/Font';
-import { Spacing, Radius, Edge } from '@/Tokens/Layout';
-import { ElementType, ModifierType, GestureType } from '@/Tokens/ElementType';
-import { Easing, AnimationType, Transition, TransitionEdge } from '@/Tokens/Animation';
 import {
-  ButtonVariant,
-  SpinnerSize,
-  ModalAnimation,
-  ImageResize,
-  AutoCapitalize,
-  KeyboardBehavior,
-  KeyboardPersistTaps,
-  ScrollDirection,
-  AccessibilityRole,
-} from '@/Tokens/Component';
-import {
-  SwipeDirection,
-  SizeClass,
-  Orientation,
-  ColorScheme,
-  DSLPlatform,
-} from '@/Tokens/Interaction';
-import {
-  TextAlign,
-  TextDecoration,
-  TextTransform,
-  FontStyle,
-  BorderStyle,
-  Position,
-  Overflow,
-  Display,
-  FlexWrap,
-  FlexDirection,
-  JustifyContent,
-  AlignItems,
-  AlignSelf,
-  Alignment,
-} from '@/Tokens/Style';
-import {
-  RNAlign,
-  RNDisplay,
-  RNColor,
-  RNTransform,
-  RNKey,
-  ApplyEdgePrefix,
-  RNTextAlignVertical,
-  RNPointerEvents,
-} from '@/Tokens/RNStyle';
+  Color, Font, Weight, Spacing, Radius, Edge, ElementType, ModifierType, GestureType, Easing,
+  AnimationType, Transition, TransitionEdge, ButtonVariant, SpinnerSize, ModalAnimation,
+  ImageResize, AutoCapitalize, KeyboardBehavior, KeyboardPersistTaps, ScrollDirection,
+  AccessibilityRole, SwipeDirection, SizeClass, Orientation, ColorScheme, DSLPlatform, TextAlign,
+  TextDecoration, TextTransform, FontStyle, BorderStyle, Position, Overflow, Display, FlexWrap,
+  FlexDirection, JustifyContent, AlignItems, AlignSelf, Alignment, RNAlign, RNDisplay, RNColor,
+  RNTransform, RNKey, ApplyEdgePrefix, RNTextAlignVertical, RNPointerEvents,
+} from '@tokens';
 
 /** Helper to count enum members (string enums only). */
 function enumSize(enumObj: Record<string, string>): number {

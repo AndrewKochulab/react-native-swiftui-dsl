@@ -1,4 +1,4 @@
-import type { DSLThemeConfig, DSLColors } from '@/Theme/types';
+import type { DSLThemeConfig, DSLColors } from '@theme';
 
 /**
  * Self-contained test theme configuration for DSL framework tests.

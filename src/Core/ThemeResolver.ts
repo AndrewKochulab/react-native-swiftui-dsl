@@ -1,7 +1,6 @@
-import { DSLColors, DSLColorConfig, ColorScheme } from '@/Theme/types';
-import { RNColor } from '@/Tokens/RNStyle';
-import { DSLWarnings } from '@/Constants/Messages';
-import { isObject, ColorSchemeField } from '@/Tokens/TypeGuards';
+import { DSLColors, DSLColorConfig, ColorScheme } from '@theme';
+import { RNColor, isObject, ColorSchemeField } from '@tokens';
+import { DSLWarnings } from '@constants';
 
 /** CSS color format prefixes for raw color detection. */
 const CSS_COLOR_PREFIX = {

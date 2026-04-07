@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react-native';
-import { DSLThemeProvider } from '@/Theme/DSLThemeProvider';
+import { DSLThemeProvider } from '@theme';
 import { testThemeConfig, testColors } from './testThemeConfig';
 
 export { testThemeConfig, testColors };

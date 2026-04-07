@@ -1,4 +1,4 @@
-import { generateId } from '@/Utils/generateId';
+import { generateId } from '@utils';
 
 describe('generateId', () => {
   it('returns a string', () => {

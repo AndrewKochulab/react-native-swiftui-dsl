@@ -5,11 +5,12 @@
  * This file contains ONLY type definitions — no runtime logic.
  */
 
-import type { SpacingToken, BorderRadiusToken, EdgeToken, BreakpointRange, BreakpointDefinition, CustomBreakpoint } from '@/Tokens/Layout';
-import type { FontSizeToken, FontWeightToken, RequiredFontWeightToken, OptionalFontWeightToken } from '@/Tokens/Font';
-import type { ColorSchemeToken } from '@/Tokens/Interaction';
-import type { ButtonVariantToken, ModalAnimationToken, SpinnerSizeToken } from '@/Tokens/Component';
-import type { TextDecorationToken } from '@/Tokens/Style';
+import type {
+  SpacingToken, BorderRadiusToken, EdgeToken, BreakpointRange, BreakpointDefinition,
+  CustomBreakpoint, FontSizeToken, FontWeightToken, RequiredFontWeightToken,
+  OptionalFontWeightToken, ColorSchemeToken, ButtonVariantToken, ModalAnimationToken,
+  SpinnerSizeToken, TextDecorationToken,
+} from '@tokens';
 
 // Re-export token types so existing imports from './Theme/types' continue working
 export type { SpacingToken, BorderRadiusToken, BreakpointRange, BreakpointDefinition, CustomBreakpoint };

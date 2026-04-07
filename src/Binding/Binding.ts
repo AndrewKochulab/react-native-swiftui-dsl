@@ -7,7 +7,7 @@
  *   TextInput($form.title).placeholder('Enter title')
  */
 
-import { isSymbol } from '@/Tokens/TypeGuards';
+import { isSymbol } from '@tokens';
 
 export interface Binding<T> {
   readonly value: T;

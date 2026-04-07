@@ -1,4 +1,4 @@
-import { formatDate, formatRelativeDate, getWeekStart, getTodayISO, formatDuration } from '@/Utils/dateUtils';
+import { formatDate, formatRelativeDate, getWeekStart, getTodayISO, formatDuration } from '@utils';
 
 describe('dateUtils', () => {
   describe('formatDate', () => {

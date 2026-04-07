@@ -1,5 +1,4 @@
-import { resolveColor, isColorToken } from '@/Core/ThemeResolver';
-import { normalizeColors } from '@/Core/ThemeResolver';
+import { resolveColor, isColorToken, normalizeColors } from '@core';
 import { testThemeConfig, testColors } from '@tests/Helpers/testThemeConfig';
 
 const colors = testColors;

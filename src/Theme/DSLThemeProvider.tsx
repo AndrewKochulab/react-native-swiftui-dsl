@@ -1,7 +1,7 @@
 import React from 'react';
 import { DSLThemeConfig, ColorScheme } from './types';
 import { DSLThemeContext } from './DSLThemeContext';
-import { ResponsiveProvider } from '@/Responsive/ResponsiveProvider';
+import { ResponsiveProvider } from '@responsive';
 
 interface Props {
   config: DSLThemeConfig;

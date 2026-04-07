@@ -1,22 +1,13 @@
 import React from 'react';
 import TestRenderer, { act } from 'react-test-renderer';
-import { Text } from '@/Primitives/Text';
-import { VStack, HStack } from '@/Primitives/Containers';
-import { Image } from '@/Primitives/Image';
-import { Toggle } from '@/Primitives/Toggle';
-import { Button } from '@/Primitives/Button';
-import { Divider } from '@/Primitives/Divider';
-import { Link } from '@/Primitives/Link';
-import { Icon } from '@/Primitives/Icon';
-import { Spinner } from '@/Primitives/Spinner';
-import { Raw } from '@/Primitives/Raw';
-import { createBinding } from '@/Binding/Binding';
-import { ViewBuilder } from '@/Core/ViewBuilder';
-import { DSLThemeProvider } from '@/Theme/DSLThemeProvider';
+import {
+  Text, VStack, HStack, Image, Toggle, Button, Divider, Link, Icon, Spinner, Raw,
+} from '@primitives';
+import { createBinding } from '@binding';
+import { ViewBuilder } from '@core';
+import { DSLThemeProvider } from '@theme';
 import { renderWithDSLTheme, testThemeConfig, testColors } from '@tests/Helpers/renderWithDSLTheme';
-import { Color } from '@/Tokens/Color';
-import { Spacing } from '@/Tokens/Layout';
-import { ButtonVariant, SpinnerSize } from '@/Tokens/Component';
+import { Color, Spacing, ButtonVariant, SpinnerSize } from '@tokens';
 
 const Colors = testColors;
 const Layout = testThemeConfig.layout;

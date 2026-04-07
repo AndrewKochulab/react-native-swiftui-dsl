@@ -1,5 +1,5 @@
-import { Animation, createAnimationPresets } from '@/Animation/presets';
-import { AnimationType, Easing } from '@/Tokens/Animation';
+import { Animation, createAnimationPresets } from '@animation';
+import { AnimationType, Easing } from '@tokens';
 
 describe('Animation presets', () => {
   it('creates easeIn timing config', () => {

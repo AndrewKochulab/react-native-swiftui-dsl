@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
-import { ProgressBar } from '@/Primitives/ProgressBar';
-import { DSLRenderer } from '@/Core/DSLRenderer';
+import { ProgressBar } from '@primitives';
+import { DSLRenderer } from '@core';
 
 jest.mock('expo-router', () => ({
   Stack: { Screen: () => null },

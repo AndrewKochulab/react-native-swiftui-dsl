@@ -1,4 +1,4 @@
-import { assertNever } from '@/Utils/exhaustive';
+import { assertNever } from '@utils';
 
 describe('assertNever', () => {
   it('throws with default message', () => {

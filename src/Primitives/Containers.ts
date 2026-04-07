@@ -1,5 +1,5 @@
-import { ViewBuilder, DSLChild } from '@/Core/ViewBuilder';
-import { ElementType } from '@/Tokens/ElementType';
+import { ViewBuilder, DSLChild } from '@core';
+import { ElementType } from '@tokens';
 
 export function VStack(...children: DSLChild[]): ViewBuilder {
   return new ViewBuilder(ElementType.vstack, {}, children);

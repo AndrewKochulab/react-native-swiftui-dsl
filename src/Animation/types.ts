@@ -3,7 +3,7 @@
  * All types derived from Token enums.
  */
 
-import { Easing, AnimationType, Transition, TransitionEdge } from '@/Tokens/Animation';
+import { Easing, AnimationType, Transition, TransitionEdge } from '@tokens';
 
 // --- Easing (derived from enum) ---
 

@@ -1,8 +1,7 @@
 import React from 'react';
-import { SectionedList } from '@/Primitives/SectionedList';
-import { Text } from '@/Primitives/Text';
+import { SectionedList, Text } from '@primitives';
 import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
-import { ElementType, ModifierType } from '@/Tokens/ElementType';
+import { ElementType, ModifierType } from '@tokens';
 
 describe('SectionedList', () => {
   const sections = [

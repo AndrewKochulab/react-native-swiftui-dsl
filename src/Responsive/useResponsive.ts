@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Dimensions, ScaledSize } from 'react-native';
 import type { SizeClassToken, Orientation, ResponsiveContext } from './types';
-import type { BreakpointDefinition, CustomBreakpoint } from '@/Theme/types';
-import { DSLDefaults } from '@/Config/Defaults';
-import { SizeClass, Orientation as OrientationToken } from '@/Tokens/Interaction';
+import type { BreakpointDefinition, CustomBreakpoint } from '@theme';
+import { DSLDefaults } from '@config';
+import { SizeClass, Orientation as OrientationToken } from '@tokens';
 
 /**
  * Determines the current size class based on screen width and breakpoint definitions.

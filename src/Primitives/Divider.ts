@@ -1,5 +1,5 @@
-import { ViewBuilder } from '@/Core/ViewBuilder';
-import { ElementType } from '@/Tokens/ElementType';
+import { ViewBuilder } from '@core';
+import { ElementType } from '@tokens';
 
 export function Divider(): ViewBuilder {
   return new ViewBuilder(ElementType.divider);

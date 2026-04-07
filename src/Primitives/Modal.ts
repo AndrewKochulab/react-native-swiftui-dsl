@@ -1,8 +1,7 @@
-import { ViewBuilder, DSLChild } from '@/Core/ViewBuilder';
-import { Binding } from '@/Binding/Binding';
-import { DSLDefaults } from '@/Config/Defaults';
-import { ElementType } from '@/Tokens/ElementType';
-import type { ModalAnimationToken } from '@/Tokens/Component';
+import { ViewBuilder, DSLChild } from '@core';
+import { Binding } from '@binding';
+import { DSLDefaults } from '@config';
+import { ElementType, type ModalAnimationToken } from '@tokens';
 
 export type ModalAnimationType = ModalAnimationToken;
 

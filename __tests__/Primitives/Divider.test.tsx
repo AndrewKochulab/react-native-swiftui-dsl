@@ -1,9 +1,7 @@
 import React from 'react';
-import { Divider } from '@/Primitives/Divider';
+import { Divider } from '@primitives';
 import { renderWithDSLTheme, testColors } from '@tests/Helpers/renderWithDSLTheme';
-import { ElementType, ModifierType } from '@/Tokens/ElementType';
-import { Color } from '@/Tokens/Color';
-import { Spacing, Edge } from '@/Tokens/Layout';
+import { ElementType, ModifierType, Color, Spacing, Edge } from '@tokens';
 
 const Colors = testColors;
 

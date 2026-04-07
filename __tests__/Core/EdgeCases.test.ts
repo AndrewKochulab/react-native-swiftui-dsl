@@ -1,16 +1,8 @@
-import { Text } from '@/Primitives/Text';
-import { VStack, HStack } from '@/Primitives/Containers';
-import { Spacer } from '@/Primitives/Spacer';
-import { Button } from '@/Primitives/Button';
-import { ViewBuilder } from '@/Core/ViewBuilder';
-import { ViewModifier, composeModifiers, ViewModifierFn } from '@/Core/ViewModifier';
-import { createModifiers } from '@/Core/ModifierSheet';
-import { DSLView } from '@/Core/DSLView';
-import { ModifierType } from '@/Tokens/ElementType';
-import { Color } from '@/Tokens/Color';
-import { Font } from '@/Tokens/Font';
-import { Spacing, Radius } from '@/Tokens/Layout';
-import { ButtonVariant } from '@/Tokens/Component';
+import { Text, VStack, HStack, Spacer, Button } from '@primitives';
+import {
+  ViewBuilder, ViewModifier, composeModifiers, ViewModifierFn, createModifiers, DSLView,
+} from '@core';
+import { ModifierType, Color, Font, Spacing, Radius, ButtonVariant } from '@tokens';
 
 // --- Modifier precedence ---
 

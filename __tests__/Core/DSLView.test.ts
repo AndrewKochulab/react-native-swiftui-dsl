@@ -1,11 +1,6 @@
-import { DSLView } from '@/Core/DSLView';
-import { ViewBuilder } from '@/Core/ViewBuilder';
-import { Text } from '@/Primitives/Text';
-import { VStack } from '@/Primitives/Containers';
-import { ModifierType } from '@/Tokens/ElementType';
-import { Color } from '@/Tokens/Color';
-import { Font } from '@/Tokens/Font';
-import { Spacing, Edge } from '@/Tokens/Layout';
+import { DSLView, ViewBuilder } from '@core';
+import { Text, VStack } from '@primitives';
+import { ModifierType, Color, Font, Spacing, Edge } from '@tokens';
 
 class SimpleCard extends DSLView<{ title: string }> {
   body(): ViewBuilder {

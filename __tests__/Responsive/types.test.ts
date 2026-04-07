@@ -1,4 +1,4 @@
-import { determineSizeClass, determineOrientation, resolveBreakpoints } from '@/Responsive/useResponsive';
+import { determineSizeClass, determineOrientation, resolveBreakpoints } from '@responsive';
 
 describe('Responsive utilities', () => {
   describe('determineSizeClass', () => {

@@ -1,6 +1,6 @@
 import type { AnimationConfig, SpringConfig, AnimationPresets } from './types';
-import { DSLDefaults } from '@/Config/Defaults';
-import { Easing as EasingToken, AnimationType } from '@/Tokens/Animation';
+import { DSLDefaults } from '@config';
+import { Easing as EasingToken, AnimationType } from '@tokens';
 
 /**
  * Creates animation preset factories using the current DSLDefaults values.

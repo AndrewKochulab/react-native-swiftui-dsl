@@ -1,9 +1,9 @@
 import React from 'react';
-import { TextInput } from '@/Primitives/TextInput';
-import { createBinding } from '@/Binding/Binding';
-import { ViewBuilder } from '@/Core/ViewBuilder';
+import { TextInput } from '@primitives';
+import { createBinding } from '@binding';
+import { ViewBuilder } from '@core';
 import { renderWithDSLTheme, testThemeConfig } from '@tests/Helpers/renderWithDSLTheme';
-import { Spacing } from '@/Tokens/Layout';
+import { Spacing } from '@tokens';
 
 describe('DSLRenderer - TextInput', () => {
   const makeBinding = (val = '') => createBinding<string>(val, jest.fn());

@@ -8,7 +8,7 @@ import {
   toString,
   JSType,
   ColorSchemeField,
-} from '@/Tokens/TypeGuards';
+} from '@tokens';
 
 describe('JSType enum', () => {
   it('has correct values', () => {

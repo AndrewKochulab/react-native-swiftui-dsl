@@ -8,30 +8,27 @@ import {
   FontWeightToken,
 } from './Modifier';
 import { ColorValue } from './ThemeResolver';
-import { Binding } from '@/Binding/Binding';
-import { DSLDefaults } from '@/Config/Defaults';
+import { Binding } from '@binding';
+import { DSLDefaults } from '@config';
 import { ViewModifier as ViewModifierClass, ViewModifierFn } from './ViewModifier';
-import { Color } from '@/Tokens/Color';
-import { DSLWarnings } from '@/Constants/Messages';
-import { ElementType, ElementTypeValue, ModifierType } from '@/Tokens/ElementType';
-import { Edge } from '@/Tokens/Layout';
-import type { EdgeToken } from '@/Tokens/Layout';
-import type { ImageResizeToken, SpinnerSizeToken, ButtonVariantToken, ModalAnimationToken } from '@/Tokens/Component';
-import { Font, Weight } from '@/Tokens/Font';
-import { isObject } from '@/Tokens/TypeGuards';
 import {
-  TextDecoration, FontStyle as FontStyleToken, FlexWrap as FlexWrapToken,
-} from '@/Tokens/Style';
+  Color, Edge, Font, Weight, ElementType, ElementTypeValue, ModifierType, TextDecoration,
+  FontStyle as FontStyleToken, FlexWrap as FlexWrapToken, ScrollDirection, isObject, type EdgeToken,
+  type ImageResizeToken, type SpinnerSizeToken, type ButtonVariantToken, type ModalAnimationToken,
+  type TextAlignToken, type TextDecorationToken, type TextTransformToken,
+  type FontStyleToken as FontStyleType, type BorderStyleToken, type PositionToken,
+  type OverflowToken, type DisplayToken, type FlexWrapToken as FlexWrapType,
+  type JustifyContentToken, type AlignItemsToken, type AlignSelfToken, type AlignmentToken,
+  type FrameAlignmentToken, type AutoCapitalizeToken, type KeyboardBehaviorToken,
+  type KeyboardPersistTapsToken,
+} from '@tokens';
+import { DSLWarnings } from '@constants';
+import type { AnimationConfig, TransitionConfig } from '@animation';
 import type {
-  TextAlignToken, TextDecorationToken, TextTransformToken, FontStyleToken as FontStyleType,
-  BorderStyleToken, PositionToken, OverflowToken, DisplayToken, FlexWrapToken as FlexWrapType,
-  JustifyContentToken, AlignItemsToken, AlignSelfToken, AlignmentToken, FrameAlignmentToken,
-} from '@/Tokens/Style';
-import type { AutoCapitalizeToken, KeyboardBehaviorToken, KeyboardPersistTapsToken } from '@/Tokens/Component';
-import { ScrollDirection } from '@/Tokens/Component';
-import type { AnimationConfig, TransitionConfig } from '@/Animation/types';
-import type { SwipeDirection, PanGestureState, PinchGestureState, RotationGestureState, PanGestureConfig, PinchGestureConfig, RotationGestureConfig, GestureConfig } from '@/Gesture/types';
-import type { ResponsiveConfig, ResponsiveModifierFn } from '@/Responsive/types';
+  SwipeDirection, PanGestureState, PinchGestureState, RotationGestureState, PanGestureConfig,
+  PinchGestureConfig, RotationGestureConfig, GestureConfig,
+} from '@gesture';
+import type { ResponsiveConfig, ResponsiveModifierFn } from '@responsive';
 
 export const VIEW_BUILDER_SYMBOL = Symbol.for('DSL.ViewBuilder');
 

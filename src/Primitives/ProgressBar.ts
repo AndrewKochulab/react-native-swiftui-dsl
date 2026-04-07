@@ -1,6 +1,5 @@
-import { ViewBuilder } from '@/Core/ViewBuilder';
-import { ColorValue } from '@/Core/ThemeResolver';
-import { ElementType } from '@/Tokens/ElementType';
+import { ViewBuilder, ColorValue } from '@core';
+import { ElementType } from '@tokens';
 
 export function ProgressBar(
   value: number,

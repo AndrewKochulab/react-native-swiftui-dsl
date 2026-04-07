@@ -1,8 +1,8 @@
 import React from 'react';
-import { Toggle } from '@/Primitives/Toggle';
-import { createBinding } from '@/Binding/Binding';
+import { Toggle } from '@primitives';
+import { createBinding } from '@binding';
 import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
-import { ElementType, ModifierType } from '@/Tokens/ElementType';
+import { ElementType, ModifierType } from '@tokens';
 
 describe('Toggle', () => {
   const mockUpdate = jest.fn();

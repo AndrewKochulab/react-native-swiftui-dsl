@@ -1,11 +1,6 @@
-import { ViewModifier, composeModifiers, ViewModifierFn } from '@/Core/ViewModifier';
-import { createModifiers } from '@/Core/ModifierSheet';
-import { Text } from '@/Primitives/Text';
-import { VStack } from '@/Primitives/Containers';
-import { ModifierType } from '@/Tokens/ElementType';
-import { Color } from '@/Tokens/Color';
-import { Font, Weight } from '@/Tokens/Font';
-import { Spacing, Edge } from '@/Tokens/Layout';
+import { ViewModifier, composeModifiers, ViewModifierFn, createModifiers } from '@core';
+import { Text, VStack } from '@primitives';
+import { ModifierType, Color, Font, Weight, Spacing, Edge } from '@tokens';
 
 class TestModifier extends ViewModifier {
   body(content: ReturnType<typeof Text>): ReturnType<typeof Text> {

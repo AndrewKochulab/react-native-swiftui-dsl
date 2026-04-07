@@ -1,7 +1,6 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { Text } from '@/Primitives/Text';
-import { ScrollStack } from '@/Primitives/ScrollStack';
+import { Text, ScrollStack } from '@primitives';
 import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
 
 describe('DSLRenderer - ScrollStack', () => {

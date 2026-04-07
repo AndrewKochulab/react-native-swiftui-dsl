@@ -3,17 +3,18 @@
  * Supports breakpoint-based layout adaptation for phones, tablets, and custom devices.
  */
 
-import type { ViewBuilder } from '@/Core/ViewBuilder';
+import type { ViewBuilder } from '@core';
 
 // Re-export from canonical Token sources
-export type { BreakpointDefinition, CustomBreakpoint } from '@/Tokens/Layout';
-export type { SizeClassToken, OrientationToken as Orientation } from '@/Tokens/Interaction';
+export type {
+  BreakpointDefinition, CustomBreakpoint, SizeClassToken, OrientationToken as Orientation,
+} from '@tokens';
 
 // --- Responsive context ---
 
 export interface ResponsiveContext {
-  sizeClass: import('../Tokens/Interaction').SizeClassToken;
-  orientation: import('../Tokens/Interaction').OrientationToken;
+  sizeClass: import('@tokens').SizeClassToken;
+  orientation: import('@tokens').OrientationToken;
   width: number;
   height: number;
   scale: number;

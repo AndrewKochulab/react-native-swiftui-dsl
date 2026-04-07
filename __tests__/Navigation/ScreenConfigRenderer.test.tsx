@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text as RNText } from 'react-native';
 import { render } from '@testing-library/react-native';
-import { ScreenConfigRenderer } from '@/Navigation/ScreenConfigRenderer';
+import { ScreenConfigRenderer } from '@navigation';
 
 // Mock expo-router Stack
 jest.mock('expo-router', () => ({

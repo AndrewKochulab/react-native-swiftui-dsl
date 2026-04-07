@@ -1,7 +1,5 @@
-import { Text } from '@/Primitives/Text';
-import { Image } from '@/Primitives/Image';
-import { GestureType, ModifierType } from '@/Tokens/ElementType';
-import { SwipeDirection } from '@/Tokens/Interaction';
+import { Text, Image } from '@primitives';
+import { GestureType, ModifierType, SwipeDirection } from '@tokens';
 
 describe('Gesture modifiers', () => {
   describe('.onSwipe()', () => {

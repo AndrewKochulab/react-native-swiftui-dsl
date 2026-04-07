@@ -1,4 +1,4 @@
-import { defaultThemeConfig } from '@/Config/Defaults';
+import { defaultThemeConfig } from '@config';
 
 const HEX_COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
 const RGBA_REGEX = /^rgba\(\d{1,3},\d{1,3},\d{1,3},[\d.]+\)$/;

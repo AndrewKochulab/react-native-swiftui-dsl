@@ -1,7 +1,6 @@
-import { ViewBuilder } from '@/Core/ViewBuilder';
-import { ElementType } from '@/Tokens/ElementType';
-import type { Binding } from '@/Binding/Binding';
-import type { ColorValue } from '@/Core/ThemeResolver';
+import { ViewBuilder, type ColorValue } from '@core';
+import { ElementType } from '@tokens';
+import type { Binding } from '@binding';
 
 export function Toggle(
   binding: Binding<boolean>,

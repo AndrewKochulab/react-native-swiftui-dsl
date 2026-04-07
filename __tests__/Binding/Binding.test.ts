@@ -1,4 +1,4 @@
-import { createBinding, bindForm, Binding } from '@/Binding/Binding';
+import { createBinding, bindForm, Binding } from '@binding';
 
 describe('createBinding', () => {
   it('creates a binding with value and update', () => {

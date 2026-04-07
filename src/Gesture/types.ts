@@ -3,8 +3,7 @@
  * All types derived from Token enums.
  */
 
-import { GestureType } from '@/Tokens/ElementType';
-import type { SwipeDirectionToken } from '@/Tokens/Interaction';
+import { GestureType, type SwipeDirectionToken } from '@tokens';
 
 // --- Direction (derived from enum) ---
 

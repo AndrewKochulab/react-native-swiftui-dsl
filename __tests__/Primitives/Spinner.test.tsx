@@ -1,9 +1,7 @@
 import React from 'react';
-import { Spinner } from '@/Primitives/Spinner';
+import { Spinner } from '@primitives';
 import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
-import { SpinnerSize } from '@/Tokens/Component';
-import { ElementType, ModifierType } from '@/Tokens/ElementType';
-import { Spacing, Edge } from '@/Tokens/Layout';
+import { SpinnerSize, ElementType, ModifierType, Spacing, Edge } from '@tokens';
 
 describe('Spinner', () => {
   it('creates a spinner element type', () => {

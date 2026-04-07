@@ -1,12 +1,7 @@
-import { Text } from '@/Primitives/Text';
-import { VStack } from '@/Primitives/Containers';
-import { ViewBuilder } from '@/Core/ViewBuilder';
-import { resolveResponsiveModifiers } from '@/Responsive/resolveResponsiveModifiers';
-import type { ResponsiveContext } from '@/Responsive/types';
-import { ModifierType } from '@/Tokens/ElementType';
-import { Color } from '@/Tokens/Color';
-import { Font } from '@/Tokens/Font';
-import { Spacing, Edge } from '@/Tokens/Layout';
+import { Text, VStack } from '@primitives';
+import { ViewBuilder } from '@core';
+import { resolveResponsiveModifiers, type ResponsiveContext } from '@responsive';
+import { ModifierType, Color, Font, Spacing, Edge } from '@tokens';
 
 const compactCtx: ResponsiveContext = {
   sizeClass: 'compact',

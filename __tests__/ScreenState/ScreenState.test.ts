@@ -2,7 +2,7 @@ import {
   ScreenStateType,
   loadingState, contentState, errorState, emptyState, listContentState,
   DataScreenState, ListScreenState, AsyncOpState, FormLoadState, FormSubmitState,
-} from '@/ScreenState/ScreenState';
+} from '@screen-state';
 
 describe('ScreenState', () => {
   describe('ScreenStateType enum', () => {

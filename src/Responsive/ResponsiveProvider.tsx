@@ -1,7 +1,7 @@
 import React from 'react';
 import { ResponsiveCtx } from './ResponsiveContext';
 import { useResponsive } from './useResponsive';
-import type { BreakpointDefinition, CustomBreakpoint } from '@/Tokens/Layout';
+import type { BreakpointDefinition, CustomBreakpoint } from '@tokens';
 
 interface Props {
   breakpoints?: Partial<BreakpointDefinition>;

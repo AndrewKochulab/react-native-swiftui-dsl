@@ -1,21 +1,26 @@
-import {
+import type {
   SpacingToken,
   BorderRadiusToken,
   FontSizeToken,
   FontWeightToken,
   DSLLayout,
   DSLFonts,
-} from '@/Theme/types';
+} from '@theme';
 import { ColorValue } from './ThemeResolver';
-import { isNumber } from '@/Tokens/TypeGuards';
-import type { AnimationConfig, TransitionConfig } from '@/Animation/types';
-import type { PanGestureState, PinchGestureState, RotationGestureState, PanGestureConfig, PinchGestureConfig, RotationGestureConfig, GestureConfig } from '@/Gesture/types';
-import type { ResponsiveConfig, ResponsiveModifierFn } from '@/Responsive/types';
-import { ModifierType } from '@/Tokens/ElementType';
-import type { EdgeToken } from '@/Tokens/Layout';
-import type { AlignmentToken, FrameAlignmentToken, JustifyContentToken, AlignItemsToken, AlignSelfToken, FlexWrapToken, TextTransformToken, TextAlignToken, TextDecorationToken, FontStyleToken, BorderStyleToken, PositionToken, OverflowToken, DisplayToken } from '@/Tokens/Style';
-import type { AutoCapitalizeToken, KeyboardBehaviorToken, KeyboardPersistTapsToken, ScrollDirectionToken } from '@/Tokens/Component';
-import type { SwipeDirectionToken } from '@/Tokens/Interaction';
+import {
+  isNumber, ModifierType, type EdgeToken, type AlignmentToken, type FrameAlignmentToken,
+  type JustifyContentToken, type AlignItemsToken, type AlignSelfToken, type FlexWrapToken,
+  type TextTransformToken, type TextAlignToken, type TextDecorationToken, type FontStyleToken,
+  type BorderStyleToken, type PositionToken, type OverflowToken, type DisplayToken,
+  type AutoCapitalizeToken, type KeyboardBehaviorToken, type KeyboardPersistTapsToken,
+  type ScrollDirectionToken, type SwipeDirectionToken,
+} from '@tokens';
+import type { AnimationConfig, TransitionConfig } from '@animation';
+import type {
+  PanGestureState, PinchGestureState, RotationGestureState, PanGestureConfig, PinchGestureConfig,
+  RotationGestureConfig, GestureConfig,
+} from '@gesture';
+import type { ResponsiveConfig, ResponsiveModifierFn } from '@responsive';
 
 export type { SpacingToken, BorderRadiusToken, FontSizeToken, FontWeightToken };
 

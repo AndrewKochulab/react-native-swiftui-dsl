@@ -1,20 +1,8 @@
 import React from 'react';
-import { Text } from '@/Primitives/Text';
-import { VStack, HStack } from '@/Primitives/Containers';
-import { Spacer } from '@/Primitives/Spacer';
-import { Button } from '@/Primitives/Button';
-import { Image } from '@/Primitives/Image';
-import { Divider } from '@/Primitives/Divider';
-import { ViewModifier } from '@/Core/ViewModifier';
-import { ViewBuilder } from '@/Core/ViewBuilder';
-import { DSLView } from '@/Core/DSLView';
-import { createModifiers } from '@/Core/ModifierSheet';
+import { Text, VStack, HStack, Spacer, Button, Image, Divider } from '@primitives';
+import { ViewModifier, ViewBuilder, DSLView, createModifiers } from '@core';
 import { renderWithDSLTheme, testColors } from '@tests/Helpers/renderWithDSLTheme';
-import { ModifierType } from '@/Tokens/ElementType';
-import { Color } from '@/Tokens/Color';
-import { Font } from '@/Tokens/Font';
-import { Spacing, Radius } from '@/Tokens/Layout';
-import { ButtonVariant } from '@/Tokens/Component';
+import { ModifierType, Color, Font, Spacing, Radius, ButtonVariant } from '@tokens';
 
 describe('Integration rendering', () => {
   describe('ViewModifier in rendered tree', () => {

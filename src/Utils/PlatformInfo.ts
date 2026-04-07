@@ -4,7 +4,7 @@
  */
 
 import { Platform } from 'react-native';
-import { DSLPlatform } from '@/Tokens/Interaction';
+import { DSLPlatform } from '@tokens';
 
 /** Static platform detection flags. */
 export const PlatformInfo = {

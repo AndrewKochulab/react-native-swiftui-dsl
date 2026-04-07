@@ -1,7 +1,6 @@
-import { ViewBuilder } from '@/Core/ViewBuilder';
-import { DSLDefaults } from '@/Config/Defaults';
-import { ElementType } from '@/Tokens/ElementType';
-import type { ButtonVariantToken } from '@/Tokens/Component';
+import { ViewBuilder } from '@core';
+import { DSLDefaults } from '@config';
+import { ElementType, type ButtonVariantToken } from '@tokens';
 
 export type ButtonStyle = ButtonVariantToken;
 

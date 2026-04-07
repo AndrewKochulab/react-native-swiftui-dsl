@@ -1,10 +1,8 @@
 import React from 'react';
-import { ScrollStack } from '@/Primitives/ScrollStack';
-import { Text } from '@/Primitives/Text';
-import { DSLDefaults } from '@/Config/Defaults';
+import { ScrollStack, Text } from '@primitives';
+import { DSLDefaults } from '@config';
 import { renderWithDSLTheme, testThemeConfig } from '@tests/Helpers/renderWithDSLTheme';
-import { ElementType, ModifierType } from '@/Tokens/ElementType';
-import { Edge } from '@/Tokens/Layout';
+import { ElementType, ModifierType, Edge } from '@tokens';
 
 const Layout = testThemeConfig.layout;
 

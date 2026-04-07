@@ -1,6 +1,6 @@
 import React from 'react';
-import { Group } from '@/Conditionals/Group';
-import { Text } from '@/Primitives/Text';
+import { Group } from '@conditionals';
+import { Text } from '@primitives';
 import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
 
 describe('Group', () => {

@@ -1,7 +1,5 @@
-import { Text } from '@/Primitives/Text';
-import { VStack } from '@/Primitives/Containers';
-import { Image } from '@/Primitives/Image';
-import { ModifierType } from '@/Tokens/ElementType';
+import { Text, VStack, Image } from '@primitives';
+import { ModifierType } from '@tokens';
 
 describe('Transform modifiers', () => {
   describe('.offset()', () => {

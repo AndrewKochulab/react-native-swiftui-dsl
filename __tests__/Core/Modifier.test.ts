@@ -2,7 +2,7 @@ import {
   resolveSpacing,
   resolveBorderRadius,
   resolveFontSize,
-} from '@/Core/Modifier';
+} from '@core';
 import { testThemeConfig } from '@tests/Helpers/testThemeConfig';
 
 const layout = testThemeConfig.layout;

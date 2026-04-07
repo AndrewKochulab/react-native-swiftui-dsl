@@ -1,11 +1,7 @@
 import React from 'react';
-import { Text } from '@/Primitives/Text';
-import { VStack } from '@/Primitives/Containers';
-import { Button } from '@/Primitives/Button';
-import { Divider } from '@/Primitives/Divider';
-import { Link } from '@/Primitives/Link';
+import { Text, VStack, Button, Divider, Link } from '@primitives';
 import { renderWithDSLTheme, testThemeConfig, testColors } from '@tests/Helpers/renderWithDSLTheme';
-import { Color } from '@/Tokens/Color';
+import { Color } from '@tokens';
 
 const DarkColors = testColors.dark;
 

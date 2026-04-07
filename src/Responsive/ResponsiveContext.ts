@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 import type { ResponsiveContext as ResponsiveContextType, SizeClassToken } from './types';
-import { SizeClass } from '@/Tokens/Interaction';
+import { SizeClass } from '@tokens';
 
 /**
  * React context that provides responsive information (size class, orientation, dimensions)

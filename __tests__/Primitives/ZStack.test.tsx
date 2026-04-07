@@ -1,8 +1,7 @@
 import React from 'react';
-import { ZStack } from '@/Primitives/Containers';
-import { Text } from '@/Primitives/Text';
+import { ZStack, Text } from '@primitives';
 import { renderWithDSLTheme, testColors } from '@tests/Helpers/renderWithDSLTheme';
-import { Color } from '@/Tokens/Color';
+import { Color } from '@tokens';
 
 const Colors = testColors;
 

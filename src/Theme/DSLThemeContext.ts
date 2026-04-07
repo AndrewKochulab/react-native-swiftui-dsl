@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 import type { DSLThemeConfig, ColorScheme } from './types';
-import { defaultThemeConfig } from '@/Config/Defaults';
-import { ColorScheme as ColorSchemeValue } from '@/Tokens/Interaction';
+import { defaultThemeConfig } from '@config';
+import { ColorScheme as ColorSchemeValue } from '@tokens';
 
 export interface DSLThemeContextValue {
   config: DSLThemeConfig;

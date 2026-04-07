@@ -1,8 +1,5 @@
-import { Text } from '@/Primitives/Text';
-import { VStack } from '@/Primitives/Containers';
-import { ModifierType } from '@/Tokens/ElementType';
-import { Color } from '@/Tokens/Color';
-import { Spacing } from '@/Tokens/Layout';
+import { Text, VStack } from '@primitives';
+import { ModifierType, Color, Spacing } from '@tokens';
 
 describe('Environment modifiers', () => {
   it('adds environment modifier', () => {

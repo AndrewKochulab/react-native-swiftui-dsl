@@ -1,9 +1,9 @@
 import React from 'react';
 import { Linking } from 'react-native';
 import { fireEvent } from '@testing-library/react-native';
-import { Link } from '@/Primitives/Link';
+import { Link } from '@primitives';
 import { renderWithDSLTheme, testColors } from '@tests/Helpers/renderWithDSLTheme';
-import { Font } from '@/Tokens/Font';
+import { Font } from '@tokens';
 
 const Colors = testColors;
 

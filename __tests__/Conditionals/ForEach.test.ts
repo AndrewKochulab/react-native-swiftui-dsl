@@ -1,6 +1,6 @@
-import { ForEach } from '@/Conditionals/ForEach';
-import { Text } from '@/Primitives/Text';
-import { ViewBuilder } from '@/Core/ViewBuilder';
+import { ForEach } from '@conditionals';
+import { Text } from '@primitives';
+import { ViewBuilder } from '@core';
 
 describe('ForEach', () => {
   it('maps data to builders', () => {

@@ -1,7 +1,6 @@
-import { ViewBuilder } from '@/Core/ViewBuilder';
-import { DSLDefaults } from '@/Config/Defaults';
-import { ElementType } from '@/Tokens/ElementType';
-import type { SpinnerSizeToken } from '@/Tokens/Component';
+import { ViewBuilder } from '@core';
+import { DSLDefaults } from '@config';
+import { ElementType, type SpinnerSizeToken } from '@tokens';
 
 export function Spinner(size: SpinnerSizeToken = DSLDefaults.spinner.defaultSize): ViewBuilder {
   return new ViewBuilder(ElementType.spinner, { spinnerSize: size });

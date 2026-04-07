@@ -1,13 +1,8 @@
 import React from 'react';
-import { Text } from '@/Primitives/Text';
-import { VStack } from '@/Primitives/Containers';
-import { Divider } from '@/Primitives/Divider';
-import { LazyList } from '@/Primitives/LazyList';
-import { SectionedList } from '@/Primitives/SectionedList';
-import { ViewBuilder } from '@/Core/ViewBuilder';
+import { Text, VStack, Divider, LazyList, SectionedList } from '@primitives';
+import { ViewBuilder } from '@core';
 import { renderWithDSLTheme } from '@tests/Helpers/renderWithDSLTheme';
-import { Font } from '@/Tokens/Font';
-import { Spacing } from '@/Tokens/Layout';
+import { Font, Spacing } from '@tokens';
 
 const testData = [
   { id: '1', name: 'Alpha' },

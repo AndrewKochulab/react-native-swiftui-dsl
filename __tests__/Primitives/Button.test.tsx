@@ -1,10 +1,9 @@
 import React from 'react';
 import { fireEvent } from '@testing-library/react-native';
-import { Button } from '@/Primitives/Button';
-import { DSLDefaults } from '@/Config/Defaults';
+import { Button } from '@primitives';
+import { DSLDefaults } from '@config';
 import { renderWithDSLTheme, testColors } from '@tests/Helpers/renderWithDSLTheme';
-import { ButtonVariant } from '@/Tokens/Component';
-import { ElementType, ModifierType } from '@/Tokens/ElementType';
+import { ButtonVariant, ElementType, ModifierType } from '@tokens';
 
 const Colors = testColors;
 
