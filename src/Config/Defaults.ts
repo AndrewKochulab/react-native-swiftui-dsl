@@ -3,6 +3,7 @@ import type { EasingPreset, TransitionEffect } from '@animation';
 import {
   Color, Font, Weight, Spacing, Edge, Easing as EasingToken, Transition, AnimationType,
   ButtonVariant, ModalAnimation, ImageResize, SpinnerSize, KeyboardPersistTaps, TextDecoration,
+  TabBarAnimation,
 } from '@tokens';
 
 /**
@@ -123,6 +124,36 @@ export const DSLDefaults = {
   progressBar: {
     height: 4,
     cornerRadius: 2,
+  },
+
+  /** TabView defaults. */
+  tabView: {
+    iconSize: 22,
+    labelFontSize: Font.small as FontSizeToken,
+    labelFontWeight: Weight.semibold as FontWeightToken,
+    barHeight: 84,
+    barBorderWidth: 0.5,
+    barTopPadding: 8,
+    iosBottomPadding: 20,
+    itemVerticalPadding: 6,
+    labelIconGap: 2,
+    animation: TabBarAnimation.none,
+    badge: {
+      offsetTop: -4,
+      offsetRight: -10,
+      borderRadius: 8,
+      minWidth: 16,
+      height: 16,
+      paddingHorizontal: 4,
+      fontSize: Font.micro as FontSizeToken,
+      fontWeight: Weight.semibold as FontWeightToken,
+    },
+    animations: {
+      spring: { scale: 1.15, duration: 300, useSpring: true, damping: 10, stiffness: 150, inactiveOpacity: 1 },
+      scale: { scale: 1.12, duration: 200, useSpring: false, damping: 10, stiffness: 100, inactiveOpacity: 1 },
+      fade: { scale: 1, duration: 250, useSpring: false, damping: 10, stiffness: 100, inactiveOpacity: 0.4 },
+      none: { scale: 1, duration: 0, useSpring: false, damping: 10, stiffness: 100, inactiveOpacity: 1 },
+    },
   },
 
   /** Animation system defaults. */

@@ -42,12 +42,12 @@ export { Easing, AnimationType, Transition, TransitionEdge } from './Animation';
 export {
   ButtonVariant, SpinnerSize, ModalAnimation, ImageResize,
   AutoCapitalize, KeyboardBehavior, KeyboardPersistTaps,
-  ScrollDirection, AccessibilityRole,
+  ScrollDirection, AccessibilityRole, TabBarAnimation,
 } from './Component';
 export type {
   ButtonVariantToken, SpinnerSizeToken, ModalAnimationToken, ImageResizeToken,
   AutoCapitalizeToken, KeyboardBehaviorToken, KeyboardPersistTapsToken,
-  ScrollDirectionToken, AccessibilityRoleToken,
+  ScrollDirectionToken, AccessibilityRoleToken, TabBarAnimationToken,
 } from './Component';
 
 // Element & Modifier types

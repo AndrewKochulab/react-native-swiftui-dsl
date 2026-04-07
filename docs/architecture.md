@@ -18,7 +18,7 @@ src/
 +-- Gesture/         # Swipe, Pan, Pinch, Rotation gesture handlers
 +-- Logger/          # Structured logging utility
 +-- Navigation/      # expo-router ScreenConfigRenderer
-+-- Primitives/      # 20 primitive factory functions
++-- Primitives/      # 21 primitive factory functions (incl. TabView)
 +-- Responsive/      # Breakpoint system, ResponsiveProvider, hooks
 +-- ScreenState/     # Screen state management (loading, error, success)
 +-- Theme/           # DSLThemeProvider, DSLThemeContext, type definitions
@@ -42,7 +42,7 @@ Each module has its own README with in-depth documentation:
 | **Core**         | [src/Core/README.md](../src/Core/README.md)                      | Core rendering engine: `ViewBuilder`, `DSLRenderer`, modifier resolution, `ThemeResolver` |
 | **Gesture**      | [src/Gesture/README.md](../src/Gesture/README.md)                | Gesture handlers: swipe, pan, pinch, rotation                                             |
 | **Navigation**   | [src/Navigation/README.md](../src/Navigation/README.md)          | Screen navigation: `ScreenConfigRenderer`, expo-router integration                        |
-| **Primitives**   | [src/Primitives/README.md](../src/Primitives/README.md)          | All 20 UI component primitives with signatures and examples                               |
+| **Primitives**   | [src/Primitives/README.md](../src/Primitives/README.md)          | All 21 UI component primitives with signatures and examples                               |
 | **Responsive**   | [src/Responsive/README.md](../src/Responsive/README.md)          | Breakpoint system, size classes, responsive modifiers                                     |
 | **Theme**        | [src/Theme/README.md](../src/Theme/README.md)                    | Theming system: `DSLThemeProvider`, `DSLColorConfig`, token types                         |
 | **Tokens**       | [src/Tokens/README.md](../src/Tokens/README.md)                  | Token enums: Color, Font, Spacing, Radius                                                 |
@@ -58,3 +58,4 @@ Each module has its own README with in-depth documentation:
 | Animations & Gestures | [examples/05-animations-gestures.tsx](../examples/05-animations-gestures.tsx) | Animation presets, transitions, gestures |
 | Global Imports | [examples/06-globals-import.tsx](../examples/06-globals-import.tsx) | Zero-import usage |
 | Transforms & Environment | [examples/07-transforms-environment.tsx](../examples/07-transforms-environment.tsx) | Transforms, environment values |
+| TabView | [examples/08-tab-view.tsx](../examples/08-tab-view.tsx) | Tab bar navigation, badges, animations |

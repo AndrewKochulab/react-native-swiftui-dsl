@@ -21,3 +21,7 @@ export type { SectionData, SectionedListOptions } from './SectionedList';
 export { Modal } from './Modal';
 export type { ModalAnimationType } from './Modal';
 export { ProgressBar } from './ProgressBar';
+export { TabView, Tab } from './TabView';
+export type {
+  TabItem, TabOptions, TabBarCustomAnimation, TabBarAnimationConfig,
+} from './TabView';

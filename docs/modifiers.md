@@ -1,6 +1,6 @@
 # API Reference: Modifiers
 
-All modifiers are **chainable** and return the same `ViewBuilder` instance. There are **60+ modifiers** organized into categories.
+All modifiers are **chainable** and return the same `ViewBuilder` instance. There are **70+ modifiers** organized into categories.
 
 [<-- Back to README](../README.md)
 
@@ -152,6 +152,23 @@ Modal(binding, { animationType: 'slide' }, ...children)
   .onDismiss(() => console.log('closed'))
 ```
 
+## Tab Bar Modifiers
+
+```ts
+TabView(/* tabs */)
+  .tabBarTintColor(Color.tint)                  // active item color
+  .tabBarInactiveTintColor(Color.secondaryText)  // inactive item color
+  .tabBarBackgroundColor(Color.card)             // bar background
+  .tabBarBorderColor(Color.separator)            // bar top border
+  .tabBarAnimation(TabBarAnimation.spring)       // animation preset or custom config
+  .tabBarLabelFontSize(Font.small)               // label font size
+  .tabBarLabelFontWeight('semibold')             // label font weight
+  .tabBarIconSize(24)                            // default icon size
+  .tabBarHeight(84)                              // bar height in points
+```
+
+> See the dedicated [TabView documentation](./tab-view.md) for animation presets, custom animations, and tab item configuration.
+
 ## Screen Navigation Modifiers
 
 ```ts
@@ -203,3 +220,6 @@ Key modifiers and the React Native style properties they resolve to:
 | `.zIndex(10)`                    | `zIndex: 10`                                                        | Direct passthrough            |
 | `.overflow('hidden')`            | `overflow: 'hidden'`                                                | Direct passthrough            |
 | `.aspectRatio(1.5)`              | `aspectRatio: 1.5`                                                  | Direct passthrough            |
+| `.tabBarTintColor(Color.tint)`   | Active tab item color                                                | Tab bar styling               |
+| `.tabBarAnimation('spring')`     | Tab bar item transition animation                                    | Animation preset or custom    |
+| `.tabBarHeight(84)`              | Tab bar height in points                                             | Layout dimension              |

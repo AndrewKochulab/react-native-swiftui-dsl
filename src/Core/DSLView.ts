@@ -21,7 +21,7 @@ import type { ViewBuilder } from './ViewBuilder';
  * ProfileCard.build({ name: 'John', bio: 'Developer' }).padding(Spacing.lg)
  * ```
  */
-export abstract class DSLView<Props extends Record<string, unknown> = Record<string, never>> {
+export abstract class DSLView<Props extends object = Record<string, never>> {
   protected readonly props: Props;
 
   constructor(props: Props) {
@@ -42,7 +42,7 @@ export abstract class DSLView<Props extends Record<string, unknown> = Record<str
    * ProfileCard.build({ name: 'John', bio: 'Dev' }).padding(Spacing.lg).shadow()
    * ```
    */
-  static build<P extends Record<string, unknown>>(
+  static build<P extends object>(
     this: new (props: P) => DSLView<P>,
     props: P,
   ): ViewBuilder {

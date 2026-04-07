@@ -64,6 +64,16 @@ export enum AccessibilityRole {
   progressbar = 'progressbar',
   image = 'image',
   text = 'text',
+  tab = 'tab',
+  tabbar = 'tabbar',
   none = 'none',
 }
 export type AccessibilityRoleToken = `${AccessibilityRole}`;
+
+export enum TabBarAnimation {
+  spring = 'spring',
+  scale = 'scale',
+  fade = 'fade',
+  none = 'none',
+}
+export type TabBarAnimationToken = `${TabBarAnimation}`;

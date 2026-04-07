@@ -77,6 +77,19 @@ Used with `.cornerRadius()`.
 | `Radius.md` | 8             |
 | `Radius.lg` | 16            |
 
+### Component Tokens
+
+#### TabBarAnimation
+
+Used with `.tabBarAnimation()` on `TabView`.
+
+| Token                     | Description                          |
+| ------------------------- | ------------------------------------ |
+| `TabBarAnimation.spring`  | Spring physics with bounce           |
+| `TabBarAnimation.scale`   | Simple scale effect                  |
+| `TabBarAnimation.fade`    | Opacity transition                   |
+| `TabBarAnimation.none`    | No animation (default)               |
+
 ## Custom Tokens
 
 Override any token by providing your own values in `DSLThemeConfig`:

@@ -25,8 +25,10 @@ export { createBinding, bindForm, useFormBinding, type Binding } from '@binding'
 export {
   Text, VStack, HStack, ZStack, Icon, Spacer, Raw, SafeArea, ScrollStack, TextInput, Spinner,
   LazyList, Image, Toggle, Button, Divider, Link, SectionedList, Modal, ProgressBar,
+  TabView, Tab,
   type LazyListOptions, type ImageSource, type ButtonStyle, type SectionData,
   type SectionedListOptions, type ModalAnimationType,
+  type TabItem, type TabOptions, type TabBarAnimationConfig, type TabBarCustomAnimation,
 } from '@primitives';
 
 // Conditionals
@@ -52,7 +54,8 @@ export {
   AlignSelf, Alignment, RNAlign, RNDisplay, RNColor, RNTransform, RNTextAlignVertical,
   RNPointerEvents, ApplyEdgePrefix, RNKey, Easing, AnimationType, Transition, TransitionEdge,
   ButtonVariant, SpinnerSize, ModalAnimation, ImageResize, AutoCapitalize, KeyboardBehavior,
-  KeyboardPersistTaps, ScrollDirection, AccessibilityRole, ElementType, GestureType, ModifierType,
+  KeyboardPersistTaps, ScrollDirection, AccessibilityRole, TabBarAnimation,
+  ElementType, GestureType, ModifierType,
   SwipeDirection, SizeClass, Orientation as OrientationValue, ColorScheme as ColorSchemeValue,
   DSLPlatform, JSType, isNumber, isString, isBoolean, isSymbol, isObject, isNil, toString,
   ColorSchemeField, type ColorToken, type EdgeToken, type TextAlignToken, type TextDecorationToken,
@@ -62,7 +65,8 @@ export {
   type FrameAlignmentToken, type ApplyEdgePrefixToken, type ButtonVariantToken,
   type SpinnerSizeToken, type ModalAnimationToken, type ImageResizeToken, type AutoCapitalizeToken,
   type KeyboardBehaviorToken, type KeyboardPersistTapsToken, type ScrollDirectionToken,
-  type AccessibilityRoleToken, type ElementTypeValue, type GestureTypeValue, type ModifierTypeValue,
+  type AccessibilityRoleToken, type TabBarAnimationToken,
+  type ElementTypeValue, type GestureTypeValue, type ModifierTypeValue,
   type SwipeDirectionToken, type SizeClassToken, type OrientationToken, type ColorSchemeToken,
   type DSLPlatformToken,
 } from '@tokens';

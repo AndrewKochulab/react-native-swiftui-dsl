@@ -136,7 +136,17 @@ export type Modifier =
   | { type: ModifierType.onRotate; onChanged: (state: RotationGestureState) => void; onEnded?: (state: RotationGestureState) => void; config?: RotationGestureConfig }
   | { type: ModifierType.gesture; config: GestureConfig }
   // Environment
-  | { type: ModifierType.environment; key: string; value: unknown };
+  | { type: ModifierType.environment; key: string; value: unknown }
+  // TabView
+  | { type: ModifierType.tabBarTintColor; color: ColorValue }
+  | { type: ModifierType.tabBarInactiveTintColor; color: ColorValue }
+  | { type: ModifierType.tabBarBackgroundColor; color: ColorValue }
+  | { type: ModifierType.tabBarBorderColor; color: ColorValue }
+  | { type: ModifierType.tabBarAnimation; config: import('@primitives').TabBarAnimationConfig }
+  | { type: ModifierType.tabBarLabelFontSize; value: FontSizeToken | number }
+  | { type: ModifierType.tabBarLabelFontWeight; weight: FontWeightToken }
+  | { type: ModifierType.tabBarIconSize; value: number }
+  | { type: ModifierType.tabBarHeight; value: number };
 
 export function resolveSpacing(value: number | SpacingToken, layout: DSLLayout): number {
   if (isNumber(value)) return value;

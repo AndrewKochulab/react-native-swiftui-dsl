@@ -18,8 +18,9 @@ Comprehensive documentation for `react-native-swiftui-dsl`.
 
 | Topic | Description | Source | Example |
 | ----- | ----------- | ------ | ------- |
-| [Primitives](./primitives.md) | 20 built-in UI components and component mapping | [src/Primitives/](../src/Primitives/README.md) | [01-basic-usage.tsx](../examples/01-basic-usage.tsx) |
-| [Modifiers](./modifiers.md) | 60+ chainable modifiers and RN property mapping | [src/Core/](../src/Core/README.md) | [02-view-modifiers.tsx](../examples/02-view-modifiers.tsx) |
+| [Primitives](./primitives.md) | 21 built-in UI components and component mapping | [src/Primitives/](../src/Primitives/README.md) | [01-basic-usage.tsx](../examples/01-basic-usage.tsx) |
+| [TabView](./tab-view.md) | Tab bar navigation with icons, badges, animations | [src/Primitives/TabView.ts](../src/Primitives/TabView.ts) | [08-tab-view.tsx](../examples/08-tab-view.tsx) |
+| [Modifiers](./modifiers.md) | 70+ chainable modifiers and RN property mapping | [src/Core/](../src/Core/README.md) | [02-view-modifiers.tsx](../examples/02-view-modifiers.tsx) |
 | [Theme System](./theme-system.md) | Token-based theming, color schemes, configuration | [src/Theme/](../src/Theme/README.md) | [01-basic-usage.tsx](../examples/01-basic-usage.tsx) |
 | [Tokens](./tokens.md) | Color, Font, Spacing, Radius token enums | [src/Tokens/](../src/Tokens/README.md) | -- |
 

@@ -139,7 +139,7 @@ describe('ElementType enum', () => {
   });
 
   it('has 21 members', () => {
-    expect(enumSize(ElementType)).toBe(21);
+    expect(enumSize(ElementType)).toBe(22);
   });
 });
 
@@ -284,7 +284,7 @@ describe('ModifierType enum', () => {
   });
 
   it('has 90 members', () => {
-    expect(enumSize(ModifierType)).toBe(90);
+    expect(enumSize(ModifierType)).toBe(99);
   });
 });
 
@@ -446,7 +446,7 @@ describe('AccessibilityRole enum', () => {
   });
 
   it('has 6 members', () => {
-    expect(enumSize(AccessibilityRole)).toBe(6);
+    expect(enumSize(AccessibilityRole)).toBe(8);
   });
 });
 

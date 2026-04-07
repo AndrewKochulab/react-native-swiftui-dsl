@@ -23,6 +23,7 @@ import {
   type KeyboardPersistTapsToken,
 } from '@tokens';
 import { DSLWarnings } from '@constants';
+import type { TabBarAnimationConfig } from '@primitives';
 import type { AnimationConfig, TransitionConfig } from '@animation';
 import type {
   SwipeDirection, PanGestureState, PinchGestureState, RotationGestureState, PanGestureConfig,
@@ -76,6 +77,8 @@ export interface DSLElementProps {
   progressValue?: number;
   progressTrackColor?: ColorValue;
   progressColor?: ColorValue;
+  // TabView
+  tabItems?: ReadonlyArray<import('@primitives').TabItem>;
 }
 
 export type DSLChild = ViewBuilder | React.ReactElement | string | number | null | undefined | boolean;
@@ -906,6 +909,66 @@ export class ViewBuilder {
   /** Generic gesture modifier for advanced gesture configurations. */
   gesture(config: GestureConfig): ViewBuilder {
     return this.withModifier({ type: ModifierType.gesture, config });
+  }
+
+  // --- TabView ---
+
+  /** Sets the tint color for the active tab bar item. */
+  tabBarTintColor(color: ColorValue): ViewBuilder {
+    return this.withModifier({ type: ModifierType.tabBarTintColor, color });
+  }
+
+  /** Sets the color for inactive tab bar items. */
+  tabBarInactiveTintColor(color: ColorValue): ViewBuilder {
+    return this.withModifier({ type: ModifierType.tabBarInactiveTintColor, color });
+  }
+
+  /** Sets the tab bar background color. */
+  tabBarBackgroundColor(color: ColorValue): ViewBuilder {
+    return this.withModifier({ type: ModifierType.tabBarBackgroundColor, color });
+  }
+
+  /** Sets the tab bar top border color. */
+  tabBarBorderColor(color: ColorValue): ViewBuilder {
+    return this.withModifier({ type: ModifierType.tabBarBorderColor, color });
+  }
+
+  /**
+   * Sets the animation effect when tapping a tab bar item.
+   *
+   * @param config - A preset name ('spring' | 'scale' | 'fade' | 'none') or a custom config object.
+   *
+   * @example
+   * ```ts
+   * TabView(...tabs)
+   *   .tabBarAnimation('spring')
+   *
+   * TabView(...tabs)
+   *   .tabBarAnimation({ scale: 1.2, duration: 200, useSpring: true, damping: 8 })
+   * ```
+   */
+  tabBarAnimation(config: TabBarAnimationConfig): ViewBuilder {
+    return this.withModifier({ type: ModifierType.tabBarAnimation, config });
+  }
+
+  /** Sets the font size for tab bar labels. */
+  tabBarLabelFontSize(size: FontSizeToken | number): ViewBuilder {
+    return this.withModifier({ type: ModifierType.tabBarLabelFontSize, value: size });
+  }
+
+  /** Sets the font weight for tab bar labels. */
+  tabBarLabelFontWeight(weight: FontWeightToken): ViewBuilder {
+    return this.withModifier({ type: ModifierType.tabBarLabelFontWeight, weight });
+  }
+
+  /** Sets the default icon size for tab bar items. */
+  tabBarIconSize(size: number): ViewBuilder {
+    return this.withModifier({ type: ModifierType.tabBarIconSize, value: size });
+  }
+
+  /** Sets the tab bar height in points. */
+  tabBarHeight(height: number): ViewBuilder {
+    return this.withModifier({ type: ModifierType.tabBarHeight, value: height });
   }
 
   // --- Environment ---

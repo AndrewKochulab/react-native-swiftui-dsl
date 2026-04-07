@@ -24,6 +24,7 @@ export enum ElementType {
   sectionlist = 'sectionlist',
   modal = 'modal',
   progressbar = 'progressbar',
+  tabview = 'tabview',
 }
 
 export type ElementTypeValue = `${ElementType}`;
@@ -134,6 +135,16 @@ export enum ModifierType {
   onRotate = 'onRotate',
   gesture = 'gesture',
   environment = 'environment',
+  // TabView
+  tabBarTintColor = 'tabBarTintColor',
+  tabBarInactiveTintColor = 'tabBarInactiveTintColor',
+  tabBarBackgroundColor = 'tabBarBackgroundColor',
+  tabBarBorderColor = 'tabBarBorderColor',
+  tabBarAnimation = 'tabBarAnimation',
+  tabBarLabelFontSize = 'tabBarLabelFontSize',
+  tabBarLabelFontWeight = 'tabBarLabelFontWeight',
+  tabBarIconSize = 'tabBarIconSize',
+  tabBarHeight = 'tabBarHeight',
 }
 
 export type ModifierTypeValue = `${ModifierType}`;

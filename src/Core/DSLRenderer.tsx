@@ -16,6 +16,7 @@ import {
   StyleSheet,
   Image as RNImage,
   Modal as RNModal,
+  Animated,
   ViewStyle,
   TextStyle,
   ImageStyle,
@@ -42,6 +43,7 @@ import {
   Overflow as OverflowConstant, ButtonVariant, AccessibilityRole, KeyboardPersistTaps,
   KeyboardBehavior, ModalAnimation, ScrollDirection as ScrollDirectionToken, SpinnerSize,
   DSLPlatform, Transition, AnimationType, SwipeDirection as SwipeDirectionToken, Edge, isString,
+  TabBarAnimation, type TabBarAnimationToken,
   isNumber, isBoolean, isNil, RNAlign, RNDisplay, RNColor, RNTextAlignVertical, RNPointerEvents,
   ApplyEdgePrefix, RNKey, ElementType, GestureType, ModifierType, type ApplyEdgePrefixToken,
   type EdgeToken, type KeyboardBehaviorToken, type KeyboardPersistTapsToken,
@@ -178,6 +180,10 @@ function renderBuilder(
 
     case ElementType.progressbar:
       element = renderProgressBar(props, computed, resolve);
+      break;
+
+    case ElementType.tabview:
+      element = renderTabView(props, computed, resolve, config, responsiveCtx);
       break;
 
     case ElementType.spacer:
@@ -919,6 +925,330 @@ function renderProgressBar(
   );
 }
 
+// --- TabView ---
+
+interface ResolvedTabAnimation {
+  readonly type: TabBarAnimationToken;
+  readonly scale: number;
+  readonly duration: number;
+  readonly useSpring: boolean;
+  readonly damping: number;
+  readonly stiffness: number;
+  readonly inactiveOpacity: number;
+}
+
+function resolveTabAnimation(
+  config: import('@primitives').TabBarAnimationConfig,
+): ResolvedTabAnimation {
+  const presets = DSLDefaults.tabView.animations;
+  if (isString(config)) {
+    const preset = presets[config as keyof typeof presets];
+    return { type: config as TabBarAnimationToken, ...preset };
+  }
+  // Custom animation config — fall back to spring preset for unset fields
+  const base = presets[TabBarAnimation.spring];
+  return {
+    type: TabBarAnimation.spring,
+    scale: config.scale ?? base.scale,
+    duration: config.duration ?? base.duration,
+    useSpring: config.useSpring ?? base.useSpring,
+    damping: config.damping ?? base.damping,
+    stiffness: config.stiffness ?? base.stiffness,
+    inactiveOpacity: config.inactiveOpacity ?? base.inactiveOpacity,
+  };
+}
+
+function TabViewComponent({
+  props,
+  computed,
+  resolve,
+  config,
+  responsiveCtx,
+}: {
+  props: DSLProps;
+  computed: ComputedStyles;
+  resolve: ColorResolver;
+  config: DSLThemeConfig;
+  responsiveCtx: ResponsiveContext | null;
+}): React.ReactElement {
+  const tabs = props.tabItems ?? [];
+  const defaults = DSLDefaults.tabView;
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const scaleRefs = React.useRef<Animated.Value[]>(tabs.map(() => new Animated.Value(1)));
+  const opacityRefs = React.useRef<Animated.Value[]>(tabs.map(() => new Animated.Value(1)));
+
+  const tintColor = computed.tabBarTintColor ?? resolve(Color.tint);
+  const inactiveTintColor = computed.tabBarInactiveTintColor ?? resolve(Color.secondaryText);
+  const barBg = computed.tabBarBackgroundColor ?? resolve(Color.background);
+  const barBorder = computed.tabBarBorderColor ?? resolve(Color.separator);
+  const iconSize = computed.tabBarIconSize ?? defaults.iconSize;
+  const labelFontSize = computed.tabBarLabelFontSize ?? resolveFontSize(defaults.labelFontSize, config.fonts);
+  const labelFontWeight = computed.tabBarLabelFontWeight ?? (defaults.labelFontWeight as FontWeightStyle);
+  const barHeight = computed.tabBarHeight ?? defaults.barHeight;
+  const animConfig = computed.tabBarAnimation ?? defaults.animation;
+
+  const resolvedAnim = resolveTabAnimation(animConfig);
+
+  const handleTabPress = React.useCallback((index: number) => {
+    if (index === activeIndex) return;
+
+    if (resolvedAnim.type !== TabBarAnimation.none) {
+      const scaleVal = scaleRefs.current[index];
+      const opacityVal = opacityRefs.current[index];
+      const halfDuration = resolvedAnim.duration / 2;
+
+      if (resolvedAnim.useSpring) {
+        Animated.sequence([
+          Animated.spring(scaleVal, {
+            toValue: resolvedAnim.scale,
+            damping: resolvedAnim.damping,
+            stiffness: resolvedAnim.stiffness,
+            useNativeDriver: true,
+          }),
+          Animated.spring(scaleVal, {
+            toValue: 1,
+            damping: resolvedAnim.damping,
+            stiffness: resolvedAnim.stiffness,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      } else {
+        Animated.sequence([
+          Animated.timing(scaleVal, {
+            toValue: resolvedAnim.scale,
+            duration: halfDuration,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scaleVal, {
+            toValue: 1,
+            duration: halfDuration,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }
+
+      if (resolvedAnim.inactiveOpacity < 1) {
+        const oldOpacity = opacityRefs.current[activeIndex];
+        Animated.timing(oldOpacity, {
+          toValue: resolvedAnim.inactiveOpacity,
+          duration: halfDuration,
+          useNativeDriver: true,
+        }).start();
+        opacityVal.setValue(resolvedAnim.inactiveOpacity);
+        Animated.timing(opacityVal, {
+          toValue: 1,
+          duration: halfDuration,
+          useNativeDriver: true,
+        }).start();
+      }
+    }
+
+    setActiveIndex(index);
+  }, [activeIndex, resolvedAnim]);
+
+  // Content area
+  const contentElements = tabs.map((tab, i) => {
+    const isActive = i === activeIndex;
+    const content = tab.content;
+    const rendered = isViewBuilder(content)
+      ? renderBuilder(content as ViewBuilder, resolve, config, responsiveCtx)
+      : content != null
+        ? React.createElement(React.Fragment, null, content)
+        : null;
+
+    return React.createElement(
+      View,
+      {
+        key: `${RNKey.text}-content-${i}`,
+        style: {
+          flex: DSLDefaults.flex,
+          display: isActive ? RNDisplay.flex : RNDisplay.none,
+        } as ViewStyle,
+      },
+      rendered,
+    );
+  });
+
+  // Tab bar items
+  const barItems = tabs.map((tab, i) => {
+    const isActive = i === activeIndex;
+    const opts = tab.options;
+    const itemColor = isActive ? tintColor : inactiveTintColor;
+    const scale = scaleRefs.current[i];
+    const opacity = opacityRefs.current[i];
+
+    let itemContent: React.ReactElement;
+
+    if (opts.customItem) {
+      const customBuilder = opts.customItem(isActive);
+      itemContent = renderBuilder(customBuilder, resolve, config, responsiveCtx);
+    } else {
+      const children: React.ReactElement[] = [];
+
+      if (opts.icon) {
+        const iconName = (isActive && opts.activeIcon) ? opts.activeIcon : opts.icon;
+        const size = opts.iconSize ?? iconSize;
+        const color = isActive
+          ? (opts.activeIconColor ? resolve(opts.activeIconColor) : tintColor)
+          : (opts.iconColor ? resolve(opts.iconColor) : inactiveTintColor);
+
+        if (FontAwesomeComponent) {
+          children.push(
+            React.createElement(FontAwesomeComponent, {
+              key: RNKey.icon,
+              name: iconName,
+              size,
+              color,
+            }),
+          );
+        } else {
+          children.push(
+            React.createElement(RNText, {
+              key: RNKey.icon,
+              style: { fontSize: size, color } as TextStyle,
+            }, iconName),
+          );
+        }
+      }
+
+      if (opts.title) {
+        children.push(
+          React.createElement(RNText, {
+            key: RNKey.label,
+            style: {
+              fontSize: labelFontSize,
+              fontWeight: labelFontWeight,
+              color: itemColor,
+              marginTop: opts.icon ? defaults.labelIconGap : 0,
+            } as TextStyle,
+            numberOfLines: 1,
+          }, opts.title),
+        );
+      }
+
+      itemContent = React.createElement(
+        View,
+        {
+          style: {
+            alignItems: RNAlign.center,
+            justifyContent: RNAlign.center,
+          } as ViewStyle,
+        },
+        ...children,
+      );
+    }
+
+    // Badge
+    let badgeElement: React.ReactElement | null = null;
+    if (opts.badge) {
+      const badgeDef = defaults.badge;
+      badgeElement = React.createElement(
+        View,
+        {
+          key: RNKey.text,
+          style: {
+            position: PositionToken.absolute,
+            top: badgeDef.offsetTop,
+            right: badgeDef.offsetRight,
+            backgroundColor: resolve(Color.error),
+            borderRadius: badgeDef.borderRadius,
+            minWidth: badgeDef.minWidth,
+            height: badgeDef.height,
+            alignItems: RNAlign.center,
+            justifyContent: RNAlign.center,
+            paddingHorizontal: badgeDef.paddingHorizontal,
+          } as ViewStyle,
+        },
+        React.createElement(RNText, {
+          style: {
+            color: resolve(Color.buttonText),
+            fontSize: resolveFontSize(badgeDef.fontSize, config.fonts),
+            fontWeight: badgeDef.fontWeight as FontWeightStyle,
+          } as TextStyle,
+        }, opts.badge),
+      );
+    }
+
+    return React.createElement(
+      Pressable,
+      {
+        key: `${RNKey.text}-bar-item-${i}`,
+        onPress: () => handleTabPress(i),
+        style: {
+          flex: DSLDefaults.flex,
+          alignItems: RNAlign.center,
+          justifyContent: RNAlign.center,
+          paddingVertical: defaults.itemVerticalPadding,
+        } as ViewStyle,
+        testID: opts.testID,
+        accessibilityRole: AccessibilityRole.tab,
+        accessibilityState: { selected: isActive },
+      },
+      React.createElement(
+        Animated.View,
+        {
+          style: {
+            alignItems: RNAlign.center,
+            justifyContent: RNAlign.center,
+            transform: [{ scale }],
+            opacity,
+          },
+        },
+        itemContent,
+        badgeElement,
+      ),
+    );
+  });
+
+  // Tab bar
+  const tabBar = React.createElement(
+    View,
+    {
+      style: {
+        flexDirection: FlexDirection.row as ViewStyle['flexDirection'],
+        backgroundColor: barBg,
+        borderTopWidth: defaults.barBorderWidth,
+        borderTopColor: barBorder,
+        height: barHeight,
+        paddingTop: defaults.barTopPadding,
+        paddingBottom: Platform.OS === DSLPlatform.ios ? defaults.iosBottomPadding : 0,
+      } as ViewStyle,
+      testID: computed.testID ? `${computed.testID}-bar` : undefined,
+      accessibilityRole: AccessibilityRole.tabbar,
+    },
+    ...barItems,
+  );
+
+  // Container
+  const containerStyle: ViewStyle = {
+    flex: DSLDefaults.flex,
+    ...computed.viewStyle,
+  };
+
+  return React.createElement(
+    View,
+    { style: containerStyle, testID: computed.testID },
+    ...contentElements,
+    tabBar,
+  );
+}
+
+function renderTabView(
+  props: DSLProps,
+  computed: ComputedStyles,
+  resolve: ColorResolver,
+  config: DSLThemeConfig,
+  responsiveCtx: ResponsiveContext | null,
+): React.ReactElement {
+  return React.createElement(TabViewComponent, {
+    props,
+    computed,
+    resolve,
+    config,
+    responsiveCtx,
+  });
+}
+
 // --- Interaction wrapper ---
 
 function wrapWithInteraction(
@@ -1237,6 +1567,16 @@ interface ComputedStyles {
   gestures?: GestureConfig[];
   // Environment
   environmentValues?: Record<string, unknown>;
+  // TabView
+  tabBarTintColor?: string;
+  tabBarInactiveTintColor?: string;
+  tabBarBackgroundColor?: string;
+  tabBarBorderColor?: string;
+  tabBarAnimation?: import('@primitives').TabBarAnimationConfig;
+  tabBarLabelFontSize?: number;
+  tabBarLabelFontWeight?: FontWeightStyle;
+  tabBarIconSize?: number;
+  tabBarHeight?: number;
 }
 
 // --- computeStyles ---
@@ -1296,6 +1636,16 @@ function computeStyles(
   let gestures: GestureConfig[] | undefined;
   // Environment
   let environmentValues: Record<string, unknown> | undefined;
+  // TabView
+  let tabBarTintColor: string | undefined;
+  let tabBarInactiveTintColor: string | undefined;
+  let tabBarBackgroundColor: string | undefined;
+  let tabBarBorderColor: string | undefined;
+  let tabBarAnimation: import('@primitives').TabBarAnimationConfig | undefined;
+  let tabBarLabelFontSize: number | undefined;
+  let tabBarLabelFontWeight: FontWeightStyle | undefined;
+  let tabBarIconSize: number | undefined;
+  let tabBarHeight: number | undefined;
 
   for (const mod of modifiers) {
     switch (mod.type) {
@@ -1662,6 +2012,34 @@ function computeStyles(
         environmentValues = environmentValues ?? {};
         environmentValues[mod.key] = mod.value;
         break;
+      // TabView
+      case ModifierType.tabBarTintColor:
+        tabBarTintColor = resolve(mod.color);
+        break;
+      case ModifierType.tabBarInactiveTintColor:
+        tabBarInactiveTintColor = resolve(mod.color);
+        break;
+      case ModifierType.tabBarBackgroundColor:
+        tabBarBackgroundColor = resolve(mod.color);
+        break;
+      case ModifierType.tabBarBorderColor:
+        tabBarBorderColor = resolve(mod.color);
+        break;
+      case ModifierType.tabBarAnimation:
+        tabBarAnimation = mod.config;
+        break;
+      case ModifierType.tabBarLabelFontSize:
+        tabBarLabelFontSize = resolveFontSize(mod.value, config.fonts);
+        break;
+      case ModifierType.tabBarLabelFontWeight:
+        tabBarLabelFontWeight = mod.weight as FontWeightStyle;
+        break;
+      case ModifierType.tabBarIconSize:
+        tabBarIconSize = mod.value;
+        break;
+      case ModifierType.tabBarHeight:
+        tabBarHeight = mod.value;
+        break;
       // Responsive/platform modifiers are resolved before computeStyles — skip here
       case ModifierType.responsive:
       case ModifierType.onCompact:
@@ -1684,6 +2062,8 @@ function computeStyles(
     refreshControlData, onEndReachedData, separatorBuilder, numColumns, emptyComponentBuilder,
     onDismiss, overlayBuilder,
     animationData, transitionData, gestures, environmentValues,
+    tabBarTintColor, tabBarInactiveTintColor, tabBarBackgroundColor, tabBarBorderColor,
+    tabBarAnimation, tabBarLabelFontSize, tabBarLabelFontWeight, tabBarIconSize, tabBarHeight,
   };
 }
 

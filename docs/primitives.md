@@ -1,6 +1,6 @@
 # API Reference: Primitives
 
-Every primitive is a factory function that returns a chainable `ViewBuilder`. The DSL provides **20 built-in primitives** that map to standard React Native components at render time.
+Every primitive is a factory function that returns a chainable `ViewBuilder`. The DSL provides **21 built-in primitives** that map to standard React Native components at render time.
 
 [<-- Back to README](../README.md)
 
@@ -53,6 +53,15 @@ Every primitive is a factory function that returns a chainable `ViewBuilder`. Th
 | --------- | --------------------------------------- | ---------------------------------------------------------------------- |
 | `Modal`   | `Modal(binding, options?, ...children)` | Modal overlay with slide/fade animations and binding-driven visibility |
 
+## Navigation
+
+| Primitive | Signature                    | Description                                               |
+| --------- | ---------------------------- | --------------------------------------------------------- |
+| `TabView` | `TabView(...tabs)`           | Bottom tab bar container with configurable animations     |
+| `Tab`     | `Tab(options, content)`      | Tab item factory — icon, title, badge, or custom renderer |
+
+> See the dedicated [TabView documentation](./tab-view.md) for full API reference.
+
 ## Utility
 
 | Primitive | Signature           | Description                             |
@@ -86,4 +95,5 @@ Every DSL primitive maps to standard React Native components at render time:
 | `SafeArea`      | `SafeAreaView`                   | `.ignoresSafeArea()`              |
 | `Modal`         | `Modal`                          | `.sheet()` / `.fullScreenCover()` |
 | `Link`          | `Pressable` + `Linking.openURL`  | `Link`                            |
+| `TabView`       | Custom `View` (tab bar + content)| `TabView`                         |
 | `Raw`           | Passthrough (any `ReactElement`) | `UIViewRepresentable`             |
