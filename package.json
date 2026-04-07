@@ -1,6 +1,6 @@
 {
   "name": "react-native-swiftui-dsl",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A SwiftUI-inspired declarative DSL for building React Native UIs with chainable modifiers, theme system, and two-way bindings.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
